@@ -1,0 +1,49 @@
+This is the old README of PHP-Ghetto-RPC. I began developing it 6 months ago, stopped. I'm coming back.
+
+There is no functional release for now. I need to re-study the code to remember what I was doing. :P
+
+My motivation to continue to improve this silly project is to help the PHP4 servers use code that runs only under PHP5. As of december/2010, 24% of the servers running PHP are using PHP4.
+
+Please, if you like it, if you think it can helps you in any way, or want to have some fun helping me to develop, I'll be glad to have you as a member in this project!
+
+HOW IT STARTED
+
+I’m working in a company that keeps an application developed in PHP4. They failed to port the code to PHP5 after many tries and dropped the idea.
+
+One tiny piece of the system does some communication with Twitter – unfortunately, with Basic Auth. A few days ago I gave them the notice that Basic Auth will be shutdown and after 08/30/2010 this method will not work anymore.
+
+So, I undertook to develop a solution to make the application work with OAuth. I thought it could be easy, but trying to port the code to PHP5 – to use Abraham’s OAuth lib – would be suicide. I tried to find a PHP4 OAuth lib, unsuccessfully. I tried to port Abraham’s OAuth to PHP4, unsuccessfully too.
+
+The solution I showed:
+
+- Run a second Apache instance with the PHP5 module loaded. Or even configure to use PHP5 in certain directories.
+- Develop a simple WebService under the new Apache instance to do the interface between the application and the OAuth lib
+
+But they didn’t like it, since they don’t have just ONE server and the application is very critical. That’s a farm and it can be very hard and risky to deploy Apache with PHP5 in every server.
+
+Then, my boss came with a very strange idea: use PHP5’s CLI to do the job, passing data to the command line and retrieving the result. The code rose in a structured and simple form, but due to many needs that appeared – like calling functions/methods after the data exchange – moved quickly to OOP.
+
+HOW IT WORKS
+
+1 – PHP-Ghetto-RPC front end is instantiated in PHP4 code
+
+2 – Variables, superglobals and constants are serialized and written to Medium. The medium can be:
+    * serialized file (serialized)
+    * memcached
+    * stdin/out (planned)
+    * shared memory (planned)
+    * FCGI (planned)
+
+3 – The PHP5 CLI is called with the path of the PHP5 source code that will be run
+
+4 – Once the PHP5 code is run, PHP-Ghetto-RPC back-end is instantiated
+
+5 – The data in the bridge fileloaded, then, all the variables and constants of the PHP4 code are now part of the PHP5 data (this is the old behaviour, I plan to make it configurable)
+
+6 – There are functions/methods from the PHP5 code that PHP-Ghetto-RPC will call and store them return values
+
+7 – Once the PHP5 code reaches its end, the PHP-Ghetto-RPC back end exports all variables to the bridge. The execution continues in PHP4 instance and PHP-Ghetto-RPC front end reads the data.
+
+8 – Optionally, series of callbacks will be executed with the data returned from the step 6
+
+I’m using the class as an alternative to WebServices. Note that it’s a slow, not reliable or secure alternative and must be used carefully and only if you have a lot of bravery. Absolutely experimental, despite an old version is running smoothly in production.
