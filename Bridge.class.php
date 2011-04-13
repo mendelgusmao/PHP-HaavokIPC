@@ -25,6 +25,7 @@
     require 'phpgr.conf.php';
 
     class Bridge {
+        
         /*
          * The class can't use public/private/protected
          * because visibility is a feature from PHP 5
