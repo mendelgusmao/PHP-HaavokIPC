@@ -142,7 +142,7 @@
             unset($class);
             unset($params);
 
-            return $_CALLS = $this->calls;
+            return $this->calls;
         }
 
         /**

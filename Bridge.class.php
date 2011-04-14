@@ -17,9 +17,9 @@
      * @todo PROBLEM with the object instances collection
      *       in Call::make() -- previously Bridge::call()
      */
-    require 'Medium.class.php';
-    require 'FileMedium.class.php';
-    require 'MemcacheMedium.class.php';
+    require 'Persistence.class.php';
+    require 'FilePersistence.class.php';
+    require 'MemcachePersistence.class.php';
     require 'Call.class.php';
     require 'CallsQueue.class.php';
     require 'phpgr.conf.php';
@@ -38,7 +38,7 @@
         var $content;
         var $mem;
         var $errors;
-        var $medium;
+        var $persistence;
 
         /**
          * Class constructor
@@ -47,9 +47,9 @@
          * @param $variables Optional variables
          * @param $methods Methods to be executed by call()
          */
-        function Bridge ($medium, $script = null, $variables = null, $calls = null) {
+        function Bridge ($persistence, $script = null, $variables = null, $calls = null) {
 
-            $this->medium = $medium;
+            $this->persistence = $persistence;
             $this->script = $script;
             $this->variables = $variables;
             $this->calls = $calls->queue;
@@ -60,8 +60,8 @@
         /*
          * Constructor extender
          * Here the class defines its behavior (running as local/remote),
-         * its unique id, the medium (file, memcache or stdin/out [todo]),
-         * an error handler to store the errors in the remote instance
+         * its unique id, the persistence (file, memcache or stdin/out [todo]),
+         * an error handler to store the errors in the back end
          * and the simulated PHP 4 destructor
          *
          */
@@ -75,18 +75,28 @@
                 define(PHPGR_IS_BACKEND, true);
 
                 set_error_handler(array(&$this, "error"));
-            } else {
+				
+            } 
+			else {
 
                 $this->id = $this->_id();
 
                 define(PHPGR_IS_BACKEND, false);
 
-                if (PHPGR_MEDIUM == PHPGR_MEDIUM_FILE && PHPGR_LOG && !is_writable(PHPGR_TMP))
+                if (PHPGR_LOG && !is_writable(PHPGR_TMP))
                     trigger_error("PHP-Ghetto-RPC: cannot initialize. directory '" . PHPGR_TMP . "' not writable", E_USER_ERROR);
+					
             }
 
-            $this->medium = new $medium();
-            $this->medium->initialize($this->id);
+			// TODO: Add fallback to persistence
+			// if $persistence is scalar, consider it the
+			// selected persistence.
+			// if $persistence is an array, iterate it
+			// instantiate the persistence and verify if it
+			// is valid. if not, proceed to the next item
+			
+            $this->persistence = new {$persistence . "Persistence"}();
+            $this->persistence->initialize($this->id);
 
             if (!session_id() == "" && !headers_sent())
                 session_start();
@@ -99,20 +109,23 @@
         }
 
         /**
-         * Remote instance (PHP 5) destructor
-         * Simulated in PHP 4 instance using register_shutdown_function()
+         * Back end (PHP 5) destructor
+         * Simulated in front end using register_shutdown_function()
          * */
         function __destruct () {
 
             if (!PHPGR_IS_BACKEND)
-                $this->medium - remove($this->id);
+                $this->persistence->remove($this->id);
 
-            $this->_log("php " . PHP_VERSION . " end"
-                    . (!PHPGR_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""));
+            $this->_log(
+				sprintf("php %s end%s",
+						PHP_VERSION,
+						(!PHPGR_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+			);
         }
 
         /**
-         * Export the variables to the medium, execute PHP 5 binary, reimport the variables
+         * Export the variables to the persistence, execute PHP 5 binary, reimport the variables
          * and store the result
          *
          * @param boolean $export If false, it will skip the export process
@@ -125,147 +138,160 @@
 
                 $this->_log("cannot execute: script not found");
 
-                trigger_error("PHP-Ghetto-RPC: cannot execute. script '{$this->script}' not found", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC: Cannot execute. File '{$this->script}' not found!", E_USER_ERROR);
 
-                return false;
             }
+            else {
+            
+                $this->_log("start execute");
 
-            $this->_log("start execute");
+                if ($export)
+                    $this->export();
 
-            if ($export)
-                $this->export();
+                $cmdline = sprintf("%s \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
 
-            $cmdline = sprintf("%s \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
+                $this->content = shell_exec($cmdline);
 
-            $this->content = shell_exec($cmdline);
+                $this->_log("end execute");
 
-            $this->_log("end execute");
+                if ($import)
+                    $this->import();
 
-            if ($import)
-                $this->import();
-
-            $this->callback();
-
+                $this->callback();
+            }
+            
             return true;
         }
 
         /**
-         * Export the variables to the medium
+         * Export the variables to the persistence
          * @return boolean
          */
         function export ($to_export = array()) {
 
             $this->_log("start export");
 
-            if (!$this->medium->valid())
-                return false;
+            if ($this->persistence->valid())
 
-            $temp_globals = array();
+                $temp_globals = array();
 
-            foreach ($GLOBALS as $name => $value)
-                if (!is_object($value))
-                    $temp_globals[$name] = $value;
+                foreach ($GLOBALS as $name => $value)
+                    if (!is_object($value))
+                        $temp_globals[$name] = $value;
 
-            $exports = array(
-                "GLOBALS" => $temp_globals,
-                "_REQUEST" => $_REQUEST,
-                "_POST" => $_POST,
-                "_GET" => $_GET,
-                "_SERVER" => $_SERVER,
-                "_COOKIE" => $_COOKIE,
-                "_SESSION" => $_SESSION,
-                "_CONSTANTS" => get_defined_constants(),
-                "_CALLS" => $this->calls,
-                "_HEADERS" => PHPGR_IS_BACKEND ? headers_list() : array(),
-                "_ERRORS" => $this->errors
-            );
+                $exports = array(
+                    "GLOBALS" => $temp_globals,
+                    "_REQUEST" => $_REQUEST,
+                    "_POST" => $_POST,
+                    "_GET" => $_GET,
+                    "_SERVER" => $_SERVER,
+                    "_COOKIE" => $_COOKIE,
+                    "_SESSION" => $_SESSION,
+                    "_CONSTANTS" => get_defined_constants(),
+                    "_CALLS" => $this->calls,
+                    "_HEADERS" => PHPGR_IS_BACKEND ? headers_list() : array(),
+                    "_ERRORS" => $this->errors
+                );
 
-            foreach (array_keys($exports) as $export_name)
-                if (!in_array($export_name, $to_export))
-                    unset($exports[$export_name]);
+                foreach (array_keys($exports) as $export_name)
+                    if (!in_array($export_name, $to_export))
+                        unset($exports[$export_name]);
 
-            if (is_array($this->variables))
-                $data = array_merge($data, $this->variables);
+                if (is_array($this->variables))
+                    $data = array_merge($data, $this->variables);
 
-            $this->medium->set($data);
+                $this->persistence->set($data);
 
-            $this->_log("end export");
+                $this->_log("end export");
+            }
+			else {
+			
+				trigger_error("PHP-Ghetto-RPC: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
 
-            return true;
+			}
+            
         }
 
         /**
-         * Import the variables from the medium
+         * Import the variables from the persistence
          * @return mixed
          * */
         function import () {
 
-            $data = $medium->get();
+			if ($this->persistence->valid()) {
+		
+				$data = $this->persistence->get();
 
-            $this->_log("start import");
+				$this->_log("start import");
 
-            if ($data && is_array($data))
-                foreach ($data as $name => $value) {
+				if ($data && is_array($data))
+					foreach ($data as $name => $value) {
 
-                    if ("_SESSION" == $name && !$value)
-                        continue;
+						if ("_SESSION" == $name && !$value)
+							continue;
 
-                    if ("_HEADERS" == $name && !headers_sent())
-                        foreach ($value as $header)
-                            header($header);
+						if ("_HEADERS" == $name && !headers_sent())
+							foreach ($value as $header)
+								header($header);
 
-                    if ("_CONSTANTS" == $name)
-                        foreach ($value as $constant => $constant_value)
-                            if (substr($constant, 0, 3) != "PHP" && !defined($constant))
-                                define($constant, $constant_value);
+						if ("_CONSTANTS" == $name)
+							foreach ($value as $constant => $constant_value)
+								if (substr($constant, 0, 3) != "PHP" && !defined($constant))
+									define($constant, $constant_value);
 
-                    if ("_CALLS" == $name)
-                        $this->calls = $value;
+						if ("_CALLS" == $name)
+							$this->calls = $value;
 
-                    if ("_ERRORS" == $name)
-                        $this->errors = $value;
+						if ("_ERRORS" == $name)
+							$this->errors = $value;
 
-                    global $$name;
-                    $$name = $value;
-                }
+						global $$name;
+						$$name = $value;
+					}
 
-            $this->_log("end import");
-
-            return $data;
+				$this->_log("end import");
+				
+				return $data;
+				
+			}
+			else {
+				
+				trigger_error("PHP-Ghetto-RPC: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
+				
+			}
+			
         }
 
         /**
-         * Execute functions/methods in the local instance using the data returned
-         * by call() in the remote instance
+         * Execute functions/methods in front end using the data returned
+         * from the back end
          * @return boolean
          */
         function callback () {
 
-            if (!$this->calls || PHPGR_IS_BACKEND)
-                return false;
+            if (is_array($this->calls) && !PHPGR_IS_BACKEND)
+				foreach ($this->calls as $call)
+					if ($callback_method = $call->callback)
+						if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
 
-            foreach ($this->calls as $call)
-                if ($callback_method = $call->callback)
-                    if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
+							continue;
 
-                        continue;
+							// NOT IMPLEMENTED
+							// TODO: PHP 4 + call_user_func + Static method calls = WAT?
 
-                        // NOT IMPLEMENTED
-                        // TODO: PHP 4 + call_user_func + Static method calls = WAT?
+							$class = $return[1];
+							$method = $return[2];
 
-                        $class = $return[1];
-                        $method = $return[2];
+							if (method_exists($class, $method))
+								call_user_func(array($class, $method), $call->return);
+								
+						}
+						else {
 
-                        if (method_exists($class, $method))
-                            call_user_func(array($class, $method), $call->return);
-                    }
-                    else {
+							if (function_exists($callback_method))
+								call_user_func($callback_method, $call->return);
 
-                        if (function_exists($callback_method))
-                            call_user_func($callback_method, $call->return);
-                    }
-
-            return true;
+						}
         }
 
         /**
@@ -273,33 +299,33 @@
          */
         function _log ($str) {
 
-            if (!PHPGR_LOG)
-                return false;
+            if (PHPGR_LOG) {
 
-            static $logfile;
+				static $logfile;
 
-            if (!$logfile)
-                if (!$logfile = @fopen(PHPGR_LOGFILE, "a+")) {
-                    define("PHPGR_LOG", false);
+				if (!$logfile)
+					if (!$logfile = @fopen(PHPGR_LOGFILE, "a+")) {
+					
+						define("PHPGR_LOG", false);
+						trigger_error("PHP-Ghetto-RPC: Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
+						
+					}
 
-                    trigger_error("PHP-Ghetto-RPC: cannot log. error opening log file '" . PHPGR_LOGFILE . "' for writing", E_USER_ERROR);
-                }
-
-            fwrite($logfile,
-                   sprintf("%s %s %s %s %s\n",
-                           $this->id,
-                           PHP_VERSION,
-                           PHPGR_USE_MEMCACHE ? "(MEM)" : "",
-                           (PHPGR_IS_BACKEND ? "    " : ""),
-                           $str)
-                   );
-
-            return true;
+				fwrite($logfile,
+					   sprintf("%s %s %s %s %s\n",
+							   $this->id,
+							   PHP_VERSION,
+							   PHPGR_USE_MEMCACHE ? "(MEM)" : "",
+							   (PHPGR_IS_BACKEND ? "    " : ""),
+							   $str)
+					   );
+			}
+            
         }
 
         /**
          *
-         * Error handler for the remote instance
+         * Error handler for the back end
          * @param $errno The first parameter, errno, contains the level of the error raised, as an integer.
          * @param $errstr The second parameter, errstr, contains the error message, as a string.
          * @param $errfile The third parameter is optional, errfile, which contains the filename that the error was raised in, as a string.
@@ -307,35 +333,35 @@
          */
         function error ($errno, $errstr, $errfile, $errline) {
 
-            if ($errfile == __FILE__ || !PHPGR_IS_BACKEND)
-                return true;
+            if ($errfile != __FILE__ && PHPGR_IS_BACKEND) {
 
-            if (!$errors)
-                static $errors = array(
-                    E_WARNING => "WARNING",
-                    E_NOTICE => "NOTICE",
-                    E_USER_ERROR => "USER_ERROR",
-                    E_USER_WARNING => "USER_WARNING",
-                    E_USER_NOTICE => "USER_NOTICE",
-                    E_STRICT => "STRICT",
-                    E_RECOVERABLE_ERROR => "RECOVERABLE_ERROR",
-                    E_DEPRECATED => "DEPRECATED",
-                    E_USER_DEPRECATED => "USER_DEPRECATED"
-                );
+				if (!$errors)
+					static $errors = array(
+						E_WARNING => "WARNING",
+						E_NOTICE => "NOTICE",
+						E_USER_ERROR => "USER_ERROR",
+						E_USER_WARNING => "USER_WARNING",
+						E_USER_NOTICE => "USER_NOTICE",
+						E_STRICT => "STRICT",
+						E_RECOVERABLE_ERROR => "RECOVERABLE_ERROR",
+						E_DEPRECATED => "DEPRECATED",
+						E_USER_DEPRECATED => "USER_DEPRECATED"
+					);
 
-            $errlevel = $errors[$errno];
+				$errlevel = $errors[$errno];
 
-            $this->errors[] = array(
-                "level" => $errlevel,
-                "message" => $errstr,
-                "file" => $errfile,
-                "line" => $errline
-            );
+				$this->errors[] = array(
+					"level"   => $errlevel,
+					"message" => $errstr,
+					"file"    => $errfile,
+					"line"    => $errline
+				);
 
-            if ($errno != E_NOTICE)
-                $this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
+				if ($errno != E_NOTICE)
+					$this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
 
-            return true;
+			}
+
         }
 
         function _id () {
