@@ -69,10 +69,6 @@
              * or develop a way to use the same instance for every subsequent call?
              */
 
-            // @todo move this verification to CallsQueue::process()
-            if (!PHPGR_IS_BACKEND)
-                return false;
-
             $class = $this->class;
             $method = $this->method;
             $static = $this->static;
@@ -132,8 +128,7 @@
                     
                 }
 
-                if ($return != null)
-                    $this->calls[$i_method]->return = $return;
+                $this->calls[$i_method]->return = $return;
 
             }
 

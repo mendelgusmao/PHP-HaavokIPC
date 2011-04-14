@@ -33,7 +33,6 @@
 
         var $script;
         var $calls;
-        var $variables;
         var $id;
         var $content;
         var $mem;
@@ -47,11 +46,10 @@
          * @param $variables Optional variables
          * @param $methods Methods to be executed by call()
          */
-        function Bridge ($persistence, $script = null, $variables = null, $calls = null) {
+        function Bridge ($persistence, $script = null, $calls = null) {
 
             $this->persistence = $persistence;
             $this->script = $script;
-            $this->variables = $variables;
             $this->calls = $calls->queue;
 
             $this->initialize();
@@ -197,9 +195,6 @@
                     if (!in_array($export_name, $to_export))
                         unset($exports[$export_name]);
 
-                if (is_array($this->variables))
-                    $data = array_merge($data, $this->variables);
-
                 $this->persistence->set($data);
 
                 $this->_log("end export");
@@ -265,33 +260,45 @@
         /**
          * Execute functions/methods in front end using the data returned
          * from the back end
+         *
+         * TODO: Allow multiple callbacks if $call->callback is an array?
+         * Example: $call->callback = array("Function1", "Function2", "Function3")
+         *          -> Function3(Function2(Function1($call->return)))
+         *
          * @return boolean
          */
         function callback () {
 
-            if (is_array($this->calls) && !PHPGR_IS_BACKEND)
-				foreach ($this->calls as $call)
-					if ($callback_method = $call->callback)
-						if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
+            if (PHPGR_IS_BACKEND) {
 
-							continue;
+                trigger_error("PHP-Ghetto-RPC: Cannot execute callbacks in back end.");
 
-							// NOT IMPLEMENTED
-							// TODO: PHP 4 + call_user_func + Static method calls = WAT?
+            }
+            else if (!is_null($this->calls) && !is_array($this->calls)) {
+                foreach ($this->calls as $call)
+                    if ($callback_method = $call->callback)
+                        if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
 
-							$class = $return[1];
-							$method = $return[2];
+                            continue;
 
-							if (method_exists($class, $method))
-								call_user_func(array($class, $method), $call->return);
-								
-						}
-						else {
+                            // NOT IMPLEMENTED
+                            // TODO: PHP 4 + call_user_func + Static method calls = WAT?
 
-							if (function_exists($callback_method))
-								call_user_func($callback_method, $call->return);
+                            $class = $return[1];
+                            $method = $return[2];
 
-						}
+                            if (method_exists($class, $method))
+                                call_user_func(array($class, $method), $call->return);
+
+                        }
+                        else {
+
+                            if (function_exists($callback_method))
+                                call_user_func($callback_method, $call->return);
+
+                        }
+                            
+            }
         }
 
         /**
