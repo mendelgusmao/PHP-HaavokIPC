@@ -2,22 +2,24 @@
 
     class Persistence {
 
+        var $name = "Persistence";
+
         var $id;
         var $source;
         var $data;
         var $valid;
 
-        function initialize ($id, $fallback_source = false);
+        function initialize ($id) {}
 
-        function set ($data);
+        function set ($data) {}
 
-        function get ();
+        function get () {}
 
-        function delete ();
+        function delete () {}
 
-        function valid ();
+        function valid () {}
 
-        function fallback ($source);
+        function fallback ($source) {}
         
     }
 

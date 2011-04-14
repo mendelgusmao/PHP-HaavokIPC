@@ -88,21 +88,20 @@
 					
             }
 
-			// TODO: Add fallback to persistence
-			// if $persistence is scalar, consider it the
-			// selected persistence.
-			// if $persistence is an array, iterate it
-			// instantiate the persistence and verify if it
-			// is valid. if not, proceed to the next item
+            // TODO: Add fallback to persistence
+            // if $persistence is scalar, consider it the
+            // selected persistence.
+            // if $persistence is an array, iterate it
+            // instantiate the persistence and verify if it
+            // is valid. if not, proceed to the next item
 			
-            $this->persistence = new {$persistence . "Persistence"}();
             $this->persistence->initialize($this->id);
 
             if (!session_id() == "" && !headers_sent())
                 session_start();
 
             register_shutdown_function(
-                    array(&$this, PHPGR_IS_BACKEND ? "export" : "__destruct")
+                array(&$this, PHPGR_IS_BACKEND ? "export" : "__destruct")
             );
 
             $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
@@ -158,6 +157,7 @@
                     $this->import();
 
                 $this->callback();
+                
             }
             
             return true;
@@ -171,7 +171,7 @@
 
             $this->_log("start export");
 
-            if ($this->persistence->valid())
+            if ($this->persistence->valid()) {
 
                 $temp_globals = array();
 
@@ -204,11 +204,11 @@
 
                 $this->_log("end export");
             }
-			else {
-			
-				trigger_error("PHP-Ghetto-RPC: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+            else {
 
-			}
+                trigger_error("PHP-Ghetto-RPC: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+
+            }
             
         }
 
