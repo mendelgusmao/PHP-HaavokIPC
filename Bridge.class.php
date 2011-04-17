@@ -17,13 +17,17 @@
      * @todo PROBLEM with the object instances collection
      *       in Call::make() -- previously Bridge::call()
      */
-    require 'Persistence.class.php';
-    require 'FilePersistence.class.php';
-    require 'MemcachePersistence.class.php';
-    require 'Call.class.php';
-    require 'CallsQueue.class.php';
-    require 'phpgr.conf.php';
-
+    require dirname(__FILE__) . '/Persistence.class.php';
+    require dirname(__FILE__) . '/FilePersistence.class.php';
+    require dirname(__FILE__) . '/MemcachePersistence.class.php';
+    require dirname(__FILE__) . '/Call.class.php';
+    require dirname(__FILE__) . '/CallsQueue.class.php';
+    
+    if (PHP_OS == "WINNT")
+        require dirname(__FILE__) . '/phpgr.win.conf.php';
+    else
+        require dirname(__FILE__) . '/phpgr.conf.php';
+        
     class Bridge {
         
         /*
@@ -35,7 +39,6 @@
         var $calls;
         var $id;
         var $content;
-        var $mem;
         var $errors;
         var $persistence;
 
@@ -46,11 +49,18 @@
          * @param $variables Optional variables
          * @param $methods Methods to be executed by call()
          */
+         
+        function __construct ($persistence, $script = null, $calls = null) {
+            
+            $this->bridge($persistence, $script, $calls);
+            
+        }
+         
         function Bridge ($persistence, $script = null, $calls = null) {
 
             $this->persistence = $persistence;
             $this->script = $script;
-            $this->calls = $calls->queue;
+            $this->calls = $calls;
 
             $this->initialize();
         }
@@ -82,7 +92,7 @@
                 define(PHPGR_IS_BACKEND, false);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
-                    trigger_error("PHP-Ghetto-RPC: cannot initialize. directory '" . PHPGR_TMP . "' not writable", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Directory '" . PHPGR_TMP . "' not writable", E_USER_ERROR);
 					
             }
 
@@ -112,7 +122,7 @@
         function __destruct () {
 
             if (!PHPGR_IS_BACKEND)
-                $this->persistence->remove($this->id);
+                $this->persistence->delete();
 
             $this->_log(
 				sprintf("php %s end%s",
@@ -147,7 +157,7 @@
 
                 $cmdline = sprintf("%s \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
 
-                $this->content = shell_exec($cmdline);
+                #$this->content = shell_exec($cmdline);
 
                 $this->_log("end execute");
 
@@ -274,8 +284,8 @@
                 trigger_error("PHP-Ghetto-RPC: Cannot execute callbacks in back end.");
 
             }
-            else if (!is_null($this->calls) && !is_array($this->calls)) {
-                foreach ($this->calls as $call)
+            else if (!is_null($this->calls->queue) && is_array($this->calls->queue)) {
+                foreach ($this->calls->queue as $call)
                     if ($callback_method = $call->callback)
                         if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
 

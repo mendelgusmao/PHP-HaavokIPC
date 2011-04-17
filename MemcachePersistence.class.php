@@ -17,7 +17,7 @@
      * @author Mendel Gusmao
      *
      */
-    class MemcachePersistence extends Persistence {
+    class MemcachePersistence {
 
         var $name = "Memcache";
 

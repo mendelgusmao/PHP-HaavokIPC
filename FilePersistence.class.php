@@ -7,7 +7,7 @@
      * @author Mendel Gusmao
      *
      */
-    class FilePersistence extends Persistence {
+    class FilePersistence {
 
         var $name = "File";
         
@@ -26,9 +26,9 @@
             $this->valid = false;
             $this->source_file = PHPGR_TMP . $this->id . PHPGR_EXT;
 
-            if ($this->source = @fopen($this->source_file, "w"))
+            if ($this->source = fopen($this->source_file, "w"))
                 $this->valid = true;	
-
+                
             return $this->valid;
         }
 
@@ -40,8 +40,8 @@
         function set ($data) {
 
             $data = serialize($data);
-            fwrite($source, $data);
-            fclose($source);
+            fwrite($this->source, $data);
+            fclose($this->source);
 			
         }
 

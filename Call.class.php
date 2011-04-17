@@ -33,6 +33,8 @@
          */
         function Call ($class_method, $parameters = null,
                        $constructor_parameters = null, $callback = null) {
+                       
+            $this->instances = new Instances();
                       
             if (preg_match("/(&)?(.*)::(.*)/", $class_method, $return)) {
             
@@ -52,8 +54,8 @@
             $this->constructor_parameters = $constructor_parameters;
             $this->callback = $callback;
 
-            self::$instance_index = array();
-            self::$instances = array();
+            $this->$instance_index = array();
+            $this->$instances = array();
 
         }
 
@@ -62,7 +64,7 @@
          * in the back end
          * @return mixed
          */
-        function make () {
+        function invoke () {
 
             /* Oh yeah, this is a real problem!
              * To instantiate a new class for every Call in the queue
@@ -84,25 +86,25 @@
 
             if ($class && class_exists($class)) {
 
-                self::$instance_index[$class] = (int) self::$instance_index[$class];
+                $this->$instance_index[$class] = (int) $this->$instance_index[$class];
 
-                if (!$object = self::$instances[$class][self::$instance_index[$class]]) {
+                if (!$object = $this->$instances[$class][$this->$instance_index[$class]]) {
                 
                     if (!$this->prev_instance) {
                     
-                        $object = $instances[$class][self::$instance_index[$class]]
+                        $object = $instances[$class][$this->$instance_index[$class]]
                             = &new $class($constructor_parameters);
 
-                        self::$instance_index[$class]++;
+                        $this->$instance_index[$class]++;
 
-                        $this->_log("call $class::__construct()");
+                        # $this->_log("call $class::__construct()");
                         
                     }
                     else {
                     
-                        $object = $instances[$class][self::$instance_index[$class] - 1];
+                        $object = $instances[$class][$this->$instance_index[$class] - 1];
 
-                        $this->_log("reuse $class");
+                        # $this->_log("reuse $class");
                         
                     }
                     
@@ -112,7 +114,7 @@
                 
                     $return = call_user_func_array(array($object, $method), $params);
 
-                    $this->_log("call $class::$method()");
+                    # $this->_log("call $class::$method()");
                     
                 }
 
@@ -124,7 +126,7 @@
                 if (function_exists($method)) {
                 
                     $return = call_user_func_array($method, $params);
-                    $this->_log("call $method()");
+                    # $this->_log("call $method()");
                     
                 }
 
