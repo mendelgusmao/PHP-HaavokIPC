@@ -37,11 +37,8 @@
 
                 $this->source = new Memcache;
 
-                if ($this->source->addServer(PHPGR_MEMCACHED, PHPGR_MEMCACHEDP)) {
-
+                if ($this->source->addServer(PHPGR_MEMCACHED, PHPGR_MEMCACHEDP))
                     $this->valid = true;
-
-                }
 
             }
 
