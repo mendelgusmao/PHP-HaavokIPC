@@ -1,4 +1,2 @@
 cmd.exe.lnk
-nbproject/private/private.properties
-nbproject/project.properties
-nbproject/project.xml
+nbproject/**/*

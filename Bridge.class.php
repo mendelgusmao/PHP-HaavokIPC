@@ -87,12 +87,15 @@
             } 
 			else {
 
+                if (!file_exists(PHPGR_BIN))
+                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
+                
                 $this->id = $this->_id();
 
                 define(PHPGR_IS_BACKEND, false);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
-                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Directory '" . PHPGR_TMP . "' not writable", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
@@ -102,6 +105,8 @@
             // if $persistence is an array, iterate it
             // instantiate the persistence and verify if it
             // is valid. if not, proceed to the next item
+            // and redo the verification. if no persistence
+            // is valid, trigger an error
 			
             $this->persistence->initialize($this->id);
 
@@ -287,15 +292,15 @@
             else if (!is_null($this->calls->queue) && is_array($this->calls->queue)) {
                 foreach ($this->calls->queue as $call)
                     if ($callback_method = $call->callback)
-                        if (preg_match("/(.*)::(.*)/", $callback_method, $return)) {
+                        if (preg_match("/(?<class>.*)::(?<method>.*)/", $callback_method, $return)) {
 
                             continue;
 
                             // NOT IMPLEMENTED
                             // TODO: PHP 4 + call_user_func + Static method calls = WAT?
 
-                            $class = $return[1];
-                            $method = $return[2];
+                            $class = $return["class"];
+                            $method = $return["method"];
 
                             if (method_exists($class, $method))
                                 call_user_func(array($class, $method), $call->return);

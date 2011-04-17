@@ -18,7 +18,6 @@
         var $callback;
         var $return;
         var $instances;
-        var $instance_index;
         var $reuse_instance;
 
         /**
@@ -31,14 +30,12 @@
          *                              in the remote instance is done
          *
          */
-        function Call ($class_method, $parameters = null,
+        function Call ($instances_container, $class_method, $parameters = null,
                        $constructor_parameters = null, $callback = null) {
                        
-            $this->instances = new Instances();
-                      
             if (preg_match("/(&)?(.*)::(.*)/", $class_method, $return)) {
             
-                $this->prev_instance = $return[1] == "&";
+                $this->reuse_instance = $return[1] == "&";
                 $this->class = $return[2];
                 $this->method = $return[3];
                 
@@ -50,12 +47,10 @@
                 
             }
 
+            $this->instances = $instances_container;            
             $this->parameters = $parameters;
             $this->constructor_parameters = $constructor_parameters;
             $this->callback = $callback;
-
-            $this->$instance_index = array();
-            $this->$instances = array();
 
         }
 
@@ -85,36 +80,22 @@
                 $constructor_parameters = array($constructor_parameters);
 
             if ($class && class_exists($class)) {
-
-                $this->$instance_index[$class] = (int) $this->$instance_index[$class];
-
-                if (!$object = $this->$instances[$class][$this->$instance_index[$class]]) {
                 
-                    if (!$this->prev_instance) {
-                    
-                        $object = $instances[$class][$this->$instance_index[$class]]
-                            = &new $class($constructor_parameters);
-
-                        $this->$instance_index[$class]++;
-
-                        # $this->_log("call $class::__construct()");
-                        
-                    }
-                    else {
-                    
-                        $object = $instances[$class][$this->$instance_index[$class] - 1];
-
-                        # $this->_log("reuse $class");
-                        
-                    }
-                    
-                }
-
+                if ($this->instances->has_instances($class) && $this->reuse_instance)
+                    $object = $this->instances->get($class);
+                else
+                    $object = $this->instances->get_or_add(new $class($constructor_parameters));
+                
                 if (method_exists($object, $method)) {
                 
                     $return = call_user_func_array(array($object, $method), $params);
 
                     # $this->_log("call $class::$method()");
+                    
+                }
+                else {
+                    
+                    trigger_error("PHP-Ghetto-RPC: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
                     
                 }
 
@@ -129,7 +110,12 @@
                     # $this->_log("call $method()");
                     
                 }
-
+                else {
+                    
+                    trigger_error("PHP-Ghetto-RPC: Function '{$method}' not found.", E_USER_ERROR);
+                    
+                }
+                
                 $this->calls[$i_method]->return = $return;
 
             }
