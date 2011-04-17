@@ -17,7 +17,7 @@
      * @todo PROBLEM with the object instances collection
      *       in Call::make() -- previously Bridge::call()
      */
-    require dirname(__FILE__) . '/Persistence.class.php';
+    require dirname(__FILE__) . '/Instances.class.php';
     require dirname(__FILE__) . '/FilePersistence.class.php';
     require dirname(__FILE__) . '/MemcachePersistence.class.php';
     require dirname(__FILE__) . '/Call.class.php';
@@ -87,8 +87,8 @@
             } 
 			else {
 
-                if (!file_exists(PHPGR_BIN))
-                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
+                #if (!file_exists(PHPGR_BIN))
+                #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
                 
                 $this->id = $this->_id();
 
@@ -160,9 +160,9 @@
                 if ($export)
                     $this->export();
 
-                $cmdline = sprintf("%s \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
+                $cmdline = sprintf("\"%s\" \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
 
-                #$this->content = shell_exec($cmdline);
+                $this->content = shell_exec($cmdline);
 
                 $this->_log("end execute");
 

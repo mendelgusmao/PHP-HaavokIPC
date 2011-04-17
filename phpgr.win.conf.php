@@ -6,15 +6,15 @@
     define("PHPGR_MEDIUM_STD", 2);
 
     /* PHP 5 binary */
-    define("PHPGR_BIN", "php52");
-    define("PHPGR_PARAMS", "-q");
+    define("PHPGR_BIN", "php4");
+    define("PHPGR_PARAMS", "");
 
     /* Medium file config */
     define("PHPGR_EXT", ".php5b");
-    define("PHPGR_TMP", dirname(__FILE__) . "/temp/");
+    define("PHPGR_TMP", dirname(__FILE__) . "\\temp\\");
 
     /* Logging config */
-    define("PHPGR_LOGFILE", PHPGR_TMP . "/log.txt");
+    define("PHPGR_LOGFILE", PHPGR_TMP . "\\log.txt");
     define("PHPGR_LOG", true);
 
     /* Memcache config */

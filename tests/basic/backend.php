@@ -1,6 +1,6 @@
 <?php
 
-    require '../Bridge.class.php';
+    require '../../Bridge.class.php';
     
     $persistence = new FilePersistence();
     $bridge = new Bridge($persistence);

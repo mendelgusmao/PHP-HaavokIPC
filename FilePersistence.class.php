@@ -12,7 +12,7 @@
         var $name = "File";
         
         var $id;
-		var $source;
+		var $descriptor;
         var $source_file;
         var $data;
         var $valid;
@@ -26,7 +26,7 @@
             $this->valid = false;
             $this->source_file = PHPGR_TMP . $this->id . PHPGR_EXT;
 
-            if ($this->source = fopen($this->source_file, "w"))
+            if ($this->descriptor = fopen($this->source_file, "w"))
                 $this->valid = true;	
                 
             return $this->valid;
@@ -40,8 +40,7 @@
         function set ($data) {
 
             $data = serialize($data);
-            fwrite($this->source, $data);
-            fclose($this->source);
+            fwrite($this->descriptor, $data);
 			
         }
 
@@ -54,10 +53,10 @@
 
             $data = "";
 
-            while ($temp = fread($this->source, 1024))
+            while ($temp = fread($this->descriptor, 1024))
                 $data .= $temp;
 
-            fclose($this->source);
+            fclose($this->descriptor);
 
             return unserialize($data);
         }
@@ -69,7 +68,7 @@
          */
         function delete () {
 
-            return @fclose($this->source) && @unlink($this->source_file);
+            return @fclose($this->descriptor) && @unlink($this->source_file);
             
         }
 
