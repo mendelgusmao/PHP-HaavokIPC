@@ -12,7 +12,7 @@
         var $name = "File";
         
         var $id;
-		var $descriptor;
+        var $descriptor;
         var $source_file;
         var $data;
         var $valid;
@@ -76,9 +76,9 @@
          * Verify if the source is valid
          * @return bool
          */
-        function valid() {
+        function valid () {
 
-            return $this->valid;
+            return $this->valid & is_array(@fstat($this->descriptor));
             
         }
 
