@@ -28,7 +28,8 @@
         
         /*
          * The class can't use public/private/protected
-         * because visibility is a feature from PHP 5
+         * because visibility and encapsulation and are
+         * features from PHP 5
          */
 
         var $script;
@@ -42,14 +43,14 @@
         /**
          * Class constructor
          *
-         * @param $script Path of the script to be executed
-         * @param $variables Optional variables
-         * @param $methods Methods to be executed by call()
+         * @param $persistence Persistence Persistence object
+         * @param $script Script filename to be called
+         * @param $calls CallsQueue Methods to be executed
          */
          
         function __construct ($persistence, $script = null, $calls = null) {
             
-            $this->bridge($persistence, $script, $calls);
+            $this->Bridge($persistence, $script, $calls);
             
         }
          
@@ -157,7 +158,7 @@
                 if ($export)
                     $this->export();
 
-                $cmdline = sprintf("\"%s\" \"%s\" --php-ghetto-rpc %s", PHPGR_BIN, $this->script, $this->id);
+                $cmdline = sprintf('"%s" "%s" --php-ghetto-rpc %s', PHPGR_BIN, $this->script, $this->id);
 
                 $this->content = shell_exec($cmdline);
 
