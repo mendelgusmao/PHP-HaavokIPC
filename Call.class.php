@@ -32,19 +32,31 @@
          */
         function Call ($instances_container, $class_method, $parameters = null,
                        $constructor_parameters = null, $callback = null) {
-                       
-            if (preg_match("/(&)?(.*)::(.*)/", $class_method, $return)) {
-            
-                $this->reuse_instance = $return[1] == "&";
-                $this->class = $return[2];
-                $this->method = $return[3];
-                
-            }
-            else {
-            
-                $this->class = null;
-                $this->method = $class_method;
-                
+
+            if (is_array($class_method)) {
+
+                if (count($class_method == 2)) {
+
+                    if (substr($class_method[0], 0, 1) == "&") {
+                        $this->reuse_instance = true;
+                        $class_method[0] = substr($class_method[0], 1);
+                    }
+
+                    $this->class = $class_method[0];
+                    $this->method = $class_method[1];
+                    
+                }
+                else if (count($class_method == 1)) {
+
+                    $this->method = $class_method[0];
+
+                }
+                else {
+
+                    trigger_error("PHP-Ghetto-RPC::Call::Call: Wrong parameter count for class method/function name.");
+
+                }
+
             }
 
             $this->instances = $instances_container;            
@@ -89,13 +101,11 @@
                 if (method_exists($object, $method)) {
                 
                     $return = call_user_func_array(array($object, $method), $params);
-
-                    # $this->_log("call $class::$method()");
                     
                 }
                 else {
                     
-                    trigger_error("PHP-Ghetto-RPC: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
                     
                 }
 
@@ -112,7 +122,7 @@
                 }
                 else {
                     
-                    trigger_error("PHP-Ghetto-RPC: Function '{$method}' not found.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
                     
                 }
                 
@@ -121,9 +131,6 @@
             }
 
             $i_method++;
-            
-            unset($class);
-            unset($params);
 
             return $this->calls;
         }
