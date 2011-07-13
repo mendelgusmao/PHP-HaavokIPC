@@ -12,7 +12,6 @@
      *         using something like 'Class::' to execute only its constructor
      *         (Problem: constructor returns its class and PHP-Ghetto-RPC don't exchange objects
      *         through Medium, so it will not return anything)
-     * @todo Improve configuration method, eliminating the excess of constants
      * @todo Standardize error triggering
      * @todo PROBLEM with the object instances collection
      *       in Call::make() -- previously Bridge::call()
@@ -93,7 +92,7 @@
                 define(PHPGR_IS_BACKEND, false);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
-                    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
@@ -148,7 +147,7 @@
 
                 $this->_log("cannot execute: script not found");
 
-                trigger_error("PHP-Ghetto-RPC: Cannot execute. File '{$this->script}' not found!", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->script}' not found!", E_USER_ERROR);
 
             }
             else {
@@ -179,7 +178,7 @@
             if ($option > 0)
                 $this->export_options[$option] = true;
             else
-                trigger_error("Unknown option value");
+                trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: ", E_USER_ERROR);
 
         }
 
@@ -245,7 +244,7 @@
             }
             else {
 
-                trigger_error("PHP-Ghetto-RPC: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::Bridge:export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
 
             }
             
@@ -294,7 +293,7 @@
             }
             else {
 
-                trigger_error("PHP-Ghetto-RPC: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::Bridge::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
             }
         }
 
@@ -312,26 +311,39 @@
 
             if (PHPGR_IS_BACKEND) {
 
-                trigger_error("PHP-Ghetto-RPC: Cannot execute callbacks in back end.");
+                trigger_error("PHP-Ghetto-RPC::Bridge::callback: Cannot execute callbacks in backend.");
 
             }
             else if (!is_null($this->calls->queue) && is_array($this->calls->queue)) {
                 foreach ($this->calls->queue as $call) {
                     if ($callback_method = $call->callback) {
-                        if (preg_match("/(?<class>.*)::(?<method>.*)/", $callback_method, $return)) {
-
+                        if (count($callback_method) == 2) {
+                            
                             // NOT IMPLEMENTED
                             // TODO: PHP 4 + call_user_func + Static method calls = WAT?
 
-                            trigger_error("PHP-Ghetto_RPC: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
+                            trigger_error("PHP-Ghetto_RPC::Bridge::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
 
-                            if (method_exists($class = $return["class"], $method = $return["method"]))
+                            $class = $callback_method[0];
+                            $method = $callback_method[1];
+
+                            if (method_exists($class, $method))
                                 call_user_func(array($class, $method), $call->return);
+                            else
+                                trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
+
+                        }
+                        else if (count($callback_method) == 1) {
+
+                            if ($function = function_exists($callback_method[0]))
+                                call_user_func($function, $call->return);
+                            else
+                                trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
+                            
                         }
                         else {
 
-                            if (function_exists($callback_method))
-                                call_user_func($callback_method, $call->return);
+                            trigger_error("PHP-Ghetto-RPC::Call::Call: Wrong parameter count for class method/function name.");
                             
                         }
                     }
@@ -350,7 +362,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(PHPGR_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-RPC: Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-RPC::Bridge::_log Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
 
                 fwrite($logfile,
                         sprintf("%s %s %s %s %s\n",
