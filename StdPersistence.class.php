@@ -60,8 +60,6 @@
             while ($temp = fread($this->stdin_descriptor, 1024))
                 $data .= $temp;
 
-            fclose($this->stdin_descriptor);
-
             return unserialize($data);
         }
 
@@ -72,7 +70,7 @@
          */
         function delete () {
 
-            return @fclose($this->stdin_descriptor) & @fclose($this->stdout_descriptor);
+            return true;
             
         }
 
