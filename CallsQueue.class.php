@@ -42,10 +42,15 @@
          */
         function enqueue ($call)    {
 
-            if (is_a($call, "Call"))
-                $this->queue[$index++] = $call;
-            else
+            $index++;
+
+            if (is_a($call, "Call")) {
+                $call->index = $index;
+                $this->queue[$index] = $call;
+            }
+            else {
                 $index = -1;
+            }
             
             return $index;
         }
@@ -53,11 +58,15 @@
         /**
          * Remove a Call from the queue
          *
-         * @param int $index The index of the queue to be removed
+         * @param mixed int or Call The index of the call to be removed
          * @return bool true if the index exists in the queue, false if not
          */
-        function dequeue ($index) {
-        
+        function dequeue ($item) {
+
+            $index = is_a($call, "Call")
+                   ? $item->item
+                   : $index = $item;
+
             if ($exists = isset($this->queue[$index]))
                 unset($this->queue[$index]);
 
@@ -80,10 +89,19 @@
                 
             }
             else {
-
-                trigger_error("PHP-Ghetto-RPC: Unable to process Calls queue in the front end.", E_USER_ERROR);
-                
+                trigger_error("PHP-Ghetto-RPC::CallsQueue::process: Unable to process Calls queue in the front end.", E_USER_ERROR);
             }
+        }
+
+        function __toString() {
+
+            $calls = array();
+
+            foreach ($this->queue as $call)
+                $calls[] = (string) $call;
+
+            return "{" . implode(",", $calls) . "}";
+
         }
     }
     

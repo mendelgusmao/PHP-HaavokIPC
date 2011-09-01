@@ -2,14 +2,16 @@
 
     class Runner {
 
+        var $bridge;
         var $executable;
         var $parameters;
         var $stdin;
         var $stdout;
         var $stderr;
 
-        function __construct ($executable, $parameters = null, $stdin = null) {
+        function __construct ($bridge, $executable, $parameters = null) {
 
+            $this->bridge = $bridge;
             $this->executable = $executable;
             $this->parameters = $parameters;
             $this->stdin = $stdin;
@@ -58,13 +60,19 @@
             return $return_value;
         }
 
-        function get_stdout () {
+        function write_stdin ($data) {
+
+            
+
+        }
+
+        function read_stdout () {
 
             return $this->stdout;
             
         }
 
-        function get_stderr () {
+        function read_stderr () {
 
             return $this->stderr;
 

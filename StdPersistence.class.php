@@ -1,7 +1,7 @@
 <?php
     /**
      * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
-     * using a serialized file as a Persistence
+     * using STDIN/STDOUT file as Persistence
      *
      *
      * @author Mendel Gusmao
@@ -12,10 +12,7 @@
         var $name = "Std";
         
         var $id;
-        var $stdin_file;
-        var $stdin_descriptor;
-        var $stdout_file;
-        var $stdout_descriptor;
+        var $runner;
         var $data;
         var $valid;
 
@@ -26,8 +23,6 @@
 
             $this->id = $id;
             $this->valid = false;
-            $this->stdin_file = "php://STDIN";
-            $this->stdout_file = "php://STDOUT";
 
             if ($this->stdin_descriptor = fopen($this->stdin_file, "r") &&
                 $this->stdout_descriptor = fopen($this->stdout_file, "w"))

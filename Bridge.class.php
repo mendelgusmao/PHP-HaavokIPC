@@ -17,6 +17,7 @@
      *       in Call::make() -- previously Bridge::call()
      */
     require dirname(__FILE__) . '/Constants.php';
+    require dirname(__FILE__) . '/Runner.class.php';
     require dirname(__FILE__) . '/Instances.class.php';
     require dirname(__FILE__) . '/FilePersistence.class.php';
     require dirname(__FILE__) . '/MemcachePersistence.class.php';
@@ -37,6 +38,7 @@
         var $content;
         var $errors;
         var $persistence;
+        var $runner;
         var $export_options;
 
         /**
@@ -60,6 +62,7 @@
             $this->calls = $calls;
 
             $this->initialize();
+            
         }
 
         /*
@@ -76,9 +79,7 @@
             if ($_SERVER["argv"][1] == "--php-ghetto-rpc") {
 
                 $this->id = $_SERVER["argv"][2];
-
                 define(PHPGR_IS_BACKEND, true);
-
                 set_error_handler(array(&$this, "error"));
 				
             } 
@@ -88,7 +89,6 @@
                 #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
                 
                 $this->id = $this->_id();
-
                 define(PHPGR_IS_BACKEND, false);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
@@ -106,9 +106,6 @@
             // is valid, trigger an error
 			
             $this->persistence->initialize($this->id);
-
-            if (!session_id() == "" && !headers_sent())
-                session_start();
 
             register_shutdown_function(
                 array(&$this, PHPGR_IS_BACKEND ? "export" : "__destruct")
@@ -146,7 +143,6 @@
             if (!$this->script = realpath($this->script)) {
 
                 $this->_log("cannot execute: script not found");
-
                 trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->script}' not found!", E_USER_ERROR);
 
             }
@@ -157,10 +153,17 @@
                 if ($export)
                     $this->export();
 
-                $cmdline = sprintf('"%s" "%s" --php-ghetto-rpc %s', PHPGR_BIN, $this->script, $this->id);
+                $this->runner = new Runner(
+                    $this,
+                    PHPGR_BIN,
+                    array(
+                        "--php-ghetto-rpc",
+                        $this->application,
+                        $this->id
+                    )
+                );
 
-                $this->content = shell_exec($cmdline);
-
+                $this->runner->run();
                 $this->_log("end execute");
 
                 if ($import)
@@ -173,12 +176,18 @@
             return true;
         }
 
-        function set_export_options ($option) {
+        function set_export_options ($export_option) {
 
-            if ($option > 0)
-                $this->export_options[$option] = true;
-            else
-                trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: ", E_USER_ERROR);
+            if (!is_array($export_option))
+                $export_option = array($export_option);
+
+            foreach ($export_option as $option)
+                if ($option > 0) {
+                    $this->export_options[$option] = true;
+                }
+                else {
+                    trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: ", E_USER_ERROR);
+                }
 
         }
 
@@ -315,6 +324,7 @@
 
             }
             else if (!is_null($this->calls->queue) && is_array($this->calls->queue)) {
+                
                 foreach ($this->calls->queue as $call) {
                     if ($callback_method = $call->callback) {
                         if (count($callback_method) == 2) {
@@ -327,18 +337,22 @@
                             $class = $callback_method[0];
                             $method = $callback_method[1];
 
-                            if (method_exists($class, $method))
+                            if (method_exists($class, $method)) {
                                 call_user_func(array($class, $method), $call->return);
-                            else
+                            }
+                            else {
                                 trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
+                            }
 
                         }
                         else if (count($callback_method) == 1) {
 
-                            if ($function = function_exists($callback_method[0]))
+                            if ($function = function_exists($callback_method[0])) {
                                 call_user_func($function, $call->return);
-                            else
+                            }
+                            else {
                                 trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
+                            }
                             
                         }
                         else {
@@ -349,6 +363,7 @@
                     }
                 }
             }
+
         }
 
         /**
@@ -420,7 +435,7 @@
 
         function _id () {
 
-            return $this->id = getmypid() . "_" . time() . "_" . uniqid("");
+            return $this->id = uniqid(getmypid() . time());
             
         }
 

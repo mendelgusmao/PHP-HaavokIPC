@@ -1,10 +1,5 @@
 <?php
 
-    /* do not change */ 
-    define("PHPGR_MEDIUM_FILE", 0);
-    define("PHPGR_MEDIUM_MEMCACHE", 1);
-    define("PHPGR_MEDIUM_STD", 2);
-
     /* PHP 5 binary */
     define("PHPGR_BIN", "php4");
     define("PHPGR_PARAMS", "");

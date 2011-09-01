@@ -11,6 +11,7 @@
 
     class Call {
 
+        var $index;
         var $class;
         var $method;
         var $parameters;
@@ -47,14 +48,10 @@
                     
                 }
                 else if (count($class_method == 1)) {
-
                     $this->method = $class_method[0];
-
                 }
                 else {
-
                     trigger_error("PHP-Ghetto-RPC::Call::Call: Wrong parameter count for class method/function name.");
-
                 }
 
             }
@@ -73,17 +70,13 @@
          */
         function invoke () {
 
-            /* Oh yeah, this is a real problem!
-             * To instantiate a new class for every Call in the queue
-             * or develop a way to use the same instance for every subsequent call?
-             */
-
             $class = $this->class;
             $method = $this->method;
             $static = $this->static;
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
             $callback = $this->callback;
+            $success = true;
 
             if ($parameters && !is_array($parameters))
                 $parameters = array($parameters);
@@ -93,46 +86,38 @@
 
             if ($class && class_exists($class)) {
                 
-                if ($this->instances->has_instances($class) && $this->reuse_instance)
+                if ($this->instances->has_instances($class) && $this->reuse_instance) {
                     $object = $this->instances->get($class);
-                else
-                    $object = $this->instances->get_or_add(new $class($constructor_parameters));
-                
-                if (method_exists($object, $method)) {
-                
-                    $return = call_user_func_array(array($object, $method), $params);
-                    
                 }
                 else {
-                    
+                    $object = $this->instances->get_or_add(new $class($constructor_parameters));
+                }
+                
+                if (method_exists($object, $method)) {
+                    $return = call_user_func_array(array($object, $method), $params);
+                }
+                else {
                     trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
-                    
                 }
 
-                $this->calls[$i_method]->return = $return;
+                $this->return = $return;
 
             }
             else {
             
                 if (function_exists($method)) {
-                
                     $return = call_user_func_array($method, $params);
                     # $this->_log("call $method()");
-                    
                 }
                 else {
-                    
                     trigger_error("PHP-Ghetto-RPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
-                    
                 }
                 
-                $this->calls[$i_method]->return = $return;
+                $this->return = $return;
 
             }
 
-            $i_method++;
-
-            return $this->calls;
+            return $success;
         }
 
         /**
