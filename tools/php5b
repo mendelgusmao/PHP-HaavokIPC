@@ -1,0 +1,27 @@
+#!/usr/bin/php
+
+<?php
+
+    error_reporting(0);
+
+    $php5b = $argv[1];
+    $dump = $argv[2] == "-d";
+
+    if (!file_exists($php5b)) die("File '$php5b' not found.");
+
+    $handler = fopen($php5b, "r");
+    $content = fread($handler, filesize($php5b));
+    fclose($handler);
+
+    if (! $unserialized_content = unserialize($content))
+        die("'$php5b' is not a valid file.");
+
+    if ($dump)
+        var_dump($unserialized_content);
+    else
+        print_r($unserialized_content);
+        
+
+
+
+?>
