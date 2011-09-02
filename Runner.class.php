@@ -37,11 +37,12 @@
                 2 => array("pipe", "r")
             );
 
-            $command_line = sprintf(
-                                "%s %s",
-                                $this->executable,
-                                $this->_stringfy($this->parameters)
-                            );
+            $command_line = sprintf("%s %s",
+                $this->executable,
+                $this->_commandify($this->parameters)
+            );
+
+            return shell_exec($command_line);
 
             $process = proc_open($command_line, $descriptors, $pipes);
 
@@ -78,10 +79,15 @@
 
         }
 
-        function _stringfy ($parameters) {
+        function _commandify ($parameters) {
 
             if (!is_array($parameters))
-                return "";
+                if (is_scalar($parameters)) {
+                    return $parameters;
+                }
+                else {
+                    return "";
+                }
 
             $string = array();
 

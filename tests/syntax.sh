@@ -1,8 +1,12 @@
-export PHP4_BIN="/usr/local/php4/bin/php"
-export PHP5_BIN="/usr/local/php4/bin/php"
+PHP4="/usr/bin/php4/bin/php"
+PHP5="/usr/bin/php"
 
-for filename in ./*.php
-do
-PHP 4 :: `$PHP4_BIN -l $filename`
-PHP 5 :: `$PHP5_BIN -l $filename`
-done;
+function test {
+    $1 -v
+    for filename in ./*.php; do
+        echo -e "\t" `$1 -l $filename`
+    done
+}
+
+if [ -x "$PHP4" ]; then test $PHP4; fi
+if [ -x "$PHP5" ]; then test $PHP5; fi

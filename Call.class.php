@@ -55,6 +55,9 @@
                 }
 
             }
+            else {
+                $this->method = $class_method;
+            }
 
             $this->instances = $instances_container;            
             $this->parameters = $parameters;
@@ -75,7 +78,6 @@
             $static = $this->static;
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
-            $callback = $this->callback;
             $success = true;
 
             if ($parameters && !is_array($parameters))
@@ -118,6 +120,58 @@
             }
 
             return $success;
+        }
+
+        /**
+         * Execute functions/methods in front end using the data returned
+         * from the back end
+         *
+         * TODO: Allow multiple callbacks if $call->callback is an array?
+         * Example: $call->callback = array("Function1", "Function2", "Function3")
+         *          -> Function3(Function2(Function1($call->return)))
+         *
+         * @return boolean
+         */
+        function callback () {
+
+            if (!isset($this->callback) || is_null($this->callback))
+                return false;
+
+            if (!is_array($this->callback))
+                $this->callback = array($this->callback);
+
+            if (count($this->callback) == 2) {
+
+                // NOT IMPLEMENTED
+                // TODO: PHP 4 + call_user_func + Static method calls = WAT?
+
+                trigger_error("PHP-Ghetto_RPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
+
+                $class = $this->callback[0];
+                $method = $this->callback[1];
+
+                if (method_exists($class, $method)) {
+                    call_user_func(array($class, $method), $this->return);
+                }
+                else {
+                    trigger_error("PHP-Ghetto_RPC::Call::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
+                }
+
+            }
+            else if (count($this->callback) == 1) {
+
+                if (function_exists($function = $this->callback[0])) {
+                    call_user_func($function, $this->return);
+                }
+                else {
+                    trigger_error("PHP-Ghetto_RPC::Call::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
+                }
+
+            }
+            else {
+                trigger_error("PHP-Ghetto-RPC::Call::callback: Wrong parameter count for class method/function name.");
+            }
+
         }
 
         /**

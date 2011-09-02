@@ -28,14 +28,14 @@
         
         /*
          * The class can't use public/private/protected
-         * because visibility and encapsulation and are
+         * because visibility and encapsulation are
          * features from PHP 5
          */
 
         var $script;
         var $calls;
         var $id;
-        var $content;
+        var $output;
         var $errors;
         var $persistence;
         var $runner;
@@ -55,11 +55,12 @@
             
         }
          
-        function Bridge ($persistence, $script = null, $calls = null) {
+        function Bridge ($persistence, $script, $calls = null) {
 
             $this->persistence = $persistence;
             $this->script = $script;
             $this->calls = $calls;
+            $this->export_options = array();
 
             $this->initialize();
             
@@ -81,6 +82,7 @@
                 $this->id = $_SERVER["argv"][2];
                 define(PHPGR_IS_BACKEND, true);
                 set_error_handler(array(&$this, "error"));
+                //ob_start();
 				
             } 
             else {
@@ -138,7 +140,7 @@
          * @param boolean $import If false, it will skip the import process
          * @return boolean
          * */
-        function execute ($import = true, $export = true) {
+        function execute ($import = true, $export = true, $callback = true) {
 
             if (!$this->script = realpath($this->script)) {
 
@@ -163,17 +165,17 @@
                     )
                 );
 
-                $this->runner->run();
+                $this->runner->executable = PHPGR_FRONTEND_BIN;
+                $this->output = $this->runner->run();
                 $this->_log("end execute");
 
                 if ($import)
                     $this->import();
 
-                $this->callback();
+                $this->calls->process_callbacks();
                 
             }
-            
-            return true;
+
         }
 
         function set_export_options ($export_option) {
@@ -239,22 +241,25 @@
                         break;
 
                         case PHPGR_EXPORT_HEADERS:
-                            $exports["_HEADERS"] = PHPGR_IS_BACKEND ? headers_list() : array();
+                            $exports["_HEADERS"] = PHPGR_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
+                        break;
+                    
+                        case PHPGR_EXPORT_OUTPUT:
+                            if (PHPGR_IS_BACKEND)
+                                $exports["_OUTPUT"] = ob_get_clean();
                         break;
                     
                     }
                 
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
-
-                $this->persistence->set($data);
+                
+                $this->persistence->set($exports);
 
                 $this->_log("end export");
             }
             else {
-
                 trigger_error("PHP-Ghetto-RPC::Bridge:export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
-
             }
             
         }
@@ -271,7 +276,7 @@
 
                 $this->_log("start import");
 
-                if ($data && is_array($data))
+                if (is_array($data))
                     foreach ($data as $name => $value) {
 
                         if ("_SESSION" == $name && !$value)
@@ -292,6 +297,9 @@
                         if ("_ERRORS" == $name)
                             $this->errors = $value;
 
+                        if ("_OUTPUT" == $name)
+                            $this->output = $value;
+
                         global $$name;
                         $$name = $value;
                     }
@@ -301,75 +309,14 @@
                 return $data;
             }
             else {
-
                 trigger_error("PHP-Ghetto-RPC::Bridge::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
             }
         }
 
         /**
-         * Execute functions/methods in front end using the data returned
-         * from the back end
-         *
-         * TODO: Allow multiple callbacks if $call->callback is an array?
-         * Example: $call->callback = array("Function1", "Function2", "Function3")
-         *          -> Function3(Function2(Function1($call->return)))
-         *
-         * @return boolean
-         */
-        function callback () {
-
-            if (PHPGR_IS_BACKEND) {
-
-                trigger_error("PHP-Ghetto-RPC::Bridge::callback: Cannot execute callbacks in backend.");
-
-            }
-            else if (!is_null($this->calls->queue) && is_array($this->calls->queue)) {
-                
-                foreach ($this->calls->queue as $call) {
-                    if ($callback_method = $call->callback) {
-                        if (count($callback_method) == 2) {
-                            
-                            // NOT IMPLEMENTED
-                            // TODO: PHP 4 + call_user_func + Static method calls = WAT?
-
-                            trigger_error("PHP-Ghetto_RPC::Bridge::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
-
-                            $class = $callback_method[0];
-                            $method = $callback_method[1];
-
-                            if (method_exists($class, $method)) {
-                                call_user_func(array($class, $method), $call->return);
-                            }
-                            else {
-                                trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
-                            }
-
-                        }
-                        else if (count($callback_method) == 1) {
-
-                            if ($function = function_exists($callback_method[0])) {
-                                call_user_func($function, $call->return);
-                            }
-                            else {
-                                trigger_error("PHP-Ghetto_RPC::Bridge::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
-                            }
-                            
-                        }
-                        else {
-
-                            trigger_error("PHP-Ghetto-RPC::Call::Call: Wrong parameter count for class method/function name.");
-                            
-                        }
-                    }
-                }
-            }
-
-        }
-
-        /**
          * @param $str Event description
          */
-        function _log($str) {
+        function _log ($str) {
 
             if (PHPGR_LOG) {
 
@@ -435,7 +382,7 @@
 
         function _id () {
 
-            return $this->id = uniqid(getmypid() . time());
+            return $this->id = uniqid(getmypid() . time(), true);
             
         }
 

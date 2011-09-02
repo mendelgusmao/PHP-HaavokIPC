@@ -8,5 +8,5 @@
     $bridge->import();
     $bridge->execute();
     $bridge->export();
-    
-    file_put_contents("backend.txt", "fui executado");
+
+    file_put_contents(PHPGR_TMP."/php5_executado.txt", implode(" ", $argv));

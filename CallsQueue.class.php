@@ -29,7 +29,7 @@
             
             $call = new Call($this->instances,
                              $class_method, $parameters, $constructor_parameters, $callback);
-            
+
             return $this->enqueue($call);
             
         }
@@ -93,6 +93,17 @@
             }
         }
 
+        function process_callbacks() {
+
+            if (PHPGR_IS_BACKEND)
+                trigger_error("PHP-Ghetto-RPC::Bridge::callback: Cannot execute callbacks in backend.");
+
+            if (is_array($this->queue))
+                foreach ($this->queue as $call)
+                    $call->callback();
+
+        }
+
         function __toString() {
 
             $calls = array();
@@ -103,6 +114,7 @@
             return "{" . implode(",", $calls) . "}";
 
         }
+
     }
     
 ?>

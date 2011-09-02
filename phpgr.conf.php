@@ -1,7 +1,7 @@
 <?php
 
-    /* PHP 5 binary */
-    define("PHPGR_BIN", "/usr/bin/php");
+    /* Backend binary */
+    define("PHPGR_FRONTEND_BIN", "/usr/bin/php");
 
     /* Medium file config */
     define("PHPGR_EXT", ".php5b");
