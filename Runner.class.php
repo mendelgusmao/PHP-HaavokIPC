@@ -9,7 +9,7 @@
         var $stdout;
         var $stderr;
 
-        function __construct ($bridge, $executable, $parameters = null) {
+        function Runner ($bridge, $executable, $parameters = null) {
 
             $this->bridge = $bridge;
             $this->executable = $executable;
@@ -23,7 +23,7 @@
         function initialize () {
 
             if (!file_exists($this->executable))
-                trigger_error("PHP-Ghetto-RPC::Runner: Executable {$this->executable} not found;", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::Runner::initialize: Executable {$this->executable} not found;", E_USER_ERROR);
 
         }
 
@@ -42,6 +42,7 @@
                 $this->_commandify($this->parameters)
             );
 
+            echo "COMMAND: ", $command_line, "\n";
             return shell_exec($command_line);
 
             $process = proc_open($command_line, $descriptors, $pipes);

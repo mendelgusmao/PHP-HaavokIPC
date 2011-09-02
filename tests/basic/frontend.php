@@ -1,20 +1,14 @@
 <?php
 
-    function foobar ($var) {
-        echo "--- Foobar callback --- ";
-        var_dump($var);
-    }
-
     require dirname(__FILE__) . '/../../Bridge.class.php';
     require dirname(__FILE__) . '/../../phpgr.conf.php';
 
     $backend = dirname(__FILE__) . '/backend.php';
     
     $calls = new CallsQueue();
-    $instances = new Instances();
     
     $calls->enqueue(
-        new Call($instances, "php_uname", null, null, "foobar")
+        new Call("php_uname", null, null, "var_dump")
     );
 
     $bridge = new Bridge(new FilePersistence(), $backend, $calls);

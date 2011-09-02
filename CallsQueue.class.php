@@ -27,8 +27,7 @@
         function create ($class_method, $parameters = null,
                          $constructor_parameters = null, $callback = null) {
             
-            $call = new Call($this->instances,
-                             $class_method, $parameters, $constructor_parameters, $callback);
+            $call = new Call($class_method, $parameters, $constructor_parameters, $callback);
 
             return $this->enqueue($call);
             
@@ -42,17 +41,18 @@
          */
         function enqueue ($call)    {
 
-            $index++;
+            $this->index++;
 
             if (is_a($call, "Call")) {
-                $call->index = $index;
-                $this->queue[$index] = $call;
+                $call->index = $this->index;
+                $call->instances = $this->instances;
+                $this->queue[$this->index] = $call;
             }
             else {
-                $index = -1;
+                $this->index = -1;
             }
             
-            return $index;
+            return $this->index;
         }
 
         /**
@@ -63,7 +63,7 @@
          */
         function dequeue ($item) {
 
-            $index = is_a($call, "Call")
+            $index = (int) is_a($call, "Call")
                    ? $item->item
                    : $index = $item;
 
@@ -106,12 +106,14 @@
 
         function __toString() {
 
+            print_r($this->queue);
+
             $calls = array();
 
             foreach ($this->queue as $call)
                 $calls[] = (string) $call;
 
-            return "{" . implode(",", $calls) . "}";
+            return "{" . implode(", ", $calls) . "}";
 
         }
 

@@ -32,7 +32,7 @@
          * features from PHP 5
          */
 
-        var $script;
+        var $application;
         var $calls;
         var $id;
         var $output;
@@ -45,20 +45,20 @@
          * Class constructor
          *
          * @param $persistence Persistence Persistence object
-         * @param $script Script filename to be called
+         * @param $application Script filename to be called
          * @param $calls CallsQueue Methods to be executed
          */
          
-        function __construct ($persistence, $script = null, $calls = null) {
+        function __construct ($persistence, $application = null, $calls = null) {
             
-            $this->Bridge($persistence, $script, $calls);
+            $this->Bridge($persistence, $application, $calls);
             
         }
          
-        function Bridge ($persistence, $script, $calls = null) {
+        function Bridge ($persistence, $application, $calls = null) {
 
             $this->persistence = $persistence;
-            $this->script = $script;
+            $this->application = $application;
             $this->calls = $calls;
             $this->export_options = array();
 
@@ -77,10 +77,11 @@
 
         function initialize () {
 
-            if ($_SERVER["argv"][1] == "--php-ghetto-rpc") {
+            define(PHPGR_IS_BACKEND, get_cfg_var("php-ghetto-rpc-backend") == 1);
 
-                $this->id = $_SERVER["argv"][2];
-                define(PHPGR_IS_BACKEND, true);
+            if (PHPGR_IS_BACKEND) {
+
+                $this->id = get_cfg_var("php-ghetto-rpc-id");
                 set_error_handler(array(&$this, "error"));
                 //ob_start();
 				
@@ -91,7 +92,6 @@
                 #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
                 
                 $this->id = $this->_id();
-                define(PHPGR_IS_BACKEND, false);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
                     trigger_error("PHP-Ghetto-RPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
@@ -142,10 +142,10 @@
          * */
         function execute ($import = true, $export = true, $callback = true) {
 
-            if (!$this->script = realpath($this->script)) {
+            if (!$this->application = realpath($this->application)) {
 
                 $this->_log("cannot execute: script not found");
-                trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->script}' not found!", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
 
             }
             else {
@@ -157,15 +157,14 @@
 
                 $this->runner = new Runner(
                     $this,
-                    PHPGR_BIN,
+                    PHPGR_BACKEND_BIN,
                     array(
-                        "--php-ghetto-rpc",
+                        "-d php-ghetto-rpc-backend" => 1,
+                        "-d php-ghetto-rpc-id" => $this->id,
                         $this->application,
-                        $this->id
-                    )
+                   )
                 );
 
-                $this->runner->executable = PHPGR_FRONTEND_BIN;
                 $this->output = $this->runner->run();
                 $this->_log("end execute");
 

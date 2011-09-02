@@ -31,7 +31,7 @@
          *                              in the remote instance is done
          *
          */
-        function Call ($instances_container, $class_method, $parameters = null,
+        function Call ($class_method, $parameters = null,
                        $constructor_parameters = null, $callback = null) {
 
             if (is_array($class_method)) {
@@ -59,7 +59,6 @@
                 $this->method = $class_method;
             }
 
-            $this->instances = $instances_container;            
             $this->parameters = $parameters;
             $this->constructor_parameters = $constructor_parameters;
             $this->callback = $callback;
@@ -188,7 +187,9 @@
             if ($this->class)
                 $class = $this->class . $constructor_parameters . "::";
 
-            $parameters = implode(", ", $this->parameters);
+            if (is_array($parameters))
+                $parameters = implode(", ", $this->parameters);
+                
             $callback = $this->callback;
             $method = $this->method;
 
