@@ -77,19 +77,21 @@
 
         function initialize () {
 
-            define(PHPGR_IS_BACKEND, get_cfg_var("php-ghetto-rpc-backend") == 1);
+            define("PHPGR_IS_BACKEND", get_cfg_var("php-ghetto-rpc-backend") == 1);
 
             if (PHPGR_IS_BACKEND) {
 
                 $this->id = get_cfg_var("php-ghetto-rpc-id");
                 set_error_handler(array(&$this, "error"));
-                //ob_start();
+
+                if (PHPGR_NO_BACKEND_OUTPUT)
+                    ob_start();
 				
             } 
             else {
 
-                #if (!file_exists(PHPGR_BIN))
-                #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BIN . "' not found.", E_USER_ERROR);
+                #if (!file_exists(PHPGR_BACKEND_BIN))
+                #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BACKEND_BIN . "' not found.", E_USER_ERROR);
                 
                 $this->id = $this->_id();
 
@@ -98,15 +100,6 @@
 					
             }
 
-            // TODO: Add fallback to persistence
-            // if $persistence is scalar, consider it the
-            // selected persistence.
-            // if $persistence is an array, iterate it
-            // instantiate the persistence and verify if it
-            // is valid. if not, proceed to the next item
-            // and redo the verification. if no persistence
-            // is valid, trigger an error
-			
             $this->persistence->initialize($this->id);
 
             register_shutdown_function(
@@ -171,9 +164,17 @@
                 if ($import)
                     $this->import();
 
-                $this->calls->process_callbacks();
+                if ($callback) {
+                    $this->calls->process_callbacks();
+                }
                 
             }
+
+        }
+
+        function execute_backend() {
+
+            $this->calls->process();
 
         }
 
@@ -187,7 +188,7 @@
                     $this->export_options[$option] = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: ", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
                 }
 
         }
@@ -244,7 +245,7 @@
                         break;
                     
                         case PHPGR_EXPORT_OUTPUT:
-                            if (PHPGR_IS_BACKEND)
+                            if (PHPGR_IS_BACKEND && PHPGR_NO_BACKEND_OUTPUT)
                                 $exports["_OUTPUT"] = ob_get_clean();
                         break;
                     
@@ -381,7 +382,7 @@
 
         function _id () {
 
-            return $this->id = uniqid(getmypid() . time(), true);
+            return $this->id = uniqid(getmypid(), true);
             
         }
 

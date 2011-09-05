@@ -3,6 +3,14 @@
      * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
      * using a serialized file as a Persistence
      *
+     * TODO: Add fallback to persistence
+     * if $persistence is scalar, consider it the
+     * selected persistence.
+     * if $persistence is an array, iterate it
+     * instantiate the persistence and verify if it
+     * is valid. if not, proceed to the next item
+     * and redo the verification. if no persistence
+     * is valid, trigger an error
      *
      * @author Mendel Gusmao
      *
@@ -26,7 +34,7 @@
             $this->valid = false;
             $this->source_file = PHPGR_TMP . $this->id . PHPGR_EXT;
 
-            if ($this->descriptor = fopen($this->source_file, "w"))
+            if ($this->descriptor = fopen($this->source_file, "a+"))
                 $this->valid = true;	
                 
             return $this->valid;
@@ -41,7 +49,7 @@
 
             $data = serialize($data);
             fwrite($this->descriptor, $data);
-			
+            
         }
 
         /**
@@ -68,7 +76,7 @@
          */
         function delete () {
 
-            return @fclose($this->descriptor) && @unlink($this->source_file);
+            return @fclose($this->descriptor) & unlink($this->source_file);
             
         }
 

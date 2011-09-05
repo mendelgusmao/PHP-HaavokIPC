@@ -42,7 +42,6 @@
                 $this->_commandify($this->parameters)
             );
 
-            echo "COMMAND: ", $command_line, "\n";
             return shell_exec($command_line);
 
             $process = proc_open($command_line, $descriptors, $pipes);

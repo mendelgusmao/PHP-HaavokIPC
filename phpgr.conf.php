@@ -3,6 +3,8 @@
     /* Backend binary */
     define("PHPGR_BACKEND_BIN", "/usr/bin/php");
 
+    define("PHPGR_NO_BACKEND_OUTPUT", false);
+
     /* Medium file config */
     define("PHPGR_EXT", ".php5b");
     define("PHPGR_TMP", dirname(__FILE__) . "/temp/");

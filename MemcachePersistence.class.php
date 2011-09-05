@@ -37,9 +37,16 @@
 
                 $this->source = new Memcache;
 
-                if ($this->source->addServer(PHPGR_MEMCACHED, PHPGR_MEMCACHEDP))
+                if ($this->source->addServer(PHPGR_MEMCACHED, PHPGR_MEMCACHEDP)) {
                     $this->valid = true;
+                }
+                else {
+                    trigger_error("PHP-Ghetto-RPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGR_MEMCACHED . ":" . PHPGR_MEMCACHEDP, E_USER_ERROR);
+                }
 
+            }
+            else {
+                trigger_error("PHP-Ghetto-RPC::MemcachePersistence::initialize: Memcache is not enabled.", E_USER_ERROR);
             }
 
             return $this->valid;
@@ -67,7 +74,7 @@
 
         }
 
-        function delete ($id) {
+        function delete () {
 
             return $this->source->delete($this->id);
 

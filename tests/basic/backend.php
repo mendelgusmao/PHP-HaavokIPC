@@ -1,12 +1,10 @@
 <?php
 
     require '../../Bridge.class.php';
+    require dirname(__FILE__) . '/../../phpgr.conf.php';
     
-    $persistence = new FilePersistence();
-    $bridge = new Bridge($persistence);
-    
+    $bridge = new Bridge(new FilePersistence);
     $bridge->import();
-    $bridge->execute();
-    $bridge->export();
+    $bridge->execute_backend();
 
-    file_put_contents(PHPGR_TMP."/php5_executado.txt", implode(" ", $argv));
+    function backend_foobar($version) { return "From $version to " . PHP_VERSION; }
