@@ -18,7 +18,7 @@
         var $index = 0;
         var $instances;
 
-        function __construct() {
+        function __construct () {
         
             $this->instances = new Instances();
         
@@ -39,20 +39,20 @@
          * @param Call $call The call to be enqueued
          * @return int Index of the queue or -1 if $call is not a Call
          */
-        function enqueue ($call)    {
+        function enqueue () {
 
-            $this->index++;
+            $calls = func_get_args();
 
-            if (is_a($call, "Call")) {
-                $call->index = $this->index;
-                $call->instances = $this->instances;
-                $this->queue[$this->index] = $call;
-            }
-            else {
-                $this->index = -1;
-            }
-            
-            return $this->index;
+            foreach ($calls as $call)
+                if (is_a($call, "Call")) {
+                    $call->index = ++$this->index;
+                    $call->instances = $this->instances;
+                    $this->queue[$this->index] = $call;
+                }
+                else {
+                    trigger_error("PHP-Ghetto-RPC::CallsQueue::enqueue: Trying to enqueue something that is not a Call.", E_USER_ERROR);
+                }
+                
         }
 
         /**
@@ -63,9 +63,9 @@
          */
         function dequeue ($item) {
 
-            $index = (int) is_a($call, "Call")
+            $index = (int) (is_a($call, "Call")
                    ? $item->item
-                   : $index = $item;
+                   : $index = $item);
 
             if ($exists = isset($this->queue[$index]))
                 unset($this->queue[$index]);
@@ -105,8 +105,6 @@
         }
 
         function __toString() {
-
-            print_r($this->queue);
 
             $calls = array();
 
