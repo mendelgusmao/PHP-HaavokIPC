@@ -36,7 +36,7 @@
 
             if (is_array($class_method)) {
 
-                if (count($class_method == 2)) {
+                if (2 == count($class_method)) {
 
                     if (substr($class_method[0], 0, 1) == "&") {
                         $this->reuse_instance = true;
@@ -47,7 +47,7 @@
                     $this->method = $class_method[1];
                     
                 }
-                else if (count($class_method == 1)) {
+                else if (1 == count($class_method))) {
                     $this->method = $class_method[0];
                 }
                 else {
@@ -85,40 +85,42 @@
             if ($constructor_parameters && !is_array($constructor_parameters))
                 $constructor_parameters = array($constructor_parameters);
 
-            if ($class && class_exists($class)) {
-                
-                if ($this->instances->has_instances($class) && $this->reuse_instance) {
-                    $object = $this->instances->get($class);
-                }
-                else {
-                    $object = $this->instances->get_or_add(new $class($constructor_parameters));
-                }
-                
-                if (method_exists($object, $method)) {
-                    $return = call_user_func_array(array($object, $method), $params);
-                }
-                else {
-                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
-                }
+            if ($class) {
 
-                $this->return = $return;
+                if (class_exists($class)) {
+                
+                    if ($this->instances->has_instances($class) && $this->reuse_instance) {
+                        $object = $this->instances->get($class);
+                    }
+                    else {
+                        $object = $this->instances->get_or_add(new $class($constructor_parameters));
+                    }
+
+                    if (method_exists($object, $method)) {
+                        $this->return = call_user_func_array(array($object, $method), $params);
+                    }
+                    else {
+                        trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                    }
+                    
+                }
+                else {
+                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Class '{$class}'.", E_USER_ERROR);
+                }
 
             }
             else {
             
                 if (function_exists($method)) {
-                    $return = call_user_func_array($method, $params);
+                    $this->return = call_user_func_array($method, $params);
                     # $this->_log("call $method()");
                 }
                 else {
                     trigger_error("PHP-Ghetto-RPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
                 }
-                
-                $this->return = $return;
 
             }
 
-            return $success;
         }
 
         /**
@@ -143,6 +145,9 @@
 
                 // NOT IMPLEMENTED
                 // TODO: PHP 4 + call_user_func + Static method calls = WAT?
+                // Temporary solution: use call to functions that consume
+                // the objects you need in the frontend. They'll be responsible
+                // for instantiating these objects
 
                 trigger_error("PHP-Ghetto_RPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
 
@@ -155,7 +160,7 @@
                 else {
                     trigger_error("PHP-Ghetto_RPC::Call::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
                 }
-
+                
             }
             else if (count($this->callback) == 1) {
 
