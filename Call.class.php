@@ -53,7 +53,7 @@
                     $this->method = $class_method[1];
                     
                 }
-                else if (1 == count($class_method))) {
+                else if (1 == count($class_method)) {
                     $this->method = $class_method[0];
                 }
                 else {
