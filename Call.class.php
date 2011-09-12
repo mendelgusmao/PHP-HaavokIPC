@@ -93,25 +93,24 @@
             if ($class) {
 
                 if (class_exists($class)) {
-                
-                    if ($this->instances->has_instances_of($class) && $this->reuse_instance) {
-                        $object = $this->instances->get($class);
+                    
+                    if ($is_static) {
+                        $object = $class;
                     }
                     else {
-                        $object = $this->instances->get_or_add(new $class($constructor_parameters));
+                        $object = $this->instances->has_instances_of($class) && $this->reuse_instance
+                                ? $this->instances->get($class)
+                                : $this->instances->get_or_add(new $class($constructor_parameters));
                     }
-
+                    
                     if (method_exists($object, $method)) {
                         $this->return = call_user_func_array(
-                            array(
-                                $is_static ? $class : $object,
-                                $method
-                            ),
+                            array($object, $method),
                             $params
                         );
                     }
                     else {
-                        trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-RPC::Call::invoke: " . ($is_static ? "Static method" : "method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
                     }
                     
                 }
