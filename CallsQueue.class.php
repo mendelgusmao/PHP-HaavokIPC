@@ -52,7 +52,8 @@
                 else {
                     trigger_error("PHP-Ghetto-RPC::CallsQueue::enqueue: Trying to enqueue something that is not a Call.", E_USER_ERROR);
                 }
-                
+
+            return $this;
         }
 
         /**
@@ -64,13 +65,13 @@
         function dequeue ($item) {
 
             $index = (int) (is_a($call, "Call")
-                   ? $item->item
+                   ? $item->index
                    : $index = $item);
 
-            if ($exists = isset($this->queue[$index]))
+            if (isset($this->queue[$index]))
                 unset($this->queue[$index]);
 
-            return $exists;
+            return $this;
         }
 
         /**
@@ -89,7 +90,7 @@
                 
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::CallsQueue::process: Unable to process Calls queue in the front end.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::CallsQueue::process: Unable to process Calls queue in the frontend.", E_USER_ERROR);
             }
         }
 
@@ -101,6 +102,8 @@
             if (is_array($this->queue))
                 foreach ($this->queue as $call)
                     $call->callback();
+
+            return $this;
 
         }
 
