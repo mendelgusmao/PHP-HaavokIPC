@@ -19,9 +19,11 @@
         var $instances;
 
         function __construct () {
-        
+            $this->CallsQueue();
+        }
+
+        function CallsQueue () {
             $this->instances = new Instances();
-        
         }
         
         function create ($class_method, $parameters = null,
