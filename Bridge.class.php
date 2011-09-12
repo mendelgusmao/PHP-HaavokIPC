@@ -133,7 +133,7 @@
          * @param boolean $import If false, it will skip the import process
          * @return boolean
          * */
-        function execute ($import = true, $export = true, $callback = true) {
+        function execute ($callback = true) {
 
             if (!$this->application = realpath($this->application)) {
 
@@ -145,8 +145,7 @@
             
                 $this->_log("start execute");
 
-                if ($export)
-                    $this->export();
+                $this->export();
 
                 $this->runner = new Runner(
                     $this,
@@ -161,8 +160,7 @@
                 $this->output = $this->runner->run();
                 $this->_log("end execute");
 
-                if ($import)
-                    $this->import();
+                $this->import();
 
                 if ($callback) {
                     $this->calls->process_callbacks();
