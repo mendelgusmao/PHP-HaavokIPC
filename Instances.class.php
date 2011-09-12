@@ -6,6 +6,10 @@
         
         function add ($instance) {
             $class_name = $this->_get_class($instance);
+
+            if (!isset($instances[$class_name]))
+                $instances[$class_name] = array();
+
             return array_push($instances[$class_name], $instance) - 1;
         }
         
