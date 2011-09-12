@@ -110,7 +110,7 @@
                         );
                     }
                     else {
-                        trigger_error("PHP-Ghetto-RPC::Call::invoke: " . ($is_static ? "Static method" : "method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-RPC::Call::invoke: " . ($is_static ? "Static method" : "Method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
                     }
                     
                 }
