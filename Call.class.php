@@ -14,6 +14,7 @@
         var $index;
         var $class;
         var $method;
+        var $is_static;
         var $parameters;
         var $constructor_parameters;
         var $callback;
@@ -38,11 +39,16 @@
 
                 if (2 == count($class_method)) {
 
-                    if (substr($class_method[0], 0, 1) == "&") {
+                    if ("&" == substr($class_method[0], 0, 1)) {
                         $this->reuse_instance = true;
                         $class_method[0] = substr($class_method[0], 1);
                     }
 
+                    if ("::" == substr($class_method[1], 0, 2)) {
+                        $this->is_static = true;
+                        $class_method[1] = substr($class_method[0], 2);
+                    }                    
+                    
                     $this->class = $class_method[0];
                     $this->method = $class_method[1];
                     
@@ -74,10 +80,9 @@
 
             $class = $this->class;
             $method = $this->method;
-            $static = $this->static;
+            $is_static = $this->is_static;
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
-            $success = true;
 
             if ($parameters && !is_array($parameters))
                 $parameters = array($parameters);
@@ -97,7 +102,13 @@
                     }
 
                     if (method_exists($object, $method)) {
-                        $this->return = call_user_func_array(array($object, $method), $params);
+                        $this->return = call_user_func_array(
+                            array(
+                                $is_static ? $class : $object,
+                                $method
+                            ),
+                            $params
+                        );
                     }
                     else {
                         trigger_error("PHP-Ghetto-RPC::Call::invoke: Method '{$method}' not found in class '{$class}'.", E_USER_ERROR);
@@ -105,7 +116,7 @@
                     
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Class '{$class}'.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Class '{$class}' doesn't exist.", E_USER_ERROR);
                 }
 
             }
