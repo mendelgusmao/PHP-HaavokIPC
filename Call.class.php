@@ -46,7 +46,7 @@
 
                     if ("::" == substr($class_method[1], 0, 2)) {
                         $this->is_static = true;
-                        $class_method[1] = substr($class_method[0], 2);
+                        $class_method[1] = substr($class_method[1], 2);
                     }                    
                     
                     $this->class = $class_method[0];
@@ -84,10 +84,10 @@
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
 
-            if ($parameters && !is_array($parameters))
+            if (!is_array($parameters))
                 $parameters = array($parameters);
 
-            if ($constructor_parameters && !is_array($constructor_parameters))
+            if (!is_array($constructor_parameters))
                 $constructor_parameters = array($constructor_parameters);
 
             if ($class) {
