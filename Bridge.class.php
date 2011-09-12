@@ -34,7 +34,6 @@
 
         var $application;
         var $calls;
-        var $id;
         var $output;
         var $errors;
         var $persistence;
@@ -81,7 +80,6 @@
 
             if (PHPGR_IS_BACKEND) {
 
-                $this->id = get_cfg_var("php-ghetto-rpc-id");
                 set_error_handler(array(&$this, "error"));
 
                 if (PHPGR_NO_BACKEND_OUTPUT)
@@ -92,15 +90,13 @@
 
                 #if (!file_exists(PHPGR_BACKEND_BIN))
                 #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BACKEND_BIN . "' not found.", E_USER_ERROR);
-                
-                $this->id = $this->_id();
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
                     trigger_error("PHP-Ghetto-RPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
-            $this->persistence->initialize($this->id);
+            $this->persistence->initialize($this->id());
 
             register_shutdown_function(
                 array(&$this, PHPGR_IS_BACKEND ? "export" : "__destruct")
@@ -148,11 +144,11 @@
                 $this->export();
 
                 $this->runner = new Runner(
-                    $this,
+                    &$this,
                     PHPGR_BACKEND_BIN,
                     array(
                         "-d php-ghetto-rpc-backend" => 1,
-                        "-d php-ghetto-rpc-id" => $this->id,
+                        "-d php-ghetto-rpc-id" => $this->id(),
                         $this->application,
                    )
                 );
@@ -162,7 +158,7 @@
 
                 $this->import();
 
-                if ($callback) {
+                if ($this->calls && $callback) {
                     $this->calls->process_callbacks();
                 }
                 
@@ -326,7 +322,7 @@
 
                 fwrite($logfile,
                         sprintf("%s %s %s %s %s\n",
-                                $this->id,
+                                $this->id(),
                                 PHP_VERSION,
                                 PHPGR_USE_MEMCACHE ? "(MEM)" : "",
                                 (PHPGR_IS_BACKEND ? "    " : ""),
@@ -378,9 +374,16 @@
 
         }
 
-        function _id () {
+        function id () {
 
-            return $this->id = uniqid(getmypid(), true);
+            static $id;
+
+            if (empty($id))
+                $id = PHPGR_IS_BACKEND
+                    ? get_cfg_var("php-ghetto-rpc-id")
+                    : uniqid(getmypid(), true);
+
+            return $id;
             
         }
 
