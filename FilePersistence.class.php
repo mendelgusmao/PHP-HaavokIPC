@@ -3,40 +3,29 @@
      * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
      * using a serialized file as a Persistence
      *
-     * TODO: Add fallback to persistence
-     * if $persistence is scalar, consider it the
-     * selected persistence.
-     * if $persistence is an array, iterate it
-     * instantiate the persistence and verify if it
-     * is valid. if not, proceed to the next item
-     * and redo the verification. if no persistence
-     * is valid, trigger an error
-     *
      * @author Mendel Gusmao
      *
      */
     class FilePersistence {
-
-        var $name = "File";
         
         var $id;
         var $descriptor;
-        var $source_file;
+        var $file;
         var $data;
         var $valid;
 
         /**
-         * Constructor extender
+         * Initialize FilePersistence by setting the id and opening the file
          */
         function initialize ($id) {
 
             $this->id = $id;
             $this->valid = false;
-            $this->source_file = PHPGR_TMP . $this->id . PHPGR_EXT;
+            $this->file = PHPGR_TMP . $this->id . PHPGR_EXT;
 
-            if ($this->descriptor = fopen($this->source_file, "a+"))
-                $this->valid = true;	
-                
+            if ($this->descriptor = fopen($this->file, PHPGR_IS_BACKEND ? "r+" : "w+"))
+                $this->valid = true;
+            
             return $this->valid;
         }
 
@@ -46,8 +35,10 @@
          * @param mixed $data The data to be set
          */
         function set ($data) {
-
+            
             $data = serialize($data);
+
+            rewind($this->descriptor);
             fwrite($this->descriptor, $data);
             
         }
@@ -59,14 +50,18 @@
          */
         function get () {
 
+            rewind($this->descriptor);
+
             $data = "";
 
             while ($temp = fread($this->descriptor, 1024))
                 $data .= $temp;
 
-            fclose($this->descriptor);
+            if (empty($data))
+                trigger_error("PHP-Ghetto-RPC::FilePersistence::get: Couldn't fetch data from persistence file.", E_USER_ERROR);
 
             return unserialize($data);
+            
         }
 
         /**
@@ -76,7 +71,7 @@
          */
         function delete () {
 
-            return @fclose($this->descriptor) & unlink($this->source_file);
+            return @fclose($this->descriptor) & unlink($this->file);
             
         }
 
