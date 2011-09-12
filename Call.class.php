@@ -14,13 +14,13 @@
         var $index;
         var $class;
         var $method;
-        var $is_static;
+        var $is_static = false;
         var $parameters;
         var $constructor_parameters;
         var $callback;
         var $return;
         var $instances;
-        var $reuse_instance;
+        var $reuse_instance = false;
 
         /**
          * Class constructor
@@ -106,7 +106,7 @@
                     if (method_exists($object, $method)) {
                         $this->return = call_user_func_array(
                             array($object, $method),
-                            $params
+                            $parameters
                         );
                     }
                     else {
@@ -122,7 +122,7 @@
             else {
             
                 if (function_exists($method)) {
-                    $this->return = call_user_func_array($method, $params);
+                    $this->return = call_user_func_array($method, $parameters);
                     # $this->_log("call $method()");
                 }
                 else {
