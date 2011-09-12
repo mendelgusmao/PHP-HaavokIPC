@@ -94,7 +94,7 @@
 
                 if (class_exists($class)) {
                 
-                    if ($this->instances->has_instances($class) && $this->reuse_instance) {
+                    if ($this->instances->has_instances_of($class) && $this->reuse_instance) {
                         $object = $this->instances->get($class);
                     }
                     else {

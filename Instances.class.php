@@ -5,18 +5,15 @@
         var $instances;
         
         function add ($instance) {
-
             $class_name = $this->_get_class($instance);
-        
             return array_push($instances[$class_name], $instance) - 1;
-            
         }
         
         function get ($class_name, $index = -1) {
 
             $instance = null;
             
-            if ($this->has_instances($class_name))
+            if ($this->has_instances_of($class_name))
                 if ($index == -1)
                     $instance = end($this->instances[$class_name]);
                 else
@@ -29,7 +26,7 @@
         
         function get_or_add ($instance) {
         
-            if (!$this->has_instances($instance))
+            if (!$this->has_instances_of($instance))
                 return $this->get($this->_get_class($instance), $this->add($instance));
         
         }
@@ -48,15 +45,15 @@
         
             $class_name = $this->_get_class($instance);
         
-            if ($exists = has_instances($class_name))
+            if ($exists = has_instances_of($class_name))
                 unset($this->instances[$class_name]);
 
             return $exists;
         }      
 
-        function has_instances ($class_name) {
+        function has_instances_of ($class_name) {
         
-            $class_name = $this->_get_class($instance);
+            $class_name = $this->_get_class($class_name);
         
             return isset($this->instances[$class_name]) 
                    && count($this->instances[$class_name]);
@@ -65,9 +62,9 @@
 
         function _instance_exists ($class_name, $index) {
         
-            $class_name = $this->_get_class($instance);
+            $class_name = $this->_get_class($class_name);
         
-            return has_instances($class_name) 
+            return has_instances_of($class_name) 
                    && isset($this->instances[$class_name][$index]);
         
         }
