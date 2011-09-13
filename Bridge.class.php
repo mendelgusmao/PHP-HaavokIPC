@@ -153,7 +153,7 @@
                    )
                 );
 
-                $this->output = $this->runner->run();
+                $this->runner->run();
                 $this->_log("end execute");
 
                 $this->import();
@@ -177,12 +177,11 @@
 
         }
 
-        function set_export_options ($export_option) {
+        function set_export_options () {
 
-            if (!is_array($export_option))
-                $export_option = array($export_option);
+            $export_options = func_get_args();
 
-            foreach ($export_option as $option)
+            foreach ($export_options as $option)
                 if ($option > 0) {
                     $this->export_options[$option] = true;
                 }
@@ -202,9 +201,10 @@
 
             if ($this->persistence->valid()) {
 
-                foreach($this->export_options as $export_option)
-                    switch ($export_option) {
+                foreach($this->export_options as $export_option => $export_option_enabled) {
 
+                    switch ($export_option) {
+                        
                         case PHPGR_EXPORT_GLOBALS:
                             foreach ($GLOBALS as $name => $value)
                                 if (!is_object($value))
@@ -244,11 +244,12 @@
                         break;
                     
                         case PHPGR_EXPORT_OUTPUT:
-                            if (PHPGR_IS_BACKEND && PHPGR_NO_BACKEND_OUTPUT)
+                            if (PHPGR_IS_BACKEND)
                                 $exports["_OUTPUT"] = ob_get_clean();
                         break;
                     
                     }
+                }
                 
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
