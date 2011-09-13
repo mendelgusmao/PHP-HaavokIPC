@@ -45,6 +45,9 @@
 
             $calls = func_get_args();
 
+            if (0 == count($calls))
+                trigger_error("PHP-Ghetto-RPC::CallsQueue::enqueue: No calls defined.", E_USER_ERROR);
+
             foreach ($calls as $call)
                 if (is_a($call, "Call")) {
                     $call->index = ++$this->index;
