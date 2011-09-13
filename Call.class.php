@@ -85,13 +85,16 @@
             $constructor_parameters = $this->constructor_parameters;
 
             if (!is_array($parameters))
-                $parameters = array($parameters);
+                $parameters = is_null($parameters)
+                            ? array()
+                            : array($parameters);
 
             if (!is_array($constructor_parameters))
-                $constructor_parameters = array($constructor_parameters);
+                $constructor_parameters = is_null($constructor_parameters)
+                                        ? array()
+                                        : array($constructor_parameters);
 
             if ($class) {
-
                 if (class_exists($class)) {
                     
                     if ($is_static) {
