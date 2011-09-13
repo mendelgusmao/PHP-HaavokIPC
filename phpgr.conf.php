@@ -3,9 +3,10 @@
     /* Backend binary */
     define("PHPGR_BACKEND_BIN", "/usr/bin/php");
 
+    /* Define whether backend's STDOUT will be sent to the frontend */
     define("PHPGR_NO_BACKEND_OUTPUT", false);
 
-    /* Medium file config */
+    /* FilePersistence config */
     define("PHPGR_EXT", ".php5b");
     define("PHPGR_TMP", dirname(__FILE__) . "/temp/");
 
@@ -17,7 +18,5 @@
     define("PHPGR_USE_MEMCACHE", false);
     define("PHPGR_MEMCACHED", "127.0.0.1");
     define("PHPGR_MEMCACHEDP", 11211);
-
-    define("PHPGR_MEDIUM", PHPGR_MEDIUM_FILE);
     
 ?>
