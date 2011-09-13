@@ -112,6 +112,12 @@
 
         }
 
+        function clear () {
+
+            $this->queue = array();
+
+        }
+
         function __toString() {
 
             $calls = array();
