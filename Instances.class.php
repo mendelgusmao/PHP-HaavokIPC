@@ -3,15 +3,19 @@
     class Instances {
     
         var $instances;
+
+        function Instances() {
+            $this->instances = array();
+        }
         
         function add ($instance) {
         
             $class_name = $this->_get_class($instance);
 
-            if (!isset($instances[$class_name]))
-                $instances[$class_name] = array();
+            if (!isset($this->instances[$class_name]))
+                $this->instances[$class_name] = array();
 
-            return array_push($instances[$class_name], $instance) - 1;
+            return array_push($this->instances[$class_name], $instance) - 1;
         }
         
         function get ($class_name, $index = -1) {
@@ -23,24 +27,28 @@
                     $instance = end($this->instances[$class_name]);
                 else
                     if ($this->_instance_exists($class_name, $index))
-                        $instance = $this->instances[$instances][$index];
+                        $instance = $this->instances[$class_name][$index];
 
             if (is_null($instance) || !is_a($instance, $class_name))
                 trigger_error("PHP-Ghetto-RPC::Instances::get: " .
                     (-1 == $index
                         ? "No instances of class '{$class_name}' found in instances container."
-                        : "Instance #{$index} of class '{$class_name}' not found in instances container.")
+                        : "Instance #{$index} of class '{$class_name}' not found in instances container."),
+                    E_USER_ERROR
                 );
                 
             return $instance;
         }
         
-        function get_or_add ($instance) {
-        
-            if (!$this->has_instances_of($instance))
-                return $this->get($this->_get_class($instance), $this->add($instance));
+        function get_or_add ($class_name, $constructor_parameters) {
 
-            return $instance;
+            if ($this->has_instances_of($class_name))
+                return $this->get($class_name);
+
+            $object = new $class_name($constructor_parameters);
+
+            return $this->get($class_name, $this->add($object));
+                    
         }
 
         function remove ($instance, $index = -1) {

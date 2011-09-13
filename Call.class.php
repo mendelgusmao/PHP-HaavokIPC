@@ -83,6 +83,7 @@
             $is_static = $this->is_static;
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
+            $reuse_instance = $this->reuse_instance;
 
             if (!is_array($parameters))
                 $parameters = is_null($parameters)
@@ -101,11 +102,11 @@
                         $object = $class;
                     }
                     else {
-                        $object = $this->instances->has_instances_of($class) && $this->reuse_instance
+                        $object = $this->instances->has_instances_of($class) && $reuse_instance
                                 ? $this->instances->get($class)
-                                : $this->instances->get_or_add(new $class($constructor_parameters));
+                                : $this->instances->get_or_add($class, $constructor_parameters);
                     }
-                    
+
                     if (method_exists($object, $method)) {
                         $this->return = call_user_func_array(
                             array($object, $method),
