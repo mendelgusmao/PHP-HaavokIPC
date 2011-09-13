@@ -5,6 +5,7 @@
         var $instances;
         
         function add ($instance) {
+        
             $class_name = $this->_get_class($instance);
 
             if (!isset($instances[$class_name]))
@@ -18,28 +19,35 @@
             $instance = null;
             
             if ($this->has_instances_of($class_name))
-                if ($index == -1)
+                if (-1 == $index)
                     $instance = end($this->instances[$class_name]);
                 else
-                    if (_instance_exists($class_name, $index))
+                    if ($this->_instance_exists($class_name, $index))
                         $instance = $this->instances[$instances][$index];
 
+            if (is_null($instance) || !is_a($instance, $class_name))
+                trigger_error("PHP-Ghetto-RPC::Instances::get: " .
+                    (-1 == $index
+                        ? "No instances of class '{$class_name}' found in instances container."
+                        : "Instance #{$index} of class '{$class_name}' not found in instances container.")
+                );
+                
             return $instance;
-        
         }
         
         function get_or_add ($instance) {
         
             if (!$this->has_instances_of($instance))
                 return $this->get($this->_get_class($instance), $this->add($instance));
-        
+
+            return $instance;
         }
 
         function remove ($instance, $index = -1) {
         
             $class_name = $this->_get_class($instance);
         
-            if ($exists = _instance_exists($instance, $index))
+            if ($exists = $this->_instance_exists($instance, $index))
                 unset($this->instances[$class_name][$index]);
 
             return $exists;
@@ -49,7 +57,7 @@
         
             $class_name = $this->_get_class($instance);
         
-            if ($exists = has_instances_of($class_name))
+            if ($exists = $this->has_instances_of($class_name))
                 unset($this->instances[$class_name]);
 
             return $exists;
@@ -68,21 +76,15 @@
         
             $class_name = $this->_get_class($class_name);
         
-            return has_instances_of($class_name) 
+            return $this->has_instances_of($class_name) 
                    && isset($this->instances[$class_name][$index]);
         
         }
         
-        function _get_class($instance) {
+        function _get_class ($object) {
         
-            return is_object($instance) ? get_class($instance) : $instance;
+            return is_object($object) ? get_class($object) : $object;
         
-        }
-        
-        function _instanceof($class, $instance) {
-            
-            return is_a($class, $instance);
-            
         }
         
     }
