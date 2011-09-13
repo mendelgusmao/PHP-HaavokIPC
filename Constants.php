@@ -11,5 +11,6 @@
     define("PHPGR_EXPORT_CALLS", 256);
     define("PHPGR_EXPORT_HEADERS", 512);
     define("PHPGR_EXPORT_OUTPUT", 1024);
+    define("PHPGR_EXPORT_FORCE_NO_OUTPUT", 2048);
 
 ?>

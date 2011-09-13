@@ -77,14 +77,15 @@
         function initialize () {
 
             define("PHPGR_IS_BACKEND", get_cfg_var("php-ghetto-rpc-backend") == 1);
+            define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-rpc-no-output") == 1);
 
             if (PHPGR_IS_BACKEND) {
 
                 set_error_handler(array(&$this, "error"));
 
-                if (PHPGR_NO_BACKEND_OUTPUT)
+                if (PHPGR_FORCE_NO_OUTPUT)
                     ob_start();
-				
+
             } 
             else {
 
@@ -149,6 +150,7 @@
                     array(
                         "-d php-ghetto-rpc-backend" => 1,
                         "-d php-ghetto-rpc-id" => $this->id(),
+                        "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT],
                         $this->application,
                    )
                 );
@@ -253,6 +255,9 @@
                 
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
+
+                if (PHPGR_FORCE_NO_OUTPUT && $buffer = ob_get_clean())
+                    $exports["_OUTPUT"] = $buffer;
                 
                 $this->persistence->set($exports);
 
@@ -298,7 +303,12 @@
                             $this->errors = $value;
 
                         if ("_OUTPUT" == $name)
-                            $this->output = $value;
+                            if (PHPGR_IS_BACKEND) {
+                                ob_start();
+                            }
+                            else {
+                                $this->output = $value;
+                            }
 
                         global $$name;
                         $$name = $value;
