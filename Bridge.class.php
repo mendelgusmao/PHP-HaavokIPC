@@ -159,7 +159,10 @@
                 $this->import();
 
                 if ($this->calls && $callback) {
+                    $this->_log("start callbacks");
                     $this->calls->process_callbacks();
+                    $this->_log("end callbacks");
+
                 }
                 
             }
@@ -168,7 +171,9 @@
 
         function execute_backend() {
 
+            $this->_log("start calls");
             $this->calls->process();
+            $this->_log("end calls");
 
         }
 
@@ -321,12 +326,12 @@
                         trigger_error("PHP-Ghetto-RPC::Bridge::_log Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
 
                 fwrite($logfile,
-                        sprintf("%s %s %s %s %s\n",
-                                $this->id(),
-                                PHP_VERSION,
-                                PHPGR_USE_MEMCACHE ? "(MEM)" : "",
-                                (PHPGR_IS_BACKEND ? "    " : ""),
-                                $str)
+                       sprintf("%s %s %s%s%s\n",
+                               time(),
+                               $this->id(),
+                               reset(explode("-", PHP_VERSION)),
+                               (PHPGR_IS_BACKEND ? "\t\t" : "\t"),
+                               $str)
                 );
             }
         }
