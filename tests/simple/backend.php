@@ -6,7 +6,7 @@
     $bridge = new Bridge(new FilePersistence);
     $bridge->set_export_options(PHPGR_EXPORT_OUTPUT);
     $bridge->import();
-    $bridge->execute_backend();
+    $bridge->execute();
 
     function function_with_no_parameters () {
         return "foobar";
