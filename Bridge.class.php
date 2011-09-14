@@ -13,8 +13,6 @@
      *         (Problem: constructor returns its class and PHP-Ghetto-RPC don't exchange objects
      *         through Medium, so it will not return anything)
      * @todo Standardize error triggering
-     * @todo PROBLEM with the object instances collection
-     *       in Call::make() -- previously Bridge::call()
      */
     require dirname(__FILE__) . '/Constants.php';
     require dirname(__FILE__) . '/Runner.class.php';
@@ -35,6 +33,7 @@
         var $application;
         var $calls;
         var $output;
+        var $output2;
         var $errors;
         var $persistence;
         var $runner;
@@ -77,12 +76,12 @@
         function initialize () {
 
             define("PHPGR_IS_BACKEND", get_cfg_var("php-ghetto-rpc-backend") == 1);
-            define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-rpc-no-output") == 1);
 
             if (PHPGR_IS_BACKEND) {
 
                 set_error_handler(array(&$this, "error"));
-
+                define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-rpc-no-output") == 1);
+                
                 if (PHPGR_FORCE_NO_OUTPUT)
                     ob_start();
 
@@ -132,51 +131,51 @@
          * */
         function execute ($callback = true) {
 
-            if (!$this->application = realpath($this->application)) {
-
-                $this->_log("cannot execute: script not found");
-                trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
-
+            if (PHPGR_IS_BACKEND) {
+        
+                $this->_log("start calls");
+                $this->calls->process();
+                $this->_log("end calls");    
+                
             }
             else {
             
-                $this->_log("start execute");
+                if (!$this->application = realpath($this->application)) {
 
-                $this->export();
-
-                $this->runner = new Runner(
-                    &$this,
-                    PHPGR_BACKEND_BIN,
-                    array(
-                        "-d php-ghetto-rpc-backend" => 1,
-                        "-d php-ghetto-rpc-id" => $this->id(),
-                        "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT],
-                        $this->application,
-                   )
-                );
-
-                $this->runner->run();
-                $this->_log("end execute");
-
-                $this->import();
-
-                if ($this->calls && $callback) {
-                    $this->_log("start callbacks");
-                    $this->calls->process_callbacks();
-                    $this->_log("end callbacks");
+                    $this->_log("cannot execute: script not found");
+                    trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
 
                 }
+                else {
                 
+                    $this->_log("start execute");
+
+                    $this->export();
+
+                    $this->runner = new Runner(
+                        &$this,
+                        PHPGR_BACKEND_BIN,
+                        array(
+                            "-d php-ghetto-rpc-backend" => 1,
+                            "-d php-ghetto-rpc-id" => $this->id(),
+                            "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT],
+                            $this->application,
+                       )
+                    );
+
+                    $this->output2 = $this->runner->run();
+                    $this->_log("end execute");
+
+                    if ($this->import())
+                        if ($this->calls && $callback) {
+                            $this->_log("start callbacks");
+                            $this->calls->process_callbacks();
+                            $this->_log("end callbacks");
+                        }
+                    
+                }
+            
             }
-
-        }
-
-        function execute_backend() {
-
-            $this->_log("start calls");
-            $this->calls->process();
-            $this->_log("end calls");
-
         }
 
         function set_export_options () {
@@ -200,6 +199,7 @@
         function export () {
 
             $this->_log("start export");
+            $export_output = false;
 
             if ($this->persistence->valid()) {
 
@@ -247,7 +247,8 @@
                     
                         case PHPGR_EXPORT_OUTPUT:
                             if (PHPGR_IS_BACKEND)
-                                $exports["_OUTPUT"] = ob_get_clean();
+                                $export_output = true;
+                            
                         break;
                     
                     }
@@ -256,8 +257,8 @@
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
 
-                if (PHPGR_FORCE_NO_OUTPUT && $buffer = ob_get_clean())
-                    $exports["_OUTPUT"] = $buffer;
+                if (PHPGR_FORCE_NO_OUTPUT || $export_output)
+                    $exports["_OUTPUT"] = ob_get_clean();
                 
                 $this->persistence->set($exports);
 
@@ -303,12 +304,8 @@
                             $this->errors = $value;
 
                         if ("_OUTPUT" == $name)
-                            if (PHPGR_IS_BACKEND) {
-                                ob_start();
-                            }
-                            else {
+                            if (!PHPGR_IS_BACKEND)
                                 $this->output = $value;
-                            }
 
                         global $$name;
                         $$name = $value;
