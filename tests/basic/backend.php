@@ -1,7 +1,6 @@
 <?php
 
     $bridge = new Bridge(new FilePersistence);
-    $bridge->import();
     $bridge->execute();
 
     function compare_php_version ($version) { return __FUNCTION__ . "() = From $version to " . PHP_VERSION; }

@@ -2,7 +2,6 @@
 
     $bridge = new Bridge(new FilePersistence);
     $bridge->set_export_options(PHPGR_EXPORT_OUTPUT);
-    $bridge->import();
     $bridge->execute();
 
     function function_with_no_parameters () {
@@ -41,8 +40,8 @@
 
         private $attribute;
 
-        function __construct ($params) {
-            $this->attribute = $params[0];
+        function __construct ($attr) {
+            $this->attribute = $attr;
         }
 
         function get_attribute () {
