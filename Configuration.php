@@ -14,5 +14,7 @@
     /* Memcache config */
     define("PHPGR_MEMCACHED", "127.0.0.1");
     define("PHPGR_MEMCACHEDP", 11211);
+
+    define("PHPGR_PREPEND_BRIDGE", true);
     
 ?>

@@ -152,16 +152,20 @@
 
                     $this->export();
 
+                    $runner_params = array(
+                        "-d php-ghetto-rpc-backend" => 1,
+                        "-d php-ghetto-rpc-id" => $this->id(),
+                        "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
+                        $this->application,
+                    );
+
+                    if (PHPGR_PREPEND_BRIDGE)
+                        $runner_params["-d auto_prepend_file"] = __FILE__;
+
                     $this->runner = new Runner(
                         $this,
                         PHPGR_BACKEND_BIN,
-                        array(
-                            "-d auto_prepend_file" => __FILE__,
-                            "-d php-ghetto-rpc-backend" => 1,
-                            "-d php-ghetto-rpc-id" => $this->id(),
-                            "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
-                            $this->application,
-                       )
+                        $runner_params
                     );
 
                     $this->output2 = $this->runner->run();
