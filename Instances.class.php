@@ -45,7 +45,7 @@
             if ($this->has_instances_of($class_name))
                 return $this->get($class_name);
 
-            $object = new $class_name($constructor_parameters);
+            $object = $this->_new($class_name, $constructor_parameters);
 
             return $this->get($class_name, $this->add($object));
                     
@@ -93,6 +93,23 @@
         
             return is_object($object) ? get_class($object) : $object;
         
+        }
+
+        function _new ($class_name, $constructor_parameters) {
+
+            $parameters = array();
+
+            $values = array_values($constructor_parameters);
+
+            foreach (array_keys($values) as $index)
+                $parameters[] = "\$values[{$index}]";
+
+            $parameters = implode(", ", $parameters);
+
+            eval("\$object = new $class_name($parameters);");
+
+            return $object;
+
         }
         
     }
