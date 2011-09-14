@@ -133,7 +133,9 @@
         function execute ($callback = true) {
 
             if (PHPGR_IS_BACKEND) {
-        
+
+                $this->import();
+                
                 $this->_log("start calls");
                 $this->calls->process();
                 $this->_log("end calls");    
