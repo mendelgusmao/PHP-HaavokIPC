@@ -57,10 +57,12 @@
             while ($temp = fread($this->descriptor, 1024))
                 $data .= $temp;
 
+            $data = unserialize($data);    
+                
             if (empty($data))
-                trigger_error("PHP-Ghetto-RPC::FilePersistence::get: Couldn't fetch data from persistence file.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-RPC::FilePersistence::get: Empty or corrupted persistence file.", E_USER_ERROR);
 
-            return unserialize($data);
+            return $data;
             
         }
 
