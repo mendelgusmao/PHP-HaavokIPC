@@ -153,12 +153,13 @@
                     $this->export();
 
                     $this->runner = new Runner(
-                        &$this,
+                        $this,
                         PHPGR_BACKEND_BIN,
                         array(
+                            "-d auto_prepend_file" => __FILE__,
                             "-d php-ghetto-rpc-backend" => 1,
                             "-d php-ghetto-rpc-id" => $this->id(),
-                            "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT],
+                            "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
                             $this->application,
                        )
                     );
