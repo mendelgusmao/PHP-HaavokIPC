@@ -1,7 +1,6 @@
 <?php
 
     require dirname(__FILE__) . '/../../Bridge.class.php';
-    require dirname(__FILE__) . '/../../Configuration.php';
 
     $backend = dirname(__FILE__) . '/backend.php';
     

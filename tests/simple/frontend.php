@@ -3,7 +3,6 @@
     /* Must include simpletest 1.0.1 (the last version with PHP 4 support */
     include 'simpletest/autorun.php';
     include dirname(__FILE__) . '/../../Bridge.class.php';
-    include dirname(__FILE__) . '/../../Configuration.php';
 
     class PHPGhettoRPC extends UnitTestCase {
 
