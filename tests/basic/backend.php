@@ -1,7 +1,7 @@
 <?php
 
     require '../../Bridge.class.php';
-    require dirname(__FILE__) . '/../../phpgr.conf.php';
+    require dirname(__FILE__) . '/../../Configuration.php';
     
     $bridge = new Bridge(new FilePersistence);
     $bridge->import();
