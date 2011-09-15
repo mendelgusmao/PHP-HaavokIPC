@@ -1,6 +1,6 @@
 <?php
     /**
-     * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
+     * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
      * using STDIN/STDOUT file as Persistence
      *
      *

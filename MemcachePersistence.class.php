@@ -1,18 +1,18 @@
 <?php
 
     /**
-     * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
+     * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
      * depending on the value of PHPGR_MEDIUM
      *
      * PHPGR_MEDIUM can be:
      * - PHPGR_MEDIUM_FILE
-     *   PHP-Ghetto-RPC will use a file as the source
+     *   PHP-Ghetto-IPC will use a file as the source
      *
      * - PHPGR_MEDIUM_MEMCACHE
-     *   PHP-Ghetto-RPC will use Memcache as the source
+     *   PHP-Ghetto-IPC will use Memcache as the source
      *
      * - PHPGR_MEDIUM_STD
-     *   PHP-Ghetto-RPC will use STDIN/STDOUT as the Medim // NOT IMPLEMENTED YET
+     *   PHP-Ghetto-IPC will use STDIN/STDOUT as the Medim // NOT IMPLEMENTED YET
      *
      * @author Mendel Gusmao
      *
@@ -41,12 +41,12 @@
                     $this->valid = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGR_MEMCACHED . ":" . PHPGR_MEMCACHEDP, E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGR_MEMCACHED . ":" . PHPGR_MEMCACHEDP, E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::MemcachePersistence::initialize: Memcache is not enabled.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Memcache is not enabled.", E_USER_ERROR);
             }
 
             return $this->valid;

@@ -23,7 +23,7 @@
         function initialize () {
 
             if (!file_exists($this->executable))
-                trigger_error("PHP-Ghetto-RPC::Runner::initialize: Executable {$this->executable} not found;", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::Runner::initialize: Executable {$this->executable} not found;", E_USER_ERROR);
 
         }
 

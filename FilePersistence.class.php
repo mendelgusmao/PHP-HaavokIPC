@@ -1,6 +1,6 @@
 <?php
     /**
-     * Class responsible for the input and output of the data used by PHP-Ghetto-RPC
+     * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
      * using a serialized file as a Persistence
      *
      * @author Mendel Gusmao
@@ -60,7 +60,7 @@
             $data = unserialize($data);    
                 
             if (empty($data))
-                trigger_error("PHP-Ghetto-RPC::FilePersistence::get: Empty or corrupted persistence file.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::FilePersistence::get: Empty or corrupted persistence file.", E_USER_ERROR);
 
             return $data;
             

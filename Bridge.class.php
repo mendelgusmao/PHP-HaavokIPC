@@ -1,7 +1,7 @@
 <?php 
 
     /**
-     * Part of PHP-Ghetto-RPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
@@ -10,7 +10,7 @@
      * @todo Define if Call->callback will be a simple array or a Call
      * @todo Define if the library will work with 'autonomous' classes
      *         using something like 'Class::' to execute only its constructor
-     *         (Problem: constructor returns its class and PHP-Ghetto-RPC don't exchange objects
+     *         (Problem: constructor returns its class and PHP-Ghetto-IPC don't exchange objects
      *         through Medium, so it will not return anything)
      * @todo Standardize error triggering
      */
@@ -76,12 +76,12 @@
 
         function initialize () {
 
-            define("PHPGR_IS_BACKEND", get_cfg_var("php-ghetto-rpc-backend") == 1);
+            define("PHPGR_IS_BACKEND", get_cfg_var("PHP-Ghetto-IPC-backend") == 1);
 
             if (PHPGR_IS_BACKEND) {
 
                 set_error_handler(array(&$this, "error"));
-                define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-rpc-no-output") == 1);
+                define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("PHP-Ghetto-IPC-no-output") == 1);
                 
                 if (PHPGR_FORCE_NO_OUTPUT)
                     ob_start();
@@ -90,10 +90,10 @@
             else {
 
                 #if (!file_exists(PHPGR_BACKEND_BIN))
-                #    trigger_error("PHP-Ghetto-RPC: Cannot initialize. Back end executable '" . PHPGR_BACKEND_BIN . "' not found.", E_USER_ERROR);
+                #    trigger_error("PHP-Ghetto-IPC: Cannot initialize. Back end executable '" . PHPGR_BACKEND_BIN . "' not found.", E_USER_ERROR);
 
                 if (PHPGR_LOG && !is_writable(PHPGR_TMP))
-                    trigger_error("PHP-Ghetto-RPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
@@ -146,7 +146,7 @@
                 if (!$this->application = realpath($this->application)) {
 
                     $this->_log("cannot execute: script not found");
-                    trigger_error("PHP-Ghetto-RPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
 
                 }
                 else {
@@ -163,9 +163,9 @@
                     $runner_params = array_merge(
                         $runner_params,
                         array(
-                            "-d php-ghetto-rpc-backend" => 1,
-                            "-d php-ghetto-rpc-id" => $this->id(),
-                            "-d php-ghetto-rpc-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
+                            "-d PHP-Ghetto-IPC-backend" => 1,
+                            "-d PHP-Ghetto-IPC-id" => $this->id(),
+                            "-d PHP-Ghetto-IPC-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
                             $this->application
                         )
                     );
@@ -200,7 +200,7 @@
                     $this->export_options[$option] = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Bridge::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Bridge::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
                 }
 
         }
@@ -278,7 +278,7 @@
                 $this->_log("end export");
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::Bridge:export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::Bridge:export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
             }
             
         }
@@ -329,7 +329,7 @@
                 return $data;
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::Bridge::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::Bridge::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
             }
         }
 
@@ -344,7 +344,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(PHPGR_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-RPC::Bridge::_log Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-IPC::Bridge::_log Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",
@@ -406,7 +406,7 @@
 
             if (empty($id))
                 $id = PHPGR_IS_BACKEND
-                    ? get_cfg_var("php-ghetto-rpc-id")
+                    ? get_cfg_var("PHP-Ghetto-IPC-id")
                     : uniqid(getmypid(), true);
 
             return $id;

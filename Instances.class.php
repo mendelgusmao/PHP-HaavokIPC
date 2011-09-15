@@ -30,7 +30,7 @@
                         $instance = $this->instances[$class_name][$index];
 
             if (is_null($instance) || !is_a($instance, $class_name))
-                trigger_error("PHP-Ghetto-RPC::Instances::get: " .
+                trigger_error("PHP-Ghetto-IPC::Instances::get: " .
                     (-1 == $index
                         ? "No instances of class '{$class_name}' found in instances container."
                         : "Instance #{$index} of class '{$class_name}' not found in instances container."),

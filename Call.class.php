@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-RPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
      *
      * @author Mendel Gusmao <mendelsongusmao@gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
@@ -57,7 +57,7 @@
                     $this->method = $class_method[0];
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Call::Call: Wrong parameter count for class method/function name.");
+                    trigger_error("PHP-Ghetto-IPC::Call::Call: Wrong parameter count for class method/function name.");
                 }
 
             }
@@ -114,12 +114,12 @@
                         );
                     }
                     else {
-                        trigger_error("PHP-Ghetto-RPC::Call::invoke: " . ($is_static ? "Static method" : "Method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-IPC::Call::invoke: " . ($is_static ? "Static method" : "Method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
                     }
                     
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Class '{$class}' doesn't exist.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Call::invoke: Class '{$class}' doesn't exist.", E_USER_ERROR);
                 }
 
             }
@@ -130,7 +130,7 @@
                     # $this->_log("call $method()");
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
                 }
 
             }
@@ -163,7 +163,7 @@
                 // the objects you need in the frontend. They'll be responsible
                 // for instantiating these objects
 
-                trigger_error("PHP-Ghetto_RPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
 
                 $class = $this->callback[0];
                 $method = $this->callback[1];
@@ -172,7 +172,7 @@
                     call_user_func(array($class, $method), $this->return);
                 }
                 else {
-                    trigger_error("PHP-Ghetto_RPC::Call::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Call::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
                 }
                 
             }
@@ -182,12 +182,12 @@
                     call_user_func($function, $this->return);
                 }
                 else {
-                    trigger_error("PHP-Ghetto_RPC::Call::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::Call::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::Call::callback: Wrong parameter count for class method/function name.");
+                trigger_error("PHP-Ghetto-IPC::Call::callback: Wrong parameter count for class method/function name.");
             }
 
         }

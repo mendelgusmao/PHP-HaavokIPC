@@ -4,7 +4,7 @@
     include 'simpletest/autorun.php';
     include dirname(__FILE__) . '/../../Bridge.class.php';
 
-    class PHPGhettoRPC extends UnitTestCase {
+    class PHPGhettoIPC extends UnitTestCase {
 
         var $persistence;
         var $bridge;

@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-RPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
      *
      * CallsQueue is a container of Calls and is responsible on processing
      * the queue, making the calls
@@ -46,7 +46,7 @@
             $calls = func_get_args();
 
             if (0 == count($calls))
-                trigger_error("PHP-Ghetto-RPC::CallsQueue::enqueue: No calls defined.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::CallsQueue::enqueue: No calls defined.", E_USER_ERROR);
 
             foreach ($calls as $call)
                 if (is_a($call, "Call")) {
@@ -55,7 +55,7 @@
                     $this->queue[$this->index] = $call;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-RPC::CallsQueue::enqueue: Trying to enqueue something that is not a Call.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::CallsQueue::enqueue: Trying to enqueue something that is not a Call.", E_USER_ERROR);
                 }
 
             return $this;
@@ -95,14 +95,14 @@
                 
             }
             else {
-                trigger_error("PHP-Ghetto-RPC::CallsQueue::process: Unable to process Calls queue in the frontend.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::CallsQueue::process: Unable to process Calls queue in the frontend.", E_USER_ERROR);
             }
         }
 
         function process_callbacks() {
 
             if (PHPGR_IS_BACKEND)
-                trigger_error("PHP-Ghetto-RPC::Bridge::callback: Cannot execute callbacks in backend.");
+                trigger_error("PHP-Ghetto-IPC::Bridge::callback: Cannot execute callbacks in backend.");
 
             if (is_array($this->queue))
                 foreach ($this->queue as $call)

@@ -1,4 +1,4 @@
-This is the old README of PHP-Ghetto-RPC. I began developing it 6 months ago, then stopped and now I'm coming back.
+This is the old README of PHP-Ghetto-IPC. I began developing it 6 months ago, then stopped and now I'm coming back.
 
 There is no functional release for now. I need to re-study the code to remember what I was doing. :P
 
@@ -25,9 +25,9 @@ Then, my boss came with a very strange idea: use PHP5’s CLI to do the job, wit
 
 HOW IT WORKS
 
-0 - PHP-Ghetto-RPC must be included in both sides: front end and back end. It has a way to determine if it's running as a front end or a back end.
+0 - PHP-Ghetto-IPC must be included in both sides: front end and back end. It has a way to determine if it's running as a front end or a back end.
 
-1 – PHP-Ghetto-RPC front end is instantiated in PHP4 code
+1 – PHP-Ghetto-IPC front end is instantiated in PHP4 code
 
 2 - Developer defines the Calls and Callbacks that will be run on back end
 
@@ -44,13 +44,13 @@ HOW IT WORKS
 
 4 – After the Persistence is exported. The PHP5 CLI is launched with the path of the PHP5 source code that will be run.
 
-5 - PHP-Ghetto-RPC back end is instantiated
+5 - PHP-Ghetto-IPC back end is instantiated
 
 6 – The data is loaded from Persistence (imported)
 
 7 – CallsQueue runs every Call, storing the return values in it
 
-8 – Once the back end finishes its job, all data is written again to Persistence. The execution continues in front and and PHP-Ghetto-RPC imports the data.
+8 – Once the back end finishes its job, all data is written again to Persistence. The execution continues in front and and PHP-Ghetto-IPC imports the data.
 
 9 – If Call has Callbacks, they will be called with the return values as parameters
 
