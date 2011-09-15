@@ -1,20 +1,20 @@
 <?php
 
     /* Backend binary */
-    define("PHPGR_BACKEND_BIN", "/usr/bin/php");
+    define("PHPGI_BACKEND_BIN", "/usr/bin/php");
 
     /* FilePersistence config */
-    define("PHPGR_EXT", ".persistence");
-    define("PHPGR_TMP", dirname(__FILE__) . "/temp/");
+    define("PHPGI_EXT", ".persistence");
+    define("PHPGI_TMP", dirname(__FILE__) . "/temp/");
 
     /* Logging config */
-    define("PHPGR_LOGFILE", PHPGR_TMP . "/log.txt");
-    define("PHPGR_LOG", true);
+    define("PHPGI_LOGFILE", PHPGI_TMP . "/log.txt");
+    define("PHPGI_LOG", true);
 
     /* Memcache config */
-    define("PHPGR_MEMCACHED", "127.0.0.1");
-    define("PHPGR_MEMCACHEDP", 11211);
+    define("PHPGI_MEMCACHED", "127.0.0.1");
+    define("PHPGI_MEMCACHEDP", 11211);
 
-    define("PHPGR_PREPEND_BRIDGE", true);
+    define("PHPGI_PREPEND_BRIDGE", true);
     
 ?>

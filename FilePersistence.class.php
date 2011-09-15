@@ -21,9 +21,9 @@
 
             $this->id = $id;
             $this->valid = false;
-            $this->file = PHPGR_TMP . $this->id . PHPGR_EXT;
+            $this->file = PHPGI_TMP . $this->id . PHPGI_EXT;
 
-            if ($this->descriptor = fopen($this->file, PHPGR_IS_BACKEND ? "r+" : "w+"))
+            if ($this->descriptor = fopen($this->file, PHPGI_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
             return $this->valid;

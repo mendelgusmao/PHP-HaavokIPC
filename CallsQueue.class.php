@@ -84,7 +84,7 @@
          */
         function process () {
 
-            if (PHPGR_IS_BACKEND) {
+            if (PHPGI_IS_BACKEND) {
 
                 foreach ($this->queue as $index => $call) {
                     $call->invoke();
@@ -101,7 +101,7 @@
 
         function process_callbacks() {
 
-            if (PHPGR_IS_BACKEND)
+            if (PHPGI_IS_BACKEND)
                 trigger_error("PHP-Ghetto-IPC::Bridge::callback: Cannot execute callbacks in backend.");
 
             if (is_array($this->queue))

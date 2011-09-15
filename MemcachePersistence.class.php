@@ -2,16 +2,16 @@
 
     /**
      * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
-     * depending on the value of PHPGR_MEDIUM
+     * depending on the value of PHPGI_MEDIUM
      *
-     * PHPGR_MEDIUM can be:
-     * - PHPGR_MEDIUM_FILE
+     * PHPGI_MEDIUM can be:
+     * - PHPGI_MEDIUM_FILE
      *   PHP-Ghetto-IPC will use a file as the source
      *
-     * - PHPGR_MEDIUM_MEMCACHE
+     * - PHPGI_MEDIUM_MEMCACHE
      *   PHP-Ghetto-IPC will use Memcache as the source
      *
-     * - PHPGR_MEDIUM_STD
+     * - PHPGI_MEDIUM_STD
      *   PHP-Ghetto-IPC will use STDIN/STDOUT as the Medim // NOT IMPLEMENTED YET
      *
      * @author Mendel Gusmao
@@ -37,11 +37,11 @@
 
                 $this->source = new Memcache;
 
-                if ($this->source->addServer(PHPGR_MEMCACHED, PHPGR_MEMCACHEDP)) {
+                if ($this->source->addServer(PHPGI_MEMCACHED, PHPGI_MEMCACHEDP)) {
                     $this->valid = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGR_MEMCACHED . ":" . PHPGR_MEMCACHEDP, E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGI_MEMCACHED . ":" . PHPGI_MEMCACHEDP, E_USER_ERROR);
                 }
 
             }

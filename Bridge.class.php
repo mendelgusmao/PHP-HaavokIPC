@@ -76,31 +76,31 @@
 
         function initialize () {
 
-            define("PHPGR_IS_BACKEND", get_cfg_var("PHP-Ghetto-IPC-backend") == 1);
+            define("PHPGI_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
 
-            if (PHPGR_IS_BACKEND) {
+            if (PHPGI_IS_BACKEND) {
 
                 set_error_handler(array(&$this, "error"));
-                define("PHPGR_FORCE_NO_OUTPUT", get_cfg_var("PHP-Ghetto-IPC-no-output") == 1);
+                define("PHPGI_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-ipc-no-output") == 1);
                 
-                if (PHPGR_FORCE_NO_OUTPUT)
+                if (PHPGI_FORCE_NO_OUTPUT)
                     ob_start();
 
             } 
             else {
 
-                #if (!file_exists(PHPGR_BACKEND_BIN))
-                #    trigger_error("PHP-Ghetto-IPC: Cannot initialize. Back end executable '" . PHPGR_BACKEND_BIN . "' not found.", E_USER_ERROR);
+                #if (!file_exists(PHPGI_BACKEND_BIN))
+                #    trigger_error("PHP-Ghetto-IPC: Cannot initialize. Back end executable '" . PHPGI_BACKEND_BIN . "' not found.", E_USER_ERROR);
 
-                if (PHPGR_LOG && !is_writable(PHPGR_TMP))
-                    trigger_error("PHP-Ghetto-IPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGR_TMP . "' not found or not writable.", E_USER_ERROR);
+                if (PHPGI_LOG && !is_writable(PHPGI_TMP))
+                    trigger_error("PHP-Ghetto-IPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
             $this->persistence->initialize($this->id());
 
             register_shutdown_function(
-                array(&$this, PHPGR_IS_BACKEND ? "export" : "__destruct")
+                array(&$this, PHPGI_IS_BACKEND ? "export" : "__destruct")
             );
 
             $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
@@ -112,13 +112,13 @@
          * */
         function __destruct () {
 
-            if (!PHPGR_IS_BACKEND)
+            if (!PHPGI_IS_BACKEND)
                 $this->persistence->delete();
 
             $this->_log(
                 sprintf("php %s end%s",
                         PHP_VERSION,
-                        (!PHPGR_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+                        (!PHPGI_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
             );
         }
 
@@ -132,7 +132,7 @@
          * */
         function execute ($callback = true) {
 
-            if (PHPGR_IS_BACKEND) {
+            if (PHPGI_IS_BACKEND) {
 
                 $this->import();
                 
@@ -157,22 +157,22 @@
 
                     $runner_params = array();
 
-                    if (PHPGR_PREPEND_BRIDGE)
+                    if (PHPGI_PREPEND_BRIDGE)
                         $runner_params["-d auto_prepend_file"] = __FILE__;
 
                     $runner_params = array_merge(
                         $runner_params,
                         array(
-                            "-d PHP-Ghetto-IPC-backend" => 1,
-                            "-d PHP-Ghetto-IPC-id" => $this->id(),
-                            "-d PHP-Ghetto-IPC-force-no-output" => $this->export_options[PHPGR_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
+                            "-d php-ghetto-ipc-backend" => 1,
+                            "-d php-ghetto-ipc-id" => $this->id(),
+                            "-d php-ghetto-ipc-force-no-output" => $this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
                             $this->application
                         )
                     );
 
                     $this->runner = new Runner(
                         $this,
-                        PHPGR_BACKEND_BIN,
+                        PHPGI_BACKEND_BIN,
                         $runner_params
                     );
 
@@ -220,46 +220,46 @@
 
                     switch ($export_option) {
                         
-                        case PHPGR_EXPORT_GLOBALS:
+                        case PHPGI_EXPORT_GLOBALS:
                             foreach ($GLOBALS as $name => $value)
                                 if (!is_object($value))
                                     $exports["GLOBALS"][$name] = $value;
                         break;
 
-                        case PHPGR_EXPORT_REQUEST:
+                        case PHPGI_EXPORT_REQUEST:
                             $exports["_REQUEST"] = $_REQUEST;
                         break;
 
-                        case PHPGR_EXPORT_POST:
+                        case PHPGI_EXPORT_POST:
                             $exports["_POST"] = $_POST;
                         break;
 
-                        case PHPGR_EXPORT_GET:
+                        case PHPGI_EXPORT_GET:
                             $exports["_GET"] = $_GET;
                         break;
 
-                        case PHPGR_EXPORT_SERVER:
+                        case PHPGI_EXPORT_SERVER:
                             $exports["_SERVER"] = $_SERVER;
                         break;
 
-                        case PHPGR_EXPORT_COOKIE:
+                        case PHPGI_EXPORT_COOKIE:
                             $exports["_COOKIE"] = $_COOKIE;
                         break;
 
-                        case PHPGR_EXPORT_SESSION:
+                        case PHPGI_EXPORT_SESSION:
                             $exports["_SESSION"] = $_SESSION;
                         break;
                     
-                        case PHPGR_EXPORT_CONSTANTS:
+                        case PHPGI_EXPORT_CONSTANTS:
                             $exports["_CONSTANTS"] = get_defined_constants();
                         break;
 
-                        case PHPGR_EXPORT_HEADERS:
-                            $exports["_HEADERS"] = PHPGR_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
+                        case PHPGI_EXPORT_HEADERS:
+                            $exports["_HEADERS"] = PHPGI_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
                         break;
                     
-                        case PHPGR_EXPORT_OUTPUT:
-                            if (PHPGR_IS_BACKEND)
+                        case PHPGI_EXPORT_OUTPUT:
+                            if (PHPGI_IS_BACKEND)
                                 $export_output = true;
                             
                         break;
@@ -270,7 +270,7 @@
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
 
-                if (PHPGR_FORCE_NO_OUTPUT || $export_output)
+                if (PHPGI_FORCE_NO_OUTPUT || $export_output)
                     $exports["_OUTPUT"] = ob_get_clean();
                 
                 $this->persistence->set($exports);
@@ -317,7 +317,7 @@
                             $this->errors = $value;
 
                         if ("_OUTPUT" == $name)
-                            if (!PHPGR_IS_BACKEND)
+                            if (!PHPGI_IS_BACKEND)
                                 $this->output = $value;
 
                         global $$name;
@@ -338,20 +338,20 @@
          */
         function _log ($str) {
 
-            if (PHPGR_LOG) {
+            if (PHPGI_LOG) {
 
                 static $logfile;
 
                 if (!$logfile)
-                    if (!$logfile = @fopen(PHPGR_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-IPC::Bridge::_log Cannot log. Error opening log file '" . PHPGR_LOGFILE . "' for writing.", E_USER_ERROR);
+                    if (!$logfile = @fopen(PHPGI_LOGFILE, "a+"))
+                        trigger_error("PHP-Ghetto-IPC::Bridge::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.", E_USER_ERROR);
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",
                                time(),
                                $this->id(),
                                reset(explode("-", PHP_VERSION)),
-                               (PHPGR_IS_BACKEND ? "\t\t" : "\t"),
+                               (PHPGI_IS_BACKEND ? "\t\t" : "\t"),
                                $str)
                 );
             }
@@ -369,7 +369,7 @@
 
             static $errors;
 
-            if ($errfile != __FILE__ && PHPGR_IS_BACKEND) {
+            if ($errfile != __FILE__ && PHPGI_IS_BACKEND) {
 
                 if (!$errors)
                     $errors = array(
@@ -405,7 +405,7 @@
             static $id;
 
             if (empty($id))
-                $id = PHPGR_IS_BACKEND
+                $id = PHPGI_IS_BACKEND
                     ? get_cfg_var("PHP-Ghetto-IPC-id")
                     : uniqid(getmypid(), true);
 
