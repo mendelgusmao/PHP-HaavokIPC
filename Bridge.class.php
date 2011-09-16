@@ -132,6 +132,9 @@
          * */
         function execute ($callback = true) {
 
+            echo PHP_VERSION, "\n";
+            print_r(debug_backtrace());
+
             if (PHPGI_IS_BACKEND) {
 
                 $this->import();
@@ -406,7 +409,7 @@
 
             if (empty($id))
                 $id = PHPGI_IS_BACKEND
-                    ? get_cfg_var("php-ghetto-rpc-id")
+                    ? get_cfg_var("php-ghetto-ipc-id")
                     : uniqid(getmypid(), true);
 
             return $id;
