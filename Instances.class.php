@@ -26,7 +26,7 @@
 
             $instance = null;
             
-            if ($this->has_instances_of($class_name))
+            if ($this->has_instances_of($class))
                 if (-1 == $index) {
                     $instance = end($this->instances[$class]);
                 }
