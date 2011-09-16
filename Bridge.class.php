@@ -132,9 +132,6 @@
          * */
         function execute ($callback = true) {
 
-            echo PHP_VERSION, "\n";
-            print_r(debug_backtrace());
-
             if (PHPGI_IS_BACKEND) {
 
                 $this->import();
