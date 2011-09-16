@@ -7,9 +7,9 @@
      * @author Mendel Gusmao
      *
      */
-    class StdPersistence {
+    class StdIOPersistence {
 
-        var $name = "Std";
+        var $name = "StdIO";
         
         var $id;
         var $runner;
