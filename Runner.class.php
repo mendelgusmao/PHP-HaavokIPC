@@ -14,7 +14,6 @@
             $this->bridge = $bridge;
             $this->executable = $executable;
             $this->parameters = $parameters;
-            $this->stdin = $stdin;
 
             $this->initialize();
 

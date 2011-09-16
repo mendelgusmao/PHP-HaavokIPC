@@ -165,7 +165,7 @@
                         array(
                             "-d php-ghetto-ipc-backend" => 1,
                             "-d php-ghetto-ipc-id" => $this->id(),
-                            "-d php-ghetto-ipc-force-no-output" => $this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT] ? 1 : 0,
+                            "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                             $this->application
                         )
                     );

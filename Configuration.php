@@ -16,5 +16,6 @@
     define("PHPGI_MEMCACHEDP", 11211);
 
     define("PHPGI_PREPEND_BRIDGE", true);
+    define("PHPGI_FORCE_NO_OUTPUT", false);
     
 ?>
