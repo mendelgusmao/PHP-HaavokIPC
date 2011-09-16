@@ -4,7 +4,11 @@
     
         var $instances;
 
-        function Instances() {
+        function __construct () {
+            $this->Instances();
+        }
+
+        function Instances () {
             $this->instances = array();
         }
         
