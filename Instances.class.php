@@ -12,96 +12,82 @@
             $this->instances = array();
         }
         
-        function add ($instance) {
+        function add ($object) {
         
-            $class_name = $this->_get_class($instance);
+            $class = get_class($object);
 
-            if (!isset($this->instances[$class_name]))
-                $this->instances[$class_name] = array();
+            if (!isset($this->instances[$class]))
+                $this->instances[$class] = array();
 
-            return array_push($this->instances[$class_name], $instance) - 1;
+            return array_push($this->instances[$class], $object) - 1;
         }
         
-        function get ($class_name, $index = -1) {
+        function get ($class, $index = -1) {
 
             $instance = null;
             
             if ($this->has_instances_of($class_name))
                 if (-1 == $index) {
-                    $instance = end($this->instances[$class_name]);
+                    $instance = end($this->instances[$class]);
                 }
                 else {
-                    if ($this->_instance_exists($class_name, $index))
-                        $instance = $this->instances[$class_name][$index];
+                    if ($this->_instance_exists($class, $index))
+                        $instance = $this->instances[$class][$index];
                 }
                 
-            if (is_null($instance) || !is_a($instance, $class_name))
+            if (is_null($instance) || !is_a($instance, $class))
                 trigger_error("PHP-Ghetto-IPC::Instances::get: " .
                     (-1 == $index
-                        ? "No instances of class '{$class_name}' found in instances container."
-                        : "Instance #{$index} of class '{$class_name}' not found in instances container."),
+                        ? "No instances of class '{$class}' found in instances container."
+                        : "Instance #{$index} of class '{$class}' not found in instances container."),
                     E_USER_ERROR
                 );
                 
             return $instance;
         }
         
-        function get_or_add ($class_name, $constructor_parameters) {
+        function get_or_add ($class, $constructor_parameters) {
 
-            if ($this->has_instances_of($class_name))
-                return $this->get($class_name);
+            if ($this->has_instances_of($class))
+                return $this->get($class);
 
-            $object = $this->_new($class_name, $constructor_parameters);
+            $object = $this->_new($class, $constructor_parameters);
 
-            return $this->get($class_name, $this->add($object));
+            return $this->get($class, $this->add($object));
                     
         }
 
-        function remove ($instance, $index = -1) {
+        function remove ($class, $index = -1) {
         
-            $class_name = $this->_get_class($instance);
-        
-            if ($exists = $this->_instance_exists($instance, $index))
-                unset($this->instances[$class_name][$index]);
+            if ($exists = $this->_instance_exists($class, $index))
+                unset($this->instances[$class][$index]);
 
             return $exists;
         }        
  
-        function clear ($instance) {
+        function clear ($class) {
         
-            $class_name = $this->_get_class($instance);
-        
-            if ($exists = $this->has_instances_of($class_name))
-                unset($this->instances[$class_name]);
+            if ($exists = $this->has_instances_of($class))
+                unset($this->instances[$class]);
 
             return $exists;
         }      
 
-        function has_instances_of ($class_name) {
+        function has_instances_of ($class) {
         
-            $class_name = $this->_get_class($class_name);
-        
-            return isset($this->instances[$class_name]) 
-                   && count($this->instances[$class_name]);
+            return isset($this->instances[$class]) 
+                   && count($this->instances[$class]);
         
         }
 
-        function _instance_exists ($class_name, $index) {
+        function _instance_exists ($class, $index) {
         
-            $class_name = $this->_get_class($class_name);
-        
-            return $this->has_instances_of($class_name) 
-                   && isset($this->instances[$class_name][$index]);
-        
-        }
-        
-        function _get_class ($object) {
-        
-            return is_object($object) ? get_class($object) : $object;
+            return $this->has_instances_of($class) 
+                   && isset($this->instances[$class][$index]);
         
         }
 
-        function _new ($class_name, $constructor_parameters) {
+        function _new ($class, $constructor_parameters) {
 
             $parameters = array();
 
@@ -112,7 +98,7 @@
 
             $parameters = implode(", ", $parameters);
 
-            eval("\$object = new $class_name($parameters);");
+            eval("\$object = new $class($parameters);");
 
             return $object;
 
