@@ -406,7 +406,7 @@
 
             if (empty($id))
                 $id = PHPGI_IS_BACKEND
-                    ? get_cfg_var("PHP-Ghetto-IPC-id")
+                    ? get_cfg_var("php-ghetto-rpc-id")
                     : uniqid(getmypid(), true);
 
             return $id;
