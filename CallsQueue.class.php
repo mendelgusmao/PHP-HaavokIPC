@@ -16,16 +16,7 @@
 
         var $queue;
         var $index = 0;
-        var $instances;
 
-        function __construct () {
-            $this->CallsQueue();
-        }
-
-        function CallsQueue () {
-            $this->instances = new Instances();
-        }
-        
         function create ($class_method, $parameters = null,
                          $constructor_parameters = null, $callback = null) {
             
@@ -51,7 +42,6 @@
             foreach ($calls as $call)
                 if (is_a($call, "Call")) {
                     $call->index = ++$this->index;
-                    $call->instances = $this->instances;
                     $this->queue[$this->index] = $call;
                 }
                 else {
@@ -84,10 +74,12 @@
          */
         function process () {
 
+            $instances = new Instances();
+
             if (PHPGI_IS_BACKEND) {
 
                 foreach ($this->queue as $index => $call) {
-                    $call->invoke();
+                    $call->invoke($instances);
                     $this->queue[$index] = $call;
                 }
 

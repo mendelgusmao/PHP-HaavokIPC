@@ -19,7 +19,6 @@
         var $constructor_parameters;
         var $callback;
         var $return;
-        var $instances;
         var $reuse_instance = false;
 
         /**
@@ -76,7 +75,7 @@
          * in the back end
          * @return mixed
          */
-        function invoke () {
+        function invoke ($instances) {
 
             $class = $this->class;
             $method = $this->method;
@@ -102,9 +101,9 @@
                         $object = $class;
                     }
                     else {
-                        $object = $this->instances->has_instances_of($class) && $reuse_instance
-                                ? $this->instances->get($class)
-                                : $this->instances->get_or_add($class, $constructor_parameters);
+                        $object = $instances->has_instances_of($class) && $reuse_instance
+                                ? $instances->get($class)
+                                : $instances->get_or_add($class, $constructor_parameters);
                     }
 
                     if (method_exists($object, $method)) {
