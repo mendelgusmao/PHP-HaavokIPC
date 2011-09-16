@@ -23,12 +23,14 @@
             $instance = null;
             
             if ($this->has_instances_of($class_name))
-                if (-1 == $index)
+                if (-1 == $index) {
                     $instance = end($this->instances[$class_name]);
-                else
+                }
+                else {
                     if ($this->_instance_exists($class_name, $index))
                         $instance = $this->instances[$class_name][$index];
-
+                }
+                
             if (is_null($instance) || !is_a($instance, $class_name))
                 trigger_error("PHP-Ghetto-IPC::Instances::get: " .
                     (-1 == $index
