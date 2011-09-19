@@ -111,15 +111,23 @@
          * Simulated in front end using register_shutdown_function()
          * */
         function __destruct () {
+            
+            static $destructed;
+            
+            if (!$destructed) {
+            
+                if (!PHPGI_IS_BACKEND)
+                    $this->persistence->delete();
 
-            if (!PHPGI_IS_BACKEND)
-                $this->persistence->delete();
-
-            $this->_log(
-                sprintf("php %s end%s",
-                        PHP_VERSION,
-                        (!PHPGI_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
-            );
+                $this->_log(
+                    sprintf("php %s end%s",
+                            PHP_VERSION,
+                            (!PHPGI_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+                );
+                
+                $destructed = true;
+            }
+            
         }
 
         /**
@@ -145,6 +153,8 @@
             
                 if (!$this->application = realpath($this->application)) {
 
+                    $this->application = escapeshellcmd($this->application);
+                    
                     $this->_log("cannot execute: script not found");
                     trigger_error("PHP-Ghetto-IPC::GhettoIPC::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
 
@@ -166,7 +176,7 @@
                             "-d php-ghetto-ipc-backend" => 1,
                             "-d php-ghetto-ipc-id" => $this->id(),
                             "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
-                            $this->application
+                            "-f \"{$this->application}\""
                         )
                     );
 
