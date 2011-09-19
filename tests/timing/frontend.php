@@ -11,7 +11,7 @@
         new Call("sha1", $base, null, "result")
     );
 
-    $ipc = new GhettoIPC(new FilePersistence, $backend, $calls);
+    $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
 
     $time_fe = microtime_float();
     $sha1_fe = sha1($base);

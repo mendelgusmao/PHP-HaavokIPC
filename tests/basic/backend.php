@@ -1,6 +1,6 @@
 <?php
 
-    $ipc = new GhettoIPC(new FilePersistence);
+    $ipc = new GhettoIPC(new FileDriver);
     $ipc->execute();
 
     function compare_php_version ($version) { return __FUNCTION__ . "() = From $version to " . PHP_VERSION; }

@@ -31,12 +31,12 @@
                     $this->valid = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Couldn't connect to memcached at " . PHPGI_MEMCACHED . ":" . PHPGI_MEMCACHEDP, E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::MemcacheDriver::initialize: Couldn't connect to memcached at " . PHPGI_MEMCACHED . ":" . PHPGI_MEMCACHEDP, E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::MemcachePersistence::initialize: Memcache is not enabled.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::MemcacheDriver::initialize: Memcache is not enabled.", E_USER_ERROR);
             }
 
             return $this->valid;

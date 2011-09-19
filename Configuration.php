@@ -3,7 +3,7 @@
     /* Backend binary */
     define("PHPGI_BACKEND_BIN", "/usr/bin/php");
 
-    /* FilePersistence config */
+    /* FileDriver config */
     define("PHPGI_EXT", ".persistence");
     define("PHPGI_TMP", dirname(__FILE__) . "/temp/");
 
@@ -11,7 +11,7 @@
     define("PHPGI_LOGFILE", PHPGI_TMP . "/log.txt");
     define("PHPGI_LOG", true);
 
-    /* Memcache config */
+    /* MemcacheDriver config */
     define("PHPGI_MEMCACHED", "127.0.0.1");
     define("PHPGI_MEMCACHEDP", 11211);
 

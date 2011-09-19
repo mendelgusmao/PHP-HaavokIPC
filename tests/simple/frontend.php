@@ -6,7 +6,7 @@
 
     class PHPGhettoIPCTest extends UnitTestCase {
 
-        var $persistence;
+        var $driver;
         var $ipc;
         var $application;
         var $call_index = 0;
@@ -27,13 +27,13 @@
             );
 
             $this->calls = new CallsQueue;
-            $this->persistence = new FilePersistence;
+            $this->driver = new FileDriver;
             
             $this->calls->enqueue(
                 $calls[$this->call_index++]
             );
 
-            $this->ipc = new Bridge($this->persistence, $this->application, $this->calls);
+            $this->ipc = new Bridge($this->driver, $this->application, $this->calls);
             $this->ipc->execute(true);
 
         }

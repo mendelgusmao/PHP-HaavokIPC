@@ -1,6 +1,6 @@
 <?php
 
-    require dirname(__FILE__) . '/../../GhettoIPC.class.php';
+    include dirname(__FILE__) . '\\..\\..\\GhettoIPC.class.php';
 
     $backend = dirname(__FILE__) . '/backend.php';
     
@@ -14,7 +14,7 @@
         new Call(array("&Backend2", "backend_raw"), null, null, "var_dump")
     );
 
-    $ipc = new GhettoIPC(new FilePersistence, $backend, $calls);
+    $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
     
     $ipc->execute(true); // execute callbacks
     

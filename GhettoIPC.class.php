@@ -18,8 +18,8 @@
     require dirname(__FILE__) . '/Configuration.php';
     require dirname(__FILE__) . '/Runner.class.php';
     require dirname(__FILE__) . '/Instances.class.php';
-    require dirname(__FILE__) . '/FilePersistence.class.php';
-    require dirname(__FILE__) . '/MemcachePersistence.class.php';
+    require dirname(__FILE__) . '/drivers/FileDriver.class.php';
+    require dirname(__FILE__) . '/drivers/MemcacheDriver.class.php';
     require dirname(__FILE__) . '/Call.class.php';
     require dirname(__FILE__) . '/CallsQueue.class.php';
     
@@ -36,27 +36,27 @@
         var $output;
         var $output2;
         var $errors;
-        var $persistence;
+        var $driver;
         var $runner;
         var $export_options;
 
         /**
          * Class constructor
          *
-         * @param $persistence Persistence Persistence object
+         * @param $driver Driver
          * @param $application Script filename to be called
          * @param $calls CallsQueue Methods to be executed
          */
          
-        function __construct ($persistence, $application = null, $calls = null) {
+        function __construct ($driver, $application = null, $calls = null) {
             
-            $this->GhettoIPC($persistence, $application, $calls);
+            $this->GhettoIPC($driver, $application, $calls);
             
         }
          
-        function GhettoIPC ($persistence, $application, $calls = null) {
+        function GhettoIPC ($driver, $application, $calls = null) {
 
-            $this->persistence = $persistence;
+            $this->driver = $driver;
             $this->application = $application;
             $this->calls = $calls;
             $this->export_options = array();
@@ -68,7 +68,7 @@
         /*
          * Constructor extender
          * Here the class defines its behavior (running as local/remote),
-         * its unique id, the persistence (file, memcache or stdin/out [todo]),
+         * its unique id, the driver (file, memcache or stdin/out),
          * an error handler to store the errors in the back end
          * and the simulated PHP 4 destructor
          *
@@ -97,7 +97,7 @@
 					
             }
 
-            $this->persistence->initialize($this->id());
+            $this->driver->initialize($this->id());
 
             register_shutdown_function(
                 array(&$this, PHPGI_IS_BACKEND ? "export" : "__destruct")
@@ -117,7 +117,7 @@
             if (!$destructed) {
             
                 if (!PHPGI_IS_BACKEND)
-                    $this->persistence->delete();
+                    $this->driver->delete();
 
                 $this->_log(
                     sprintf("php %s end%s",
@@ -131,7 +131,7 @@
         }
 
         /**
-         * Export the variables to the persistence, execute PHP 5 binary, reimport the variables
+         * Export the variables to the driver, execute PHP 5 binary, reimport the variables
          * and store the result
          *
          * @param boolean $export If false, it will skip the export process
@@ -216,7 +216,7 @@
         }
 
         /**
-         * Export the variables to the persistence
+         * Export the variables to the driver
          * @return boolean
          */
         function export () {
@@ -224,7 +224,7 @@
             $this->_log("start export");
             $export_output = false;
 
-            if ($this->persistence->valid()) {
+            if ($this->driver->valid()) {
 
                 foreach($this->export_options as $export_option => $export_option_enabled) {
 
@@ -283,25 +283,25 @@
                 if (PHPGI_FORCE_NO_OUTPUT || $export_output)
                     $exports["_OUTPUT"] = ob_get_clean();
                 
-                $this->persistence->set($exports);
+                $this->driver->set($exports);
 
                 $this->_log("end export");
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::GhettoIPC::export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::GhettoIPC::export: Cannot export. Driver resource is not valid anymore.", E_USER_ERROR);
             }
             
         }
 
         /**
-         * Import the variables from the persistence
+         * Import the variables from the driver
          * @return mixed
          * */
         function import () {
 
-            if ($this->persistence->valid()) {
+            if ($this->driver->valid()) {
 
-                $data = $this->persistence->get();
+                $data = $this->driver->get();
 
                 $this->_log("start import");
 
@@ -339,7 +339,7 @@
                 return $data;
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::GhettoIPC::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::GhettoIPC::import: Cannot import. Driver resource is not valid anymore.", E_USER_ERROR);
             }
         }
 

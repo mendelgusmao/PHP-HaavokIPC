@@ -1,6 +1,6 @@
 <?php
 
-    $ipc = new GhettoIPC(new FilePersistence);
+    $ipc = new GhettoIPC(new FileDriver);
     $ipc->execute();
 
 ?>

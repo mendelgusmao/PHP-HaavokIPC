@@ -15,7 +15,7 @@
         var $valid;
 
         /**
-         * Initialize FilePersistence by setting the id and opening the file
+         * Initialize FileDriver by setting the id and opening the file
          */
         function initialize ($id) {
 
@@ -60,7 +60,7 @@
             $data = unserialize($data);    
                 
             if (empty($data))
-                trigger_error("PHP-Ghetto-IPC::FilePersistence::get: Empty or corrupted persistence file.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::FileDriver::get: Empty or corrupted file.", E_USER_ERROR);
 
             return $data;
             
