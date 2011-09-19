@@ -15,7 +15,7 @@
     define("PHPGI_MEMCACHED", "127.0.0.1");
     define("PHPGI_MEMCACHEDP", 11211);
 
-    define("PHPGI_PREPEND_BRIDGE", true);
+    define("PHPGI_PREPEND_IPC_CLASS", true);
     define("PHPGI_FORCE_NO_OUTPUT", false);
     
 ?>

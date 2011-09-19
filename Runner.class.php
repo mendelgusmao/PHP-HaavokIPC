@@ -2,16 +2,16 @@
 
     class Runner {
 
-        var $bridge;
+        var $ipc;
         var $executable;
         var $parameters;
         var $stdin;
         var $stdout;
         var $stderr;
 
-        function Runner ($bridge, $executable, $parameters = null) {
+        function Runner ($ipc, $executable, $parameters = null) {
 
-            $this->bridge = $bridge;
+            $this->bridge = $ipc;
             $this->executable = $executable;
             $this->parameters = $parameters;
 

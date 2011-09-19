@@ -23,7 +23,7 @@
     require dirname(__FILE__) . '/Call.class.php';
     require dirname(__FILE__) . '/CallsQueue.class.php';
     
-    class Bridge {
+    class GhettoIPC {
         
         /*
          * The class can't use public/private/protected
@@ -50,11 +50,11 @@
          
         function __construct ($persistence, $application = null, $calls = null) {
             
-            $this->Bridge($persistence, $application, $calls);
+            $this->GhettoIPC($persistence, $application, $calls);
             
         }
          
-        function Bridge ($persistence, $application, $calls = null) {
+        function GhettoIPC ($persistence, $application, $calls = null) {
 
             $this->persistence = $persistence;
             $this->application = $application;
@@ -93,7 +93,7 @@
                 #    trigger_error("PHP-Ghetto-IPC: Cannot initialize. Back end executable '" . PHPGI_BACKEND_BIN . "' not found.", E_USER_ERROR);
 
                 if (PHPGI_LOG && !is_writable(PHPGI_TMP))
-                    trigger_error("PHP-Ghetto-IPC::Bridge::initialize: Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::initialize: Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.", E_USER_ERROR);
 					
             }
 
@@ -146,7 +146,7 @@
                 if (!$this->application = realpath($this->application)) {
 
                     $this->_log("cannot execute: script not found");
-                    trigger_error("PHP-Ghetto-IPC::Bridge::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
 
                 }
                 else {
@@ -157,7 +157,7 @@
 
                     $runner_params = array();
 
-                    if (PHPGI_PREPEND_BRIDGE)
+                    if (PHPGI_PREPEND_IPC_CLASS)
                         $runner_params["-d auto_prepend_file"] = __FILE__;
 
                     $runner_params = array_merge(
@@ -200,7 +200,7 @@
                     $this->export_options[$option] = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Bridge::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
+                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
                 }
 
         }
@@ -278,7 +278,7 @@
                 $this->_log("end export");
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::Bridge:export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::GhettoIPC::export: Cannot export. Persistence is not valid anymore.", E_USER_ERROR);
             }
             
         }
@@ -329,7 +329,7 @@
                 return $data;
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::Bridge::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
+                trigger_error("PHP-Ghetto-IPC::GhettoIPC::import: Cannot import. Persistence is not valid anymore.", E_USER_ERROR);
             }
         }
 
@@ -344,7 +344,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(PHPGI_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-IPC::Bridge::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-IPC::GhettoIPC::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.", E_USER_ERROR);
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",

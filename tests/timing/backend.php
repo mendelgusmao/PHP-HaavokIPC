@@ -1,6 +1,6 @@
 <?php
 
-    $bridge = new Bridge(new FilePersistence);
-    $bridge->execute();
+    $ipc = new GhettoIPC(new FilePersistence);
+    $ipc->execute();
 
 ?>

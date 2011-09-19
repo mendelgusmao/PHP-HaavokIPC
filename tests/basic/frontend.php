@@ -1,6 +1,6 @@
 <?php
 
-    require dirname(__FILE__) . '/../../Bridge.class.php';
+    require dirname(__FILE__) . '/../../GhettoIPC.class.php';
 
     $backend = dirname(__FILE__) . '/backend.php';
     
@@ -14,12 +14,12 @@
         new Call(array("&Backend2", "backend_raw"), null, null, "var_dump")
     );
 
-    $bridge = new Bridge(new FilePersistence, $backend, $calls);
+    $ipc = new GhettoIPC(new FilePersistence, $backend, $calls);
     
-    $bridge->execute(true); // execute callbacks
+    $ipc->execute(true); // execute callbacks
     
     echo "#################################################################\n";
-    echo $bridge->output;
+    echo $ipc->output;
     echo "#################################################################\n";
-    echo $bridge->output2;
+    echo $ipc->output2;
     echo "#################################################################\n";

@@ -1,8 +1,8 @@
 <?php
 
-    $bridge = new Bridge(new FilePersistence);
-    $bridge->set_export_options(PHPGI_EXPORT_OUTPUT);
-    $bridge->execute();
+    $ipc = new GhettoIPC(new FilePersistence);
+    $ipc->set_export_options(PHPGI_EXPORT_OUTPUT);
+    $ipc->execute();
 
     function function_with_no_parameters () {
         return "foobar";

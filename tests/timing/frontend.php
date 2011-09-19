@@ -1,6 +1,6 @@
 <?php
 
-    require dirname(__FILE__) . '/../../Bridge.class.php';
+    require dirname(__FILE__) . '/../../GhettoIPC.class.php';
     $backend = dirname(__FILE__) . '/backend.php';
 
     $calls = new CallsQueue;
@@ -11,7 +11,7 @@
         new Call("sha1", $base, null, "result")
     );
 
-    $bridge = new Bridge(new FilePersistence, $backend, $calls);
+    $ipc = new GhettoIPC(new FilePersistence, $backend, $calls);
 
     $time_fe = microtime_float();
     $sha1_fe = sha1($base);
@@ -19,7 +19,7 @@
     echo "Frontend executed sha1(string(4096) \$base) [{$sha1_fe}] in ", $time_fe, " ms\n";
 
     $time_be = microtime_float();
-    $bridge->execute(true);
+    $ipc->execute(true);
 
     function result ($sha1_be) {
         global $time_be, $base;

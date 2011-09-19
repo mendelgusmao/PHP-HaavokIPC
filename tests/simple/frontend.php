@@ -4,10 +4,10 @@
     include 'simpletest/autorun.php';
     include dirname(__FILE__) . '/../../Bridge.class.php';
 
-    class PHPGhettoIPC extends UnitTestCase {
+    class PHPGhettoIPCTest extends UnitTestCase {
 
         var $persistence;
-        var $bridge;
+        var $ipc;
         var $application;
         var $call_index = 0;
         var $calls;
@@ -33,50 +33,50 @@
                 $calls[$this->call_index++]
             );
 
-            $this->bridge = new Bridge($this->persistence, $this->application, $this->calls);
-            $this->bridge->execute(true);
+            $this->ipc = new Bridge($this->persistence, $this->application, $this->calls);
+            $this->ipc->execute(true);
 
         }
 
         function testCallToFunctionWithNoParameters () {
             $this->assertEqual(
                 "foobar",
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 
         function testCallToFunctionWithParameters () {
             $this->assertEqual(
                 PHP_VERSION,
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 
         function testCallToStaticMethodWithNoParameters () {
             $this->assertEqual(
                 "static foobar",
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 
         function testCallToStaticMethodWithParameters () {
             $this->assertEqual(
                 PHP_VERSION,
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 
         function testCallToInstanceMethodWithNoParameters () {
             $this->assertEqual(
                 "instance foobar",
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 
         function testCallToInstanceMethodWithParameters () {
             $this->assertEqual(
                 PHP_VERSION,
-                $this->bridge->calls->queue[0]->return
+                $this->ipc->calls->queue[0]->return
             );
         }
 

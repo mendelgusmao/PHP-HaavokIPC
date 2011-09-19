@@ -1,7 +1,7 @@
 <?php
 
-    $bridge = new Bridge(new FilePersistence);
-    $bridge->execute();
+    $ipc = new GhettoIPC(new FilePersistence);
+    $ipc->execute();
 
     function compare_php_version ($version) { return __FUNCTION__ . "() = From $version to " . PHP_VERSION; }
 
