@@ -1,6 +1,6 @@
 <?php
 
-    include dirname(__FILE__) . '\\..\\..\\GhettoIPC.class.php';
+    include dirname(__FILE__) . '/../../GhettoIPC.class.php';
 
     $backend = dirname(__FILE__) . '/backend.php';
     
