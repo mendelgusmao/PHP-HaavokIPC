@@ -188,7 +188,7 @@
                         
                         case PHPGI_EXPORT_GLOBALS:
                             foreach ($GLOBALS as $name => $value)
-                                if (!is_object($value))
+                                if (!is_object($value) && !is_resource($value))
                                     $exports["GLOBALS"][$name] = $value;
                         break;
 

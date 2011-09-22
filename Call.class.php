@@ -131,6 +131,11 @@
 
             }
 
+            if (is_resource($this->return)) {
+                trigger_error("PHP-Ghetto-IPC::Call::invoke: Value returned is a resource.", E_USER_ERROR);
+                $this->return = null;
+            }
+
         }
 
         function callback () {
