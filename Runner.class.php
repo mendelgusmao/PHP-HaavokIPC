@@ -5,13 +5,16 @@
         var $ipc;
         var $executable;
         var $parameters;
-        var $stdin;
-        var $stdout;
-        var $stderr;
+
+        function __construct ($ipc, $executable, $parameters = null) {
+
+            $this->Runner($ipc, $executable, $parameters);
+
+        }
 
         function Runner ($ipc, $executable, $parameters = null) {
 
-            $this->bridge = $ipc;
+            $this->ipc = $ipc;
             $this->executable = $executable;
             $this->parameters = $parameters;
 
@@ -28,65 +31,13 @@
 
         function run () {
 
-            $return_value = false;
-
-            $descriptors = array(
-                0 => array("pipe", "r"),
-                1 => array("pipe", "w"),
-                2 => array("pipe", "r")
-            );
-
-            $command_line = sprintf("%s %s",
-                $this->executable,
-                $this->_commandify($this->parameters)
-            );
+            $command_line = $this->executable . " " . $this->_commandify($this->parameters);
 
             return shell_exec($command_line);
-
-            $process = proc_open($command_line, $descriptors, $pipes);
-
-            if (is_resource($process)) {
-                
-                // ...
-
-                fclose($pipes[0]);
-                fclose($pipes[1]);
-                fclose($pipes[2]);
-
-                $return_value = proc_close($process);
-                
-            }
-
-            return $return_value;
-        }
-
-        function write_stdin ($data) {
-
-            
-
-        }
-
-        function read_stdout () {
-
-            return $this->stdout;
             
         }
-
-        function read_stderr () {
-
-            return $this->stderr;
-
-        }
-
+        
         function _commandify ($parameters) {
-
-            if (!is_array($parameters))
-                if (is_scalar($parameters)) {
-                    return $parameters;
-                }
-                else {
-                    return "";
-                }
 
             $string = array();
 
