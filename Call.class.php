@@ -75,7 +75,7 @@
          * in the back end
          * @return mixed
          */
-        function invoke ($instances) {
+        function invoke (&$instances) {
 
             $class = $this->class;
             $method = $this->method;
