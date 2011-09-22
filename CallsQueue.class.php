@@ -59,7 +59,7 @@
          */
         function dequeue ($item) {
 
-            $index = (int) (is_a($call, "Call")
+            $index = (int) (is_a($item, "Call")
                    ? $item->index
                    : $index = $item);
 
@@ -79,6 +79,7 @@
             if (PHPGI_IS_BACKEND) {
 
                 foreach ($this->queue as $index => $call) {
+                    $call->index = $index;
                     $call->invoke($instances);
                     $this->queue[$index] = $call;
                 }
