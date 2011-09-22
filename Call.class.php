@@ -1,11 +1,18 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * @author Mendel Gusmao <mendelsongusmao@gmail.com> | @MendelGusmao
+     * Call is an object responsible for storing the information of a call,
+     * the class method or function that will be called in backend, the objects
+     * it will use and the invoking of itself and its callback (if any)
+     *
+     * When reading $class_method, think in "class method" OR "function"
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
-     * @version 1.1
+     * @version 1.3
      *
      */
 
@@ -21,18 +28,13 @@
         var $return;
         var $reuse_instance = false;
 
-        /**
-         * Class constructor
-         *
-         * @param string $class_method The 'function' or 'Class::method' to be called in remote instance
-         * @param array $parameters Parameters to be passed to the function/class method
-         * @param array $constructor_parameters Parameters to be passed to the class constructor
-         * @param string/Call $callback Callback to be called when the processing
-         *                              in the remote instance is done
-         *
-         */
-        function Call ($class_method, $parameters = null,
-                       $constructor_parameters = null, $callback = null) {
+        function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null) {
+
+            $this->Call($class_method, $parameters, $constructor_parameters, $callback);
+            
+        }
+
+        function Call ($class_method, $parameters = null, $constructor_parameters = null, $callback = null) {
 
             if (is_array($class_method)) {
 
@@ -70,11 +72,6 @@
 
         }
 
-        /**
-         * Execute the functions or class methods passed by ::$methods
-         * in the back end
-         * @return mixed
-         */
         function invoke (&$instances) {
 
             $class = $this->class;
@@ -136,16 +133,6 @@
 
         }
 
-        /**
-         * Execute functions/methods in front end using the data returned
-         * from the back end
-         *
-         * TODO: Allow multiple callbacks if $call->callback is an array?
-         * Example: $call->callback = array("Function1", "Function2", "Function3")
-         *          -> Function3(Function2(Function1($call->return)))
-         *
-         * @return boolean
-         */
         function callback () {
 
             if (!isset($this->callback) || is_null($this->callback))
@@ -156,12 +143,13 @@
 
             if (count($this->callback) == 2) {
 
-                // NOT IMPLEMENTED
-                // TODO: PHP 4 + call_user_func + Static method calls = WAT?
-                // Temporary solution: use call to functions that consume
-                // the objects you need in the frontend. They'll be responsible
-                // for instantiating these objects
-
+                /*
+                 * NOT IMPLEMENTED
+                 * @TODO: PHP 4 + call_user_func + Static method calls = WAT?
+                 * Possible solution: use call to functions that consume
+                 * the objects you need in the frontend. They'll be responsible
+                 * for instantiating these objects
+                 */
                 trigger_error("PHP-Ghetto-IPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
 
                 $class = $this->callback[0];
@@ -191,12 +179,6 @@
 
         }
 
-        /**
-         * Returns an human readable form of the class
-         * @example  'Callback(Class(p1, p2, p3)::Method(p4, p5, p6))'
-         *
-         * @return string
-         */
         function __toString () {
         
             if ($this->constructor_parameters)

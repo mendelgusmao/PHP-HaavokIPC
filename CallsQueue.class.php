@@ -1,37 +1,29 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * CallsQueue is a container of Calls and is responsible on processing
-     * the queue, making the calls
+     * the queue, invoking the calls and the callback of a call
      *
-     * @author Mendel Gusmao <mendelsongusmao@gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
-     * @version 1.1
+     * @version 1.3
      *
      */
 
     class CallsQueue {
 
-        var $queue;
+        var $queue = array();
         var $index = 0;
 
-        function create ($class_method, $parameters = null,
-                         $constructor_parameters = null, $callback = null) {
+        function create ($class_method, $parameters = null, $constructor_parameters = null, $callback = null) {
             
             $call = new Call($class_method, $parameters, $constructor_parameters, $callback);
-
             return $this->enqueue($call);
-            
         }
         
-        /**
-         * Enqueue a Call
-         *
-         * @param Call $call The call to be enqueued
-         * @return int Index of the queue or -1 if $call is not a Call
-         */
         function enqueue () {
 
             $calls = func_get_args();
@@ -51,12 +43,6 @@
             return $this;
         }
 
-        /**
-         * Remove a Call from the queue
-         *
-         * @param mixed int or Call The index of the call to be removed
-         * @return bool true if the index exists in the queue, false if not
-         */
         function dequeue ($item) {
 
             $index = (int) (is_a($item, "Call")
@@ -69,9 +55,6 @@
             return $this;
         }
 
-        /**
-         * Process the queue of calls
-         */
         function process () {
 
             $instances = new Instances();

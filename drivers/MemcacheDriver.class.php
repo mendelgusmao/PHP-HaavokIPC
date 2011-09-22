@@ -1,33 +1,34 @@
 <?php
 
     /**
-     * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
-     * using Memcached
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * @author Mendel Gusmao
+     * MemcacheDriver is the class responsible for writing and reading data generated
+     * by GhettoIPC to a memcache daemon. After data is read by the frontend
+     * (meaning the end of the process), the item is deleted.
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
      *
      */
     class MemcacheDriver {
 
-        var $name = "Memcache";
-
         var $id;
-        var $source;
+        var $handle;
         var $data;
         var $valid;
 
-        /**
-         * Constructor extender
-         */
         function initialize ($id, $fallback_source = null) {
 
             $this->valid = false;
 
             if (class_exists("Memcache")) {
 
-                $this->source = new Memcache;
+                $this->handle = new Memcache;
 
-                if ($this->source->addServer(PHPGI_MEMCACHED, PHPGI_MEMCACHEDP)) {
+                if ($this->handle->addServer(PHPGI_MEMCACHED, PHPGI_MEMCACHEDP)) {
                     $this->valid = true;
                 }
                 else {
@@ -42,38 +43,24 @@
             return $this->valid;
         }
 
-        /**
-         * Sets the data to the source
-         *
-         * @param mixed $data The data to be set
-         */
         function set ($data) {
 
-            return $this->source->set($this->id, $data, 1);
+            return $this->handle->set($this->id, $data, 1);
 
         }
 
-        /**
-         * Gets the data from the source
-         *
-         * @return mixed $data The data
-         */
         function get () {
 
-            return $this->source->get($this->id);
+            return $this->handle->get($this->id);
 
         }
 
         function delete () {
 
-            return $this->source->delete($this->id);
+            return $this->handle->delete($this->id);
 
         }
 
-        /**
-         * Verify if the source is valid
-         * @return bool
-         */
         function valid () {
 
             return $this->valid;

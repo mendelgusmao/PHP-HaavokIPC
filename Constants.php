@@ -1,5 +1,17 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * Basic constants to set what data will be exported
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
+     *
+     */
+
     define("PHPGI_EXPORT_GLOBALS", 1);
     define("PHPGI_EXPORT_REQUEST", 2);
     define("PHPGI_EXPORT_POST", 4);

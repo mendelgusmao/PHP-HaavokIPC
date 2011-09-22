@@ -1,5 +1,18 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * This is the main configuration file, defining basic directives for
+     * the functioning of GhettoIPC
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
+     *
+     */
+
     /* Backend binary */
     define("PHPGI_BACKEND_BIN", "/usr/bin/php");
 

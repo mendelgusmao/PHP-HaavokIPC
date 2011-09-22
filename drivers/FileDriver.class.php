@@ -1,60 +1,55 @@
 <?php
+
     /**
-     * Class responsible for the input and output of the data used by PHP-Ghetto-IPC
-     * using a serialized file
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * @author Mendel Gusmao
+     * FileDriver is the class responsible for writing and reading data generated
+     * by GhettoIPC to a file. After data is read by the frontend (meaning the end
+     * of the process), the file is deleted.
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
      *
      */
     class FileDriver {
         
         var $id;
-        var $descriptor;
+        var $handle;
         var $file;
         var $data;
         var $valid;
 
-        /**
-         * Initialize FileDriver by setting the id and opening the file
-         */
         function initialize ($id) {
 
             $this->id = $id;
             $this->valid = false;
             $this->file = PHPGI_TMP . $this->id . PHPGI_EXT;
 
-            if ($this->descriptor = fopen($this->file, PHPGI_IS_BACKEND ? "r+" : "w+"))
+            if ($this->handle = fopen($this->file, PHPGI_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
             return $this->valid;
+            
         }
 
-        /**
-         * Sets the data to the source
-         *
-         * @param mixed $data The data to be set
-         */
         function set ($data) {
             
             $data = serialize($data);
 
-            rewind($this->descriptor);
-            fwrite($this->descriptor, $data);
+            rewind($this->handle);
+            fwrite($this->handle, $data);
             
         }
 
-        /**
-         * Gets the data from the source file
-         *
-         * @return mixed $data The data
-         */
         function get () {
 
-            rewind($this->descriptor);
+            rewind($this->handle);
 
             $data = "";
 
-            while ($temp = fread($this->descriptor, 1024))
+            while ($temp = fread($this->handle, 1024))
                 $data .= $temp;
 
             $data = unserialize($data);    
@@ -66,24 +61,15 @@
             
         }
 
-        /**
-         * Delete the source file
-         *
-         * @return boolean
-         */
         function delete () {
 
-            return @fclose($this->descriptor) & unlink($this->file);
+            return @fclose($this->handle) & unlink($this->file);
             
         }
 
-        /**
-         * Verify if the source is valid
-         * @return bool
-         */
         function valid () {
 
-            return $this->valid & is_array(@fstat($this->descriptor));
+            return $this->valid & is_array(@fstat($this->handle));
             
         }
 

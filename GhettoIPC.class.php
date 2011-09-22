@@ -1,34 +1,26 @@
 <?php 
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP 5 code under a PHP 4 instance
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * GhettoIPC is the main class
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
-     * @version 1.1
+     * @version 1.3
      *
-     * @todo Define if Call->callback will be a simple array or a Call
-     * @todo Define if the library will work with 'autonomous' classes
-     *         using something like 'Class::' to execute only its constructor
-     *         (Problem: constructor returns its class and PHP-Ghetto-IPC don't exchange objects
-     *         through Medium, so it will not return anything)
-     * @todo Standardize error triggering
      */
-    require dirname(__FILE__) . '/Constants.php';
-    require dirname(__FILE__) . '/Configuration.php';
-    require dirname(__FILE__) . '/Runner.class.php';
-    require dirname(__FILE__) . '/Instances.class.php';
-    require dirname(__FILE__) . '/drivers/FileDriver.class.php';
-    require dirname(__FILE__) . '/drivers/MemcacheDriver.class.php';
-    require dirname(__FILE__) . '/Call.class.php';
-    require dirname(__FILE__) . '/CallsQueue.class.php';
+
+    include "Includes.php";
     
     class GhettoIPC {
         
-        /*
+        /**
          * The class can't use public/private/protected
          * because visibility and encapsulation are
-         * features from PHP 5
+         * features from PHP 5 and the proposal of this
+         * library is to be multiversion
          */
 
         var $application;
@@ -40,14 +32,6 @@
         var $runner;
         var $export_options;
 
-        /**
-         * Class constructor
-         *
-         * @param $driver Driver
-         * @param $application Script filename to be called
-         * @param $calls CallsQueue Methods to be executed
-         */
-         
         function __construct ($driver, $application = null, $calls = null) {
             
             $this->GhettoIPC($driver, $application, $calls);
@@ -65,15 +49,6 @@
             
         }
 
-        /*
-         * Constructor extender
-         * Here the class defines its behavior (running as local/remote),
-         * its unique id, the driver (file, memcache or stdin/out),
-         * an error handler to store the errors in the back end
-         * and the simulated PHP 4 destructor
-         *
-         */
-
         function initialize () {
 
             define("PHPGI_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
@@ -89,9 +64,6 @@
             } 
             else {
 
-                #if (!file_exists(PHPGI_BACKEND_BIN))
-                #    trigger_error("PHP-Ghetto-IPC: Cannot initialize. Back end executable '" . PHPGI_BACKEND_BIN . "' not found.", E_USER_ERROR);
-
                 if (PHPGI_LOG && !is_writable(PHPGI_TMP))
                     trigger_error("PHP-Ghetto-IPC::GhettoIPC::initialize: Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.", E_USER_ERROR);
 					
@@ -106,10 +78,6 @@
             $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
         }
 
-        /**
-         * Back end (PHP 5) destructor
-         * Simulated in front end using register_shutdown_function()
-         * */
         function __destruct () {
             
             static $destructed;
@@ -130,14 +98,6 @@
             
         }
 
-        /**
-         * Export the variables to the driver, execute PHP 5 binary, reimport the variables
-         * and store the result
-         *
-         * @param boolean $export If false, it will skip the export process
-         * @param boolean $import If false, it will skip the import process
-         * @return boolean
-         * */
         function execute ($callback = true) {
 
             if (PHPGI_IS_BACKEND) {
@@ -215,10 +175,6 @@
 
         }
 
-        /**
-         * Export the variables to the driver
-         * @return boolean
-         */
         function export () {
 
             $this->_log("start export");
@@ -293,10 +249,6 @@
             
         }
 
-        /**
-         * Import the variables from the driver
-         * @return mixed
-         * */
         function import () {
 
             if ($this->driver->valid()) {
@@ -343,9 +295,6 @@
             }
         }
 
-        /**
-         * @param $str Event description
-         */
         function _log ($str) {
 
             if (PHPGI_LOG) {
@@ -367,14 +316,6 @@
             }
         }
 
-        /**
-         *
-         * Error handler for the back end
-         * @param $errno The first parameter, errno, contains the level of the error raised, as an integer.
-         * @param $errstr The second parameter, errstr, contains the error message, as a string.
-         * @param $errfile The third parameter is optional, errfile, which contains the filename that the error was raised in, as a string.
-         * @param $errline The fourth parameter is optional, errline, which contains the line number the error was raised at, as an integer.
-         */
         function error ($errno, $errstr, $errfile, $errline) {
 
             static $errors;

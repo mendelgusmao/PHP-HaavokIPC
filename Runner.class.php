@@ -1,5 +1,20 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * Runner is the class responsible for executing the backend bin with
+     * parameters passed by GhettoIPC class. For now it will use shell_exec()
+     * to do it, but is planned to use proc_open(), due to the need of using
+     * bidirectional pipes for StdIODriver.
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
+     *
+     */
+
     class Runner {
 
         var $ipc;
@@ -9,7 +24,7 @@
         function __construct ($ipc, $executable, $parameters = null) {
 
             $this->Runner($ipc, $executable, $parameters);
-
+            
         }
 
         function Runner ($ipc, $executable, $parameters = null) {

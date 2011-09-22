@@ -1,16 +1,21 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * Instances is a container of objects instantiated in backend. It's responsible
+     * for instantiating, storing and retrieving an object.
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.3
+     *
+     */
+
     class Instances {
     
-        var $instances;
-
-        function __construct () {
-            $this->Instances();
-        }
-
-        function Instances () {
-            $this->instances = array();
-        }
+        var $instances = array();
         
         function add ($object) {
         
