@@ -417,7 +417,7 @@
             if (empty($id))
                 $id = PHPGI_IS_BACKEND
                     ? get_cfg_var("php-ghetto-ipc-id")
-                    : uniqid(getmypid(), true);
+                    : uniqid(PHPGI_ID_PREFIX . getmypid(), true);
 
             return $id;
             

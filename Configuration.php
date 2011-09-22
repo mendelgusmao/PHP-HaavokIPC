@@ -4,6 +4,7 @@
     define("PHPGI_BACKEND_BIN", "/usr/bin/php");
 
     /* FileDriver config */
+    define("PHPGI_ID_PREFIX", "");
     define("PHPGI_EXT", ".persistence");
     define("PHPGI_TMP", dirname(__FILE__) . "/temp/");
 
