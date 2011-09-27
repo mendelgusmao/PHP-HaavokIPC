@@ -69,12 +69,6 @@
             
         }
 
-        function run (&$ipc, $executable, $parameters = "") {
-
-            return shell_exec($executable . " " . $parameters);
-
-        }
-
     }
 
 ?>
