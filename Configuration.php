@@ -29,7 +29,13 @@
     define("PHPGI_MEMCACHED", "127.0.0.1");
     define("PHPGI_MEMCACHEDP", 11211);
 
+    /* Define whether GhettoIPC.class.php will be prepend in backend with "-d auto_prepend_file" argument */
     define("PHPGI_PREPEND_IPC_CLASS", true);
+
     define("PHPGI_FORCE_NO_OUTPUT", false);
+
+    /* ShmDriver config */
+    define("PHPGI_SHM_SIZE", 10000);
+    define("PHPGI_SHM_PERMS", 0666);
     
 ?>
