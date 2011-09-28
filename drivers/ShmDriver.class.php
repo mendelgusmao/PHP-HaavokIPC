@@ -28,7 +28,7 @@
             $this->valid = false;
 
             if (preg_match("/win/i", PHP_OS))
-                trigger_error("PHP-Ghetto-IPC::ShmDriver::initialize: Cannot use Shared Memory Driver in Windows.");
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot use Shared Memory Driver in Windows.");
 
             $this->handle = shm_attach($this->id, PHPGI_SHM_SIZE, PHPGI_SHM_PERMS);
             $this->sem_id = sem_get($this->id, 2);

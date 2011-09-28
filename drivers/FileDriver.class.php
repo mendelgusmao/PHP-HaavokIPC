@@ -55,7 +55,7 @@
             $data = unserialize($data);    
                 
             if (empty($data))
-                trigger_error("PHP-Ghetto-IPC::FileDriver::get: Empty or corrupted file.", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Empty or corrupted file.");
 
             return $data;
             

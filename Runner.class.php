@@ -40,7 +40,7 @@
         function initialize () {
 
             if (!file_exists($this->executable))
-                trigger_error("PHP-Ghetto-IPC::Runner::initialize: Executable {$this->executable} not found;", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Executable {$this->executable} not found;");
 
         }
 

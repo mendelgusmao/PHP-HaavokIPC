@@ -63,7 +63,7 @@
                         $this->driver = new $driver;
                     }
                     else {
-                        trigger_error("PHP-Ghetto-IPC (Backend)::GhettoIPC::initialize: Driver '{$driver}' not found or not loaded in Includes.php.", E_USER_ERROR);
+                        phpgi_trigger_error(__CLASS__, __FUNCTION__, "Driver '{$driver}' not found or not loaded in Includes.php.");
                     }
                     
                 }
@@ -78,7 +78,7 @@
             else {
 
                 if (PHPGI_LOG && !is_writable(PHPGI_TMP))
-                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::initialize: Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable.");
 					
             }
 
@@ -129,7 +129,7 @@
                     $this->application = escapeshellcmd($this->application);
                     
                     $this->_log("cannot execute: script not found");
-                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::execute: Cannot execute. File '{$this->application}' not found!", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute. File '{$this->application}' not found!");
 
                 }
                 else {
@@ -184,7 +184,7 @@
                     $this->export_options[$option] = true;
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::GhettoIPC::set_export_options: Invalid option '{$export_option}'", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Invalid option '{$export_option}'");
                 }
 
         }
@@ -258,7 +258,7 @@
                 $this->_log("end export");
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::GhettoIPC::export: Cannot export. Driver resource is not valid anymore.", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot export. Driver resource is not valid anymore.");
             }
             
         }
@@ -305,7 +305,7 @@
                 return $data;
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::GhettoIPC::import: Cannot import. Driver resource is not valid anymore.", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot import. Driver resource is not valid anymore.");
             }
         }
 
@@ -317,7 +317,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(PHPGI_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-IPC::GhettoIPC::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.", E_USER_ERROR);
+                        trigger_error("PHP-Ghetto-IPC::GhettoIPC::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.");
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",

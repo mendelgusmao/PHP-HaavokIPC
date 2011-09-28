@@ -41,11 +41,10 @@
                 }
                 
             if (is_null($instance) || !is_a($instance, $class))
-                trigger_error("PHP-Ghetto-IPC::Instances::get: " .
-                    (-1 == $index
+                phpgi_trigger_error(__CLASS__, __FUNCTION__,
+                    -1 == $index
                         ? "No instances of class '{$class}' found in instances container."
-                        : "Instance #{$index} of class '{$class}' not found in instances container."),
-                    E_USER_ERROR
+                        : "Instance #{$index} of class '{$class}' not found in instances container."
                 );
                 
             return $instance;

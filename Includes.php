@@ -3,6 +3,7 @@
     $__DIR__ = dirname(__FILE__) . "/";
 
     $includes = <<<INC
+        Utils
         Constants
         Configuration
         Runner.class

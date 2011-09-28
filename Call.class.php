@@ -58,7 +58,7 @@
                     $this->method = $class_method[0];
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Call::Call: Wrong parameter count for class method/function name.");
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name.");
                 }
 
             }
@@ -110,12 +110,12 @@
                         );
                     }
                     else {
-                        trigger_error("PHP-Ghetto-IPC::Call::invoke: " . ($is_static ? "Static method" : "Method") . " '{$method}' not found in class '{$class}'.", E_USER_ERROR);
+                        phpgi_trigger_error(__CLASS__, __FUNCTION__, "Method '{$method}' not found in class '{$class}'.");
                     }
                     
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Call::invoke: Class '{$class}' doesn't exist.", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Class '{$class}' doesn't exist.");
                 }
 
             }
@@ -126,13 +126,13 @@
                     # $this->_log("call $method()");
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Call::invoke: Function '{$method}' not found.", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Function '{$method}' not found.");
                 }
 
             }
 
             if (is_resource($this->return)) {
-                trigger_error("PHP-Ghetto-IPC::Call::invoke: Value returned is a resource.", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Value returned is a resource.");
                 $this->return = null;
             }
 
@@ -155,7 +155,7 @@
                  * the objects you need in the frontend. They'll be responsible
                  * for instantiating these objects
                  */
-                trigger_error("PHP-Ghetto-IPC::Call::callback: Cannot execute static method calls in PHP 4.", E_USER_ERROR);
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute static method calls in PHP 4.");
 
                 $class = $this->callback[0];
                 $method = $this->callback[1];
@@ -164,7 +164,7 @@
                     call_user_func(array($class, $method), $this->return);
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Call::callback: Error calling method {$method}() of {$class}. Method not defined.", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Error calling method {$method}() of {$class}. Method not defined.");
                 }
                 
             }
@@ -174,12 +174,12 @@
                     call_user_func($function, $this->return);
                 }
                 else {
-                    trigger_error("PHP-Ghetto-IPC::Call::callback: Error calling function {$function}(). Function not defined.", E_USER_ERROR);
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Error calling function {$function}(). Function not defined.");
                 }
 
             }
             else {
-                trigger_error("PHP-Ghetto-IPC::Call::callback: Wrong parameter count for class method/function name.");
+                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name.");
             }
 
         }
