@@ -35,7 +35,7 @@
     define("PHPGI_FORCE_NO_OUTPUT", false);
 
     /* ShmDriver config */
-    define("PHPGI_SHM_SIZE", 10000);
+    define("PHPGI_SHM_SIZE", 32768);
     define("PHPGI_SHM_PERMS", 0666);
     
 ?>
