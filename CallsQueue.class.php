@@ -29,7 +29,7 @@
             $calls = func_get_args();
 
             if (0 == count($calls))
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "No calls defined.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "No calls defined."), E_USER_ERROR);
 
             foreach ($calls as $call)
                 if (is_a($call, "Call")) {
@@ -37,7 +37,7 @@
                     $this->queue[$this->index] = $call;
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Trying to enqueue something that is not a Call.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Trying to enqueue something that is not a Call."), E_USER_ERROR);
                 }
 
             return $this;
@@ -70,14 +70,14 @@
                 
             }
             else {
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Unable to process Calls queue in the frontend.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Unable to process Calls queue in the frontend."), E_USER_ERROR);
             }
         }
 
         function process_callbacks() {
 
             if (PHPGI_IS_BACKEND)
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute callbacks in backend.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot execute callbacks in backend."), E_USER_ERROR);
 
             if (is_array($this->queue))
                 foreach ($this->queue as $call)

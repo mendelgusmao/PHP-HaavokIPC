@@ -58,7 +58,7 @@
                     $this->method = $class_method[0];
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name."), E_USER_ERROR);
                 }
 
             }
@@ -110,12 +110,12 @@
                         );
                     }
                     else {
-                        phpgi_trigger_error(__CLASS__, __FUNCTION__, "Method '{$method}' not found in class '{$class}'.");
+                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Method '{$method}' not found in class '{$class}'."), E_USER_ERROR);
                     }
                     
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Class '{$class}' doesn't exist.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Class '{$class}' doesn't exist."), E_USER_ERROR);
                 }
 
             }
@@ -126,13 +126,13 @@
                     # $this->_log("call $method()");
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Function '{$method}' not found.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Function '{$method}' not found."), E_USER_ERROR);
                 }
 
             }
 
             if (is_resource($this->return)) {
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Value returned is a resource.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Value returned is a resource."), E_USER_ERROR);
                 $this->return = null;
             }
 
@@ -155,7 +155,7 @@
                  * the objects you need in the frontend. They'll be responsible
                  * for instantiating these objects
                  */
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute static method calls in PHP 4.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot execute static method calls in PHP 4."), E_USER_ERROR);
 
                 $class = $this->callback[0];
                 $method = $this->callback[1];
@@ -164,7 +164,7 @@
                     call_user_func(array($class, $method), $this->return);
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Error calling method {$method}() of {$class}. Method not defined.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Error calling method {$method}() of {$class}. Method not defined."), E_USER_ERROR);
                 }
                 
             }
@@ -174,12 +174,12 @@
                     call_user_func($function, $this->return);
                 }
                 else {
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Error calling function {$function}(). Function not defined.");
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Error calling function {$function}(). Function not defined."), E_USER_ERROR);
                 }
 
             }
             else {
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name."), E_USER_ERROR);
             }
 
         }

@@ -63,7 +63,7 @@
                         $this->driver = new $driver;
                     }
                     else {
-                        trigger_error(error_message(__CLASS__, __FUNCTION__, "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
+                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
                     }
                     
                 }
@@ -78,7 +78,7 @@
             else {
 
                 if (PHPGI_LOG && !is_writable(PHPGI_TMP))
-                    trigger_error(error_message(__CLASS__, __FUNCTION__, "Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable."), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable."), E_USER_ERROR);
 					
             }
 
@@ -127,7 +127,7 @@
                 if (!realpath($this->application)) {
 
                     $this->_log("cannot execute: script not found");
-                    trigger_error(error_message(__CLASS__, __FUNCTION__, "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
 
                 }
                 else {
@@ -185,7 +185,7 @@
                     $this->export_options[$option] = true;
                 }
                 else {
-                    trigger_error(error_message(__CLASS__, __FUNCTION__, "Invalid option '{$export_option}'"), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Invalid option '{$export_option}'"), E_USER_ERROR);
                 }
 
         }
@@ -260,7 +260,7 @@
                 $this->_log("end export");
             }
             else {
-                trigger_error(error_message(__CLASS__, __FUNCTION__, "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
             }
             
         }
@@ -310,7 +310,7 @@
                 return $data;
             }
             else {
-                trigger_error(error_message(__CLASS__, __FUNCTION__, "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
             }
         }
 

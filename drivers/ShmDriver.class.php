@@ -28,7 +28,7 @@
             $this->valid = false;
 
             if (preg_match("/win/i", PHP_OS))
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot use Shared Memory Driver in Windows.");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
             $this->handle = shm_attach($this->id, PHPGI_SHM_SIZE, PHPGI_SHM_PERMS);
             $this->sem_id = sem_get($this->id, 2);

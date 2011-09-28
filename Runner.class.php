@@ -40,7 +40,7 @@
         function initialize () {
 
             if (!file_exists($this->executable))
-                phpgi_trigger_error(__CLASS__, __FUNCTION__, "Executable {$this->executable} not found;");
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Executable {$this->executable} not found;"), E_USER_ERROR);
 
         }
 
