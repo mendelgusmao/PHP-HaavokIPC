@@ -2,18 +2,19 @@
 
     $__DIR__ = dirname(__FILE__) . "/";
 
-    $includes = array(
-        "Constants.php",
-        "Configuration.php",
-        "Runner.class.php",
-        "Instances.class.php",
-        "drivers/FileDriver.class.php",
-        "drivers/MemcacheDriver.class.php",
-        "Call.class.php",
-        "CallsQueue.class.php",
-    );
+    $includes = <<<INC
+        Constants
+        Configuration
+        Runner.class
+        Instances.class
+        Call.class
+        CallsQueue.class
+        drivers/FileDriver.class
+        drivers/MemcacheDriver.class
+        drivers/ShmDriver.class
+INC;
 
-    foreach ($includes as $include)
-        include $__DIR__ . $include;
+    foreach (explode("\n", $includes) as $include)
+        include $__DIR__ . trim($include) . ".php";
 
 ?>
