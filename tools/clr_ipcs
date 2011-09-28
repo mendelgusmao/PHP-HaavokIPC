@@ -1,5 +1,10 @@
 #app:clr_ipcs 27/09/11 16:39:31
-ipcs \
+ipcs -m \
 | awk '{print ($6 == 0 ? $2 : "x")}' \
 | grep -v ^x \
 | xargs -n 1 ipcrm -m
+
+ipcs -s \
+| awk '{print $2}' \
+| xargs -n 1 ipcrm -s
+
