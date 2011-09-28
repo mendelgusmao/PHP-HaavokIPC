@@ -31,7 +31,7 @@
                 trigger_error("PHP-Ghetto-IPC::ShmDriver::initialize: Cannot use Shared Memory Driver in Windows.");
 
             $this->handle = shm_attach($this->id, PHPGI_SHM_SIZE, PHPGI_SHM_PERMS);
-            $this->sem_id = sem_get($this->id, 1);
+            $this->sem_id = sem_get($this->id, 2);
             
             return $this->valid;
             
@@ -58,6 +58,7 @@
 
             return shm_put_var($this->handle, $this->id, null)
                    & sem_remove($this->sem_id)
+                   & shm_remove($this->handle)
                    & shm_detach($this->handle);
             
         }
