@@ -124,16 +124,17 @@
             }
             else {
             
-                if (!$this->application = realpath($this->application)) {
+                if (!realpath($this->application)) {
 
-                    $this->application = escapeshellcmd($this->application);
-                    
                     $this->_log("cannot execute: script not found");
-                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute. File '{$this->application}' not found!");
+                    phpgi_trigger_error(__CLASS__, __FUNCTION__, "Cannot execute. Application file '{$this->application}' not found!");
 
                 }
                 else {
-                
+
+                    $this->application = realpath($this->application);
+                    $this->application = escapeshellcmd($this->application);
+
                     $this->_log("start execute");
 
                     $this->export();
