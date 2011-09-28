@@ -200,6 +200,7 @@
                 $exports["_EXPORT_OPTIONS"] = $this->export_options;
                 $exports["_CALLS"] = $this->calls;
                 $exports["_ERRORS"] = $this->errors;
+                $exports["_OUTPUT"] = null;
 
                 foreach($this->export_options as $export_option => $export_option_enabled) {
 
@@ -244,15 +245,14 @@
                         break;
                     
                         case PHPGI_EXPORT_OUTPUT:
-                            if (PHPGI_IS_BACKEND)
-                                $export_output = true;
+                            $export_output = true;
                             
                         break;
                     
                     }
                 }
                 
-                if (PHPGI_FORCE_NO_OUTPUT || $export_output)
+                if (PHPGI_IS_BACKEND && (PHPGI_FORCE_NO_OUTPUT || $export_output))
                     $exports["_OUTPUT"] = ob_get_clean();
                 
                 $this->driver->set($exports);
