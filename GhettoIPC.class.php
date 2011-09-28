@@ -32,13 +32,13 @@
         var $runner;
         var $export_options;
 
-        function __construct ($driver, $application = null, $calls = null) {
+        function __construct ($driver = null, $application = null, $calls = null) {
             
             $this->GhettoIPC($driver, $application, $calls);
             
         }
          
-        function GhettoIPC ($driver, $application, $calls = null) {
+        function GhettoIPC ($driver = null, $application = null, $calls = null) {
 
             $this->driver = $driver;
             $this->application = $application;
@@ -54,6 +54,19 @@
             define("PHPGI_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
 
             if (PHPGI_IS_BACKEND) {
+
+                if (is_null($this->driver)) {
+
+                    $driver = get_cfg_var("php-ghetto-ipc-driver");
+
+                    if (class_exists($driver)) {
+                        $this->driver = new $driver;
+                    }
+                    else {
+                        trigger_error("PHP-Ghetto-IPC (Backend)::GhettoIPC::initialize: Driver '{$driver}' not found or not loaded in Includes.php.", E_USER_ERROR);
+                    }
+                    
+                }
 
                 set_error_handler(array(&$this, "error"));
                 define("PHPGI_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-ipc-no-output") == 1);
@@ -135,6 +148,7 @@
                         array(
                             "-d php-ghetto-ipc-backend" => 1,
                             "-d php-ghetto-ipc-id" => $this->id(),
+                            "-d php-ghetto-ipc-driver" => get_class($this->driver),
                             "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                             "-f \"{$this->application}\""
                         )
