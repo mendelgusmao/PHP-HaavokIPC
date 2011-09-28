@@ -1,0 +1,13 @@
+#!/bin/bash
+
+lang=$1
+ext=$2
+dirs="drivers temp tests"
+files="Configuration Constants Includes Call Calls GhettoIPC Instances Runner"
+drivers="File Memcache StdIO Shm"
+
+rm -rf ./$lang
+
+for file in $dirs; do mkdir -p $lang/$file; done
+for file in $files; do echo "" > $lang/$file.$ext; done
+for file in $drivers; do echo "" > $lang/drivers/${file}Driver.$ext; done
