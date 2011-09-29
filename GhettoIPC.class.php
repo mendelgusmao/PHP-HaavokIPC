@@ -176,16 +176,18 @@
             }
         }
 
-        function set_export_options () {
+        function set_export_options ($options, $value = 1) {
 
-            $export_options = func_get_args();
+            if (!is_array($options))
+                $options = array($options => $value);
 
-            foreach ($export_options as $option)
+            foreach ($options as $option => $value)
                 if ($option > 0) {
-                    $this->export_options[$option] = true;
+                    $this->export_options[$option] = $value;
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Invalid option '{$export_option}'"), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        "Invalid option '{$export_option}'"), E_USER_ERROR);
                 }
 
         }
@@ -202,7 +204,15 @@
                 $exports["_ERRORS"] = $this->errors;
                 $exports["_OUTPUT"] = null;
 
-                foreach($this->export_options as $export_option => $export_option_enabled) {
+                foreach ($this->export_options as $export_option => $export_option_value) {
+
+                    if (
+                        $export_option_value != PHPGI_EXPORT_WAY_BOTH
+                        && (
+                            (PHPGI_IS_BACKEND && $export_option_value == PHPGI_EXPORT_WAY_F2B)
+                            || (!PHPGI_IS_BACKEND && $export_option_value == PHPGI_EXPORT_WAY_B2F)
+                        )
+                    ) continue;
 
                     switch ($export_option) {
                         
@@ -322,7 +332,8 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(PHPGI_LOGFILE, "a+"))
-                        trigger_error("PHP-Ghetto-IPC::GhettoIPC::_log Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing.");
+                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                            "Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing."));
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",

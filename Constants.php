@@ -25,4 +25,8 @@
     define("PHPGI_EXPORT_OUTPUT", 1024);
     define("PHPGI_EXPORT_FORCE_NO_OUTPUT", 2048);
 
+    define("PHPGI_EXPORT_WAY_BOTH", 1);
+    define("PHPGI_EXPORT_WAY_F2B", 2);
+    define("PHPGI_EXPORT_WAY_B2F", 3);
+
 ?>
