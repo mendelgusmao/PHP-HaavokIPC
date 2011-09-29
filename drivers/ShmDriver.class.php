@@ -14,7 +14,7 @@
      *
      */
     class ShmDriver {
-        
+
         var $id;
         var $handle;
         var $sem_id;
@@ -24,50 +24,54 @@
         function initialize ($id) {
 
             $this->id = end(explode(".", $id)) . (int) $id;
-            
-            $this->valid = false;
 
             if (preg_match("/win/i", PHP_OS))
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
-            $this->handle = shm_attach($this->id, PHPGI_SHM_SIZE, PHPGI_SHM_PERMS);
-            $this->sem_id = sem_get($this->id, 2);
-            
-            return $this->valid;
-            
+            $this->handle = shmop_open($this->id, "c", PHPGI_SHM_PERMS, PHPGI_SHM_SIZE);
+
+            return true;
+
         }
 
         function set ($data) {
 
-            sem_acquire($this->sem_id);
-            shm_put_var($this->handle, $this->id, $data);
-            sem_release($this->sem_id);
-            
+            $data = serialize($data);
+            $expected = strlen($data);
+            $written = shmop_write($this->handle, $data, 0);
+
+            if ($written != $expected)
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Error writing to shared memory cache: expected {$expected} bytes, written {$written} bytes. "
+                    . "Try to increase PHPGI_SHM_SIZE constant."), E_USER_ERROR);
+
         }
 
         function get () {
 
-            sem_acquire($this->sem_id);
-            $data = shm_get_var($this->handle, $this->id);
-            sem_release($this->sem_id);
+            $data = shmop_read($this->handle, 0, shmop_size($this->handle));
+            $data = unserialize($data);
+
+            if (empty($data))
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Empty or corrupted data from shared memory segment."), E_USER_ERROR);
+
             return $data;
-            
+
         }
 
         function delete () {
 
-            return shm_put_var($this->handle, $this->id, null)
-                   & sem_remove($this->sem_id)
-                   & shm_remove($this->handle)
-                   & shm_detach($this->handle);
-            
+            return shmop_delete($this->handle);
+
         }
 
         function valid () {
 
-            // TODO: Find a way to know if a handle is valid
+            // TODO: Find a way to know if a shared memory handle is valid
             return true;
-            
+
         }
 
     }
