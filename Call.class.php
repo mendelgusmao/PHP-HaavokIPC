@@ -25,16 +25,17 @@
         var $parameters;
         var $constructor_parameters;
         var $callback;
+        var $additional_callback_parameters;
         var $return;
         var $reuse_instance = false;
 
-        function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null) {
+        function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
-            $this->Call($class_method, $parameters, $constructor_parameters, $callback);
+            $this->Call($class_method, $parameters, $constructor_parameters, $callback, $callback_parameters = null);
             
         }
 
-        function Call ($class_method, $parameters = null, $constructor_parameters = null, $callback = null) {
+        function Call ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
             if (is_array($class_method)) {
 
@@ -70,6 +71,13 @@
             $this->constructor_parameters = $constructor_parameters;
             $this->callback = $callback;
 
+            if (!is_array($additional_callback_parameters))
+                $additional_callback_parameters = is_null($additional_callback_parameters)
+                                                ? array()
+                                                : array($additional_callback_parameters);
+
+            $this->additional_callback_parameters = $additional_callback_parameters;
+            
         }
 
         function invoke (&$instances) {
@@ -110,12 +118,14 @@
                         );
                     }
                     else {
-                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Method '{$method}' not found in class '{$class}'."), E_USER_ERROR);
+                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                            "Method '{$method}' not found in class '{$class}'."), E_USER_ERROR);
                     }
                     
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Class '{$class}' doesn't exist."), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        "Class '{$class}' doesn't exist."), E_USER_ERROR);
                 }
 
             }
@@ -126,13 +136,15 @@
                     # $this->_log("call $method()");
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Function '{$method}' not found."), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        "Function '{$method}' not found."), E_USER_ERROR);
                 }
 
             }
 
             if (is_resource($this->return)) {
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Value returned is a resource."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Value returned is a resource."), E_USER_ERROR);
                 $this->return = null;
             }
 
@@ -145,6 +157,8 @@
 
             if (!is_array($this->callback))
                 $this->callback = array($this->callback);
+            
+            array_unshift($this->additional_callback_parameters, $this->return);
 
             if (count($this->callback) == 2) {
 
@@ -155,31 +169,41 @@
                  * the objects you need in the frontend. They'll be responsible
                  * for instantiating these objects
                  */
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot execute static method calls in PHP 4."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot execute static method calls in PHP 4."), E_USER_ERROR);
 
                 $class = $this->callback[0];
                 $method = $this->callback[1];
 
                 if (method_exists($class, $method)) {
-                    call_user_func(array($class, $method), $this->return);
+                    call_user_func_array(
+                        array($class, $method),
+                        $this->additional_callback_parameters
+                    );
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Error calling method {$method}() of {$class}. Method not defined."), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        "Error calling method {$method}() of {$class}. Method not defined."), E_USER_ERROR);
                 }
                 
             }
             else if (count($this->callback) == 1) {
 
                 if (function_exists($function = $this->callback[0])) {
-                    call_user_func($function, $this->return);
+                    call_user_func_array(
+                        $function,
+                        $this->additional_callback_parameters
+                    );
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Error calling function {$function}(). Function not defined."), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        "Error calling function {$function}(). Function not defined."), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name."), E_USER_ERROR);
+                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    "Wrong parameter count for class method/function name."), E_USER_ERROR);
             }
 
         }
@@ -202,5 +226,5 @@
         }
 
     }
-    
+
 ?>
