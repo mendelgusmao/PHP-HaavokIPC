@@ -103,9 +103,7 @@
 
             $parameters = implode(", ", $parameters);
 
-            eval("\$object = new $class($parameters);");
-
-            return $object;
+            return eval("return new $class($parameters);");
 
         }
         
