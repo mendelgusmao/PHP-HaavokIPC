@@ -59,7 +59,7 @@
 
             $instances = new Instances();
 
-            if (PHPGI_IS_BACKEND) {
+            if (GIPC_IS_BACKEND) {
 
                 foreach ($this->queue as $index => $call) {
                     $call->invoke($instances);
@@ -76,7 +76,7 @@
 
         function process_callbacks() {
 
-            if (PHPGI_IS_BACKEND)
+            if (GIPC_IS_BACKEND)
                 trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Cannot execute callbacks in backend."), E_USER_ERROR);
 
             if (is_array($this->queue))

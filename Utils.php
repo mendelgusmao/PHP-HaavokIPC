@@ -2,7 +2,7 @@
 
     function phpgi_error_message ($class, $function, $message) {
 
-        $end = PHPGI_IS_BACKEND ? "Backend" : "Frontend";
+        $end = GIPC_IS_BACKEND ? "Backend" : "Frontend";
         $version = PHP_VERSION;
         $error_message = "PHP-Ghetto-IPC (%s [%s])::%s::%s: %s";
 

@@ -28,11 +28,11 @@
 
                 $this->handle = new Memcache;
 
-                if ($this->handle->addServer(PHPGI_MEMCACHED, PHPGI_MEMCACHEDP)) {
+                if ($this->handle->addServer(GIPC_MEMCACHED, GIPC_MEMCACHEDP)) {
                     $this->valid = true;
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . PHPGI_MEMCACHED . ":" . PHPGI_MEMCACHEDP), E_USER_ERROR);
+                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }

@@ -51,9 +51,9 @@
 
         function initialize () {
 
-            define("PHPGI_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
+            define("GIPC_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
 
-            if (PHPGI_IS_BACKEND) {
+            if (GIPC_IS_BACKEND) {
 
                 if (is_null($this->driver)) {
 
@@ -70,9 +70,9 @@
                 }
 
                 set_error_handler(array(&$this, "error"));
-                define("PHPGI_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-ipc-no-output") == 1);
+                define("GIPC_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-ipc-no-output") == 1);
                 
-                if (PHPGI_FORCE_NO_OUTPUT)
+                if (GIPC_FORCE_NO_OUTPUT)
                     ob_start();
 
             } 
@@ -82,16 +82,16 @@
                     trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
-                if (PHPGI_LOG && !is_writable(PHPGI_TMP))
+                if (GIPC_LOG && !is_writable(GIPC_TMP))
                     trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
-                        "Cannot initialize. Directory '" . PHPGI_TMP . "' not found or not writable."), E_USER_ERROR);
+                        "Cannot initialize. Directory '" . GIPC_TMP . "' not found or not writable."), E_USER_ERROR);
 					
             }
 
             $this->driver->initialize($this->id());
 
             register_shutdown_function(
-                array(&$this, PHPGI_IS_BACKEND ? "export" : "__destruct")
+                array(&$this, GIPC_IS_BACKEND ? "export" : "__destruct")
             );
 
             $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
@@ -103,13 +103,13 @@
             
             if (!$destructed) {
             
-                if (!PHPGI_IS_BACKEND)
+                if (!GIPC_IS_BACKEND)
                     $this->driver->delete();
 
                 $this->_log(
                     sprintf("php %s end%s",
                             PHP_VERSION,
-                            (!PHPGI_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+                            (!GIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
                 );
                 
                 $destructed = true;
@@ -119,7 +119,7 @@
 
         function execute ($callback = true) {
 
-            if (PHPGI_IS_BACKEND) {
+            if (GIPC_IS_BACKEND) {
 
                 $this->import();
                 
@@ -148,7 +148,7 @@
 
                     $runner_params = array();
 
-                    if (PHPGI_PREPEND_IPC_CLASS)
+                    if (GIPC_PREPEND_IPC_CLASS)
                         $runner_params["-d auto_prepend_file"] = __FILE__;
 
                     $runner_params = array_merge(
@@ -157,14 +157,14 @@
                             "-d php-ghetto-ipc-backend" => 1,
                             "-d php-ghetto-ipc-id" => $this->id(),
                             "-d php-ghetto-ipc-driver" => get_class($this->driver),
-                            "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[PHPGI_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
+                            "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[GIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                             "-f \"{$this->application}\""
                         )
                     );
 
                     $this->runner = new Runner(
                         $this,
-                        PHPGI_BACKEND_BIN,
+                        GIPC_BACKEND_BIN,
                         $runner_params
                     );
 
@@ -214,54 +214,54 @@
                 foreach ($this->export_options as $export_option => $export_option_value) {
 
                     if (
-                        $export_option_value != PHPGI_EXPORT_WAY_BOTH
+                        $export_option_value != GIPC_EXPORT_WAY_BOTH
                         && (
-                            (PHPGI_IS_BACKEND && $export_option_value == PHPGI_EXPORT_WAY_F2B)
-                            || (!PHPGI_IS_BACKEND && $export_option_value == PHPGI_EXPORT_WAY_B2F)
+                            (GIPC_IS_BACKEND && $export_option_value == GIPC_EXPORT_WAY_F2B)
+                            || (!GIPC_IS_BACKEND && $export_option_value == GIPC_EXPORT_WAY_B2F)
                         )
                     ) continue;
 
                     switch ($export_option) {
                         
-                        case PHPGI_EXPORT_GLOBALS:
+                        case GIPC_EXPORT_GLOBALS:
                             foreach ($GLOBALS as $name => $value)
                                 if (!is_object($value) && !is_resource($value))
                                     $exports["GLOBALS"][$name] = $value;
                         break;
 
-                        case PHPGI_EXPORT_REQUEST:
+                        case GIPC_EXPORT_REQUEST:
                             $exports["_REQUEST"] = $_REQUEST;
                         break;
 
-                        case PHPGI_EXPORT_POST:
+                        case GIPC_EXPORT_POST:
                             $exports["_POST"] = $_POST;
                         break;
 
-                        case PHPGI_EXPORT_GET:
+                        case GIPC_EXPORT_GET:
                             $exports["_GET"] = $_GET;
                         break;
 
-                        case PHPGI_EXPORT_SERVER:
+                        case GIPC_EXPORT_SERVER:
                             $exports["_SERVER"] = $_SERVER;
                         break;
 
-                        case PHPGI_EXPORT_COOKIE:
+                        case GIPC_EXPORT_COOKIE:
                             $exports["_COOKIE"] = $_COOKIE;
                         break;
 
-                        case PHPGI_EXPORT_SESSION:
+                        case GIPC_EXPORT_SESSION:
                             $exports["_SESSION"] = $_SESSION;
                         break;
                     
-                        case PHPGI_EXPORT_CONSTANTS:
+                        case GIPC_EXPORT_CONSTANTS:
                             $exports["_CONSTANTS"] = get_defined_constants();
                         break;
 
-                        case PHPGI_EXPORT_HEADERS:
-                            $exports["_HEADERS"] = PHPGI_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
+                        case GIPC_EXPORT_HEADERS:
+                            $exports["_HEADERS"] = GIPC_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
                         break;
                     
-                        case PHPGI_EXPORT_OUTPUT:
+                        case GIPC_EXPORT_OUTPUT:
                             $export_output = true;
                             
                         break;
@@ -269,7 +269,7 @@
                     }
                 }
                 
-                if (PHPGI_IS_BACKEND && (PHPGI_FORCE_NO_OUTPUT || $export_output))
+                if (GIPC_IS_BACKEND && (GIPC_FORCE_NO_OUTPUT || $export_output))
                     $exports["_OUTPUT"] = ob_get_clean();
                 
                 $this->driver->set($exports);
@@ -316,7 +316,7 @@
                             $this->errors = $value;
 
                         if ("_OUTPUT" == $name)
-                            if (!PHPGI_IS_BACKEND)
+                            if (!GIPC_IS_BACKEND)
                                 $this->output = $value;
 
                         global $$name;
@@ -335,21 +335,21 @@
 
         function _log ($str) {
 
-            if (PHPGI_LOG) {
+            if (GIPC_LOG) {
 
                 static $logfile;
 
                 if (!$logfile)
-                    if (!$logfile = @fopen(PHPGI_LOGFILE, "a+"))
+                    if (!$logfile = @fopen(GIPC_LOGFILE, "a+"))
                         trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
-                            "Cannot log. Error opening log file '" . PHPGI_LOGFILE . "' for writing."));
+                            "Cannot log. Error opening log file '" . GIPC_LOGFILE . "' for writing."));
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",
                                time(),
                                $this->id(),
                                reset(explode("-", PHP_VERSION)),
-                               (PHPGI_IS_BACKEND ? "\t\t" : "\t"),
+                               (GIPC_IS_BACKEND ? "\t\t" : "\t"),
                                $str)
                 );
             }
@@ -359,7 +359,7 @@
 
             static $errors;
 
-            if ($errfile != __FILE__ && PHPGI_IS_BACKEND) {
+            if ($errfile != __FILE__ && GIPC_IS_BACKEND) {
 
                 if (!$errors)
                     $errors = array(
@@ -395,9 +395,9 @@
             static $id;
 
             if (empty($id))
-                $id = PHPGI_IS_BACKEND
+                $id = GIPC_IS_BACKEND
                     ? get_cfg_var("php-ghetto-ipc-id")
-                    : uniqid(PHPGI_ID_PREFIX . getmypid(), true);
+                    : uniqid(GIPC_ID_PREFIX . getmypid(), true);
 
             return $id;
             

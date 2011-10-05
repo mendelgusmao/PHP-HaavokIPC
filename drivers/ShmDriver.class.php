@@ -29,7 +29,7 @@
                 trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
                     "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
-            $this->handle = shmop_open($this->id, "c", PHPGI_SHM_PERMS, PHPGI_SHM_SIZE);
+            $this->handle = shmop_open($this->id, "c", GIPC_SHM_PERMS, GIPC_SHM_SIZE);
 
             return true;
 
@@ -44,7 +44,7 @@
             if ($written != $expected)
                 trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
                     "Error writing to shared memory cache: expected {$expected} bytes, written {$written} bytes. "
-                    . "Try to increase PHPGI_SHM_SIZE constant."), E_USER_ERROR);
+                    . "Try to increase GIPC_SHM_SIZE constant."), E_USER_ERROR);
 
         }
 

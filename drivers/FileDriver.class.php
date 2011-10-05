@@ -25,9 +25,9 @@
 
             $this->id = $id;
             $this->valid = false;
-            $this->file = PHPGI_TMP . $this->id . PHPGI_EXT;
+            $this->file = GIPC_TMP . $this->id . GIPC_EXT;
 
-            if ($this->handle = fopen($this->file, PHPGI_IS_BACKEND ? "r+" : "w+"))
+            if ($this->handle = fopen($this->file, GIPC_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
             return $this->valid;

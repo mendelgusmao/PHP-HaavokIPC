@@ -22,7 +22,7 @@
     }
 
     $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
-    $ipc->set_export_options(PHPGI_EXPORT_SERVER);
+    $ipc->set_export_options(GIPC_EXPORT_SERVER);
     $ipc->execute(true); // execute callbacks
     
     echo "#################################################################\n";
