@@ -55,7 +55,7 @@
             $data = unserialize($data);    
                 
             if (empty($data))
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Empty or corrupted file."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Empty or corrupted file."), E_USER_ERROR);
 
             return $data;
             

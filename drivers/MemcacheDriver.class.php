@@ -32,12 +32,12 @@
                     $this->valid = true;
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__, "Memcache is not enabled."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Memcache is not enabled."), E_USER_ERROR);
             }
 
             return $this->valid;

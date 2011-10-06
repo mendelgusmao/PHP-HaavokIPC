@@ -63,7 +63,7 @@
                         $this->driver = new $driver;
                     }
                     else {
-                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                             "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
                     }
                     
@@ -79,11 +79,11 @@
             else {
 
                 if (is_null($this->driver))
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
                 if (GIPC_LOG && !is_writable(GIPC_TMP))
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize. Directory '" . GIPC_TMP . "' not found or not writable."), E_USER_ERROR);
 					
             }
@@ -133,7 +133,7 @@
                 if (!realpath($this->application)) {
 
                     $this->_log("cannot execute: script not found");
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
 
                 }
@@ -193,7 +193,7 @@
                     $this->export_options[$option] = $value;
                 }
                 else {
-                    trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Invalid option '{$export_option}'"), E_USER_ERROR);
                 }
 
@@ -277,7 +277,7 @@
                 $this->_log("end export");
             }
             else {
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
             }
             
@@ -328,7 +328,7 @@
                 return $data;
             }
             else {
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
             }
         }
@@ -341,7 +341,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen(GIPC_LOGFILE, "a+"))
-                        trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                             "Cannot log. Error opening log file '" . GIPC_LOGFILE . "' for writing."));
 
                 fwrite($logfile,

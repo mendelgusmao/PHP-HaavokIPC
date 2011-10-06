@@ -42,7 +42,7 @@
                 
             if (is_null($instance) || !is_a($instance, $class))
                 trigger_error(
-                    phpgi_error_message(__CLASS__, __FUNCTION__,
+                    gipc_error_message(__CLASS__, __FUNCTION__,
                     -1 == $index
                         ? "No instances of class '{$class}' found in instances container."
                         : "Instance #{$index} of class '{$class}' not found in instances container.")

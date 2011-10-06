@@ -26,7 +26,7 @@
             $this->id = end(explode(".", $id)) . (int) $id;
 
             if (preg_match("/win/i", PHP_OS))
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
             $this->handle = shmop_open($this->id, "c", GIPC_SHM_PERMS, GIPC_SHM_SIZE);
@@ -42,7 +42,7 @@
             $written = shmop_write($this->handle, $data, 0);
 
             if ($written != $expected)
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Error writing to shared memory cache: expected {$expected} bytes, written {$written} bytes. "
                     . "Try to increase GIPC_SHM_SIZE constant."), E_USER_ERROR);
 
@@ -54,7 +54,7 @@
             $data = unserialize($data);
 
             if (empty($data))
-                trigger_error(phpgi_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Empty or corrupted data from shared memory segment."), E_USER_ERROR);
 
             return $data;
