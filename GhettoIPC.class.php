@@ -125,7 +125,7 @@
                 
                 $this->_log("start calls");
                 $this->calls->process();
-                $this->_log("end calls");    
+                $this->_log("end calls");
                 
             }
             else {
@@ -263,7 +263,15 @@
                     
                         case GIPC_EXPORT_OUTPUT:
                             $export_output = true;
-                            
+
+                        case GIPC_EXPORT_ENV:
+                            $exports["_ENV"] = $_ENV;
+                        break;
+
+                        case GIPC_EXPORT_FILES:
+                            $exports["_FILES"] = $_FILES;
+                        break;
+
                         break;
                     
                     }
