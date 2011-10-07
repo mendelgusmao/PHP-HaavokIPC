@@ -102,19 +102,19 @@
             
             static $destructed;
             
-            if (!$destructed) {
+            if ($destructed)
+            	return;
             
-                if (!GIPC_IS_BACKEND)
-                    $this->driver->delete();
+            if (!GIPC_IS_BACKEND)
+                $this->driver->delete();
 
-                $this->_log(
-                    sprintf("php %s end%s",
-                            PHP_VERSION,
-                            (!GIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
-                );
-                
-                $destructed = true;
-            }
+            $this->_log(
+                sprintf("php %s end%s",
+                        PHP_VERSION,
+                        (!GIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+            );
+        
+            $destructed = true;
             
         }
 
