@@ -363,7 +363,7 @@
                        sprintf("%s %s %s%s%s\n",
                                time(),
                                $this->id(),
-                               reset(explode("-", PHP_VERSION)),
+                               PHP_VERSION,
                                (GIPC_IS_BACKEND ? "\t\t" : "\t"),
                                $str)
                 );
@@ -374,34 +374,30 @@
 
             static $errors;
 
-            if ($errfile != __FILE__ && GIPC_IS_BACKEND) {
-
-                if (!$errors)
-                    $errors = array(
-                        E_WARNING => "WARNING",
-                        E_NOTICE => "NOTICE",
-                        E_USER_ERROR => "USER_ERROR",
-                        E_USER_WARNING => "USER_WARNING",
-                        E_USER_NOTICE => "USER_NOTICE",
-                        E_STRICT => "STRICT",
-                        E_RECOVERABLE_ERROR => "RECOVERABLE_ERROR",
-                        E_DEPRECATED => "DEPRECATED",
-                        E_USER_DEPRECATED => "USER_DEPRECATED"
-                    );
-
-                $errlevel = $errors[$errno];
-
-                $this->errors[] = array(
-                    "level" => $errlevel,
-                    "message" => $errstr,
-                    "file" => $errfile,
-                    "line" => $errline
+            if (!$errors)
+                $errors = array(
+                    E_WARNING => "WARNING",
+                    E_NOTICE => "NOTICE",
+                    E_USER_ERROR => "USER_ERROR",
+                    E_USER_WARNING => "USER_WARNING",
+                    E_USER_NOTICE => "USER_NOTICE",
+                    E_STRICT => "STRICT",
+                    E_RECOVERABLE_ERROR => "RECOVERABLE_ERROR",
+                    E_DEPRECATED => "DEPRECATED",
+                    E_USER_DEPRECATED => "USER_DEPRECATED"
                 );
 
-                if ($errno != E_NOTICE)
-                    $this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
+            $errlevel = $errors[$errno];
 
-            }
+            $this->errors[] = array(
+                "level" => $errlevel,
+                "message" => $errstr,
+                "file" => $errfile,
+                "line" => $errline
+            );
+
+            if ($errno != E_NOTICE)
+                $this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
 
         }
 
