@@ -24,7 +24,8 @@
     define("GIPC_EXPORT_HEADERS", 512);
     define("GIPC_EXPORT_ENV", 1024);
     define("GIPC_EXPORT_FILES", 2048);
-    define("GIPC_EXPORT_OUTPUT", 4096);
+    define("GIPC_EXPORT_DEBUG", 4096);
+    define("GIPC_EXPORT_OUTPUT", 8192);
 
     define("GIPC_EXPORT_WAY_BOTH", 1);
     define("GIPC_EXPORT_WAY_F2B", 2);

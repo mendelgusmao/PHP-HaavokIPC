@@ -31,6 +31,7 @@
         var $driver;
         var $runner;
         var $export_options;
+        var $debug_backtrace;
 
         function __construct ($driver = null, $application = null, $calls = null) {
             
@@ -272,6 +273,10 @@
                             $exports["_FILES"] = $_FILES;
                         break;
 
+                        case GIPC_EXPORT_DEBUG:
+                            $exports["_DEBUG"] = GIPC_IS_BACKEND ? debug_backtrace() : array();
+                        break;
+
                         break;
                     
                     }
@@ -326,6 +331,9 @@
                         if ("_OUTPUT" == $name)
                             if (!GIPC_IS_BACKEND)
                                 $this->output = $value;
+
+                        if ("_DEBUG" == $name)
+                            $this->debug_backtrace = $value;
 
                         global $$name;
                         $$name = $value;
