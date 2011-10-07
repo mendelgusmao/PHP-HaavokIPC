@@ -264,7 +264,8 @@
                     
                         case GIPC_EXPORT_OUTPUT:
                             $export_output = true;
-
+                        break;
+                        
                         case GIPC_EXPORT_ENV:
                             $exports["_ENV"] = $_ENV;
                         break;
@@ -275,8 +276,6 @@
 
                         case GIPC_EXPORT_DEBUG:
                             $exports["_DEBUG"] = GIPC_IS_BACKEND ? debug_backtrace() : array();
-                        break;
-
                         break;
                     
                     }
