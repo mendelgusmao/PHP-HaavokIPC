@@ -160,7 +160,7 @@
             
             array_unshift($this->additional_callback_parameters, $this->return);
 
-            if (count($this->callback) == 2) {
+            if (2 == count($this->callback)) {
 
                 /*
                  * NOT IMPLEMENTED
@@ -187,7 +187,7 @@
                 }
                 
             }
-            else if (count($this->callback) == 1) {
+            else if (1 == count($this->callback)) {
 
                 if (function_exists($function = $this->callback[0])) {
                     call_user_func_array(

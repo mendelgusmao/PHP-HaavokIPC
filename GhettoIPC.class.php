@@ -52,7 +52,7 @@
 
         function initialize () {
 
-            define("GIPC_IS_BACKEND", get_cfg_var("php-ghetto-ipc-backend") == 1);
+            define("GIPC_IS_BACKEND", 1 == get_cfg_var("php-ghetto-ipc-backend"));
 
             if (GIPC_IS_BACKEND) {
 
@@ -71,7 +71,7 @@
                 }
 
                 set_error_handler(array(&$this, "error"));
-                define("GIPC_FORCE_NO_OUTPUT", get_cfg_var("php-ghetto-ipc-no-output") == 1);
+                define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("php-ghetto-ipc-no-output"));
                 
                 if (GIPC_FORCE_NO_OUTPUT)
                     ob_start();
