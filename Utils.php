@@ -10,4 +10,13 @@
 
     }
 
+    function gipc_var_dump () {
+        ob_start();
+        $variable = func_get_args();
+        call_user_func_array('var_dump', $variable);
+        $return = ob_get_clean();
+
+        return substr($return, 0, strpos($return, " "));
+    }
+
 ?>
