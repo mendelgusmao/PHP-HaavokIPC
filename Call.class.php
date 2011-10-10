@@ -28,7 +28,7 @@
         var $additional_callback_parameters;
         var $return;
         var $reuse_instance = false;
-
+        
         function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
             $this->Call($class_method, $parameters, $constructor_parameters, $callback, $callback_parameters = null);
@@ -130,14 +130,22 @@
 
             }
             else {
-            
+
                 if (function_exists($method)) {
                     $this->return = call_user_func_array($method, $parameters);
-                    # $this->_log("call $method()");
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                        "Function '{$method}' not found."), E_USER_ERROR);
+
+                    $wrappers = new Wrappers;
+
+                    if ($wrappers->has($method)) {
+                        $this->return = $wrappers->$method($parameters);
+                    }
+                    else {
+                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                            "Function '{$method}' not found."), E_USER_ERROR);
+                    }
+                    
                 }
 
             }
@@ -209,20 +217,47 @@
         }
 
         function __toString () {
-        
-            if ($this->constructor_parameters)
-                $constructor_parameters = "(" . implode(", ", $this->constructor_parameters) . ")";
 
-            if ($this->class)
-                $class = $this->class . $constructor_parameters . "::";
-
-            if (is_array($parameters))
-                $parameters = implode(", ", $this->parameters);
-                
-            $callback = $this->callback;
+            $class = $this->class;
             $method = $this->method;
+            $parameters = $this->parameters;
+            $constructor_parameters = $this->constructor_parameters;
+            $callback = $this->callback;
+            $parameters_types = array();
 
-            return sprintf("%s(%s%s(%s))", $callback, $class, $method, $parameters);
+            if ($class) {
+                if (is_array($constructor_parameters)) {
+
+                    foreach ($constructor_parameters as $parameter)
+                        $parameters_types[] = gipc_var_dump($parameter);
+
+                    $constructor_parameters = "(" . implode(", ", $parameters_types) . ")";
+                }
+
+                $method = "::" . $method;
+            }
+            else {
+                $constructor_parameters = gipc_var_dump($constructor_parameters);
+            }
+
+            $parameters_types = array();
+
+            if (is_array($parameters)) {
+                foreach ($parameters as $parameter)
+                    $parameters_types[] = gipc_var_dump($parameter);
+
+                $parameters = implode(", ", $parameters_types);
+            }
+            else {
+                $parameters = gipc_var_dump($parameters);
+            }
+
+            $string = sprintf("%s%s%s(%s)", $class, $constructor_parameters, $method, $parameters);
+
+            if ($callback)
+                $string = sprintf("%s(%s)", $callback, $string);
+
+            return $string;
         }
 
     }

@@ -29,7 +29,8 @@
             $calls = func_get_args();
 
             if (0 == count($calls))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "No calls defined."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    "No calls defined."), E_USER_ERROR);
 
             foreach ($calls as $call)
                 if (is_a($call, "Call")) {
@@ -37,7 +38,8 @@
                     $this->queue[$this->index] = $call;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Trying to enqueue something that is not a Call."), E_USER_ERROR);
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                        "Trying to enqueue something that is not a Call."), E_USER_ERROR);
                 }
 
             return $this;
@@ -70,14 +72,16 @@
                 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Unable to process Calls queue in the frontend."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    "Unable to process Calls queue in the frontend."), E_USER_ERROR);
             }
         }
 
         function process_callbacks() {
 
             if (GIPC_IS_BACKEND)
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Cannot execute callbacks in backend."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot execute callbacks in backend."), E_USER_ERROR);
 
             if (is_array($this->queue))
                 foreach ($this->queue as $call)

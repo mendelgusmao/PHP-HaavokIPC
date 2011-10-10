@@ -10,6 +10,7 @@
         Instances.class
         Call.class
         CallsQueue.class
+        Wrappers.class
         drivers/FileDriver.class
         drivers/MemcacheDriver.class
         drivers/ShmDriver.class
