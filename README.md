@@ -2,11 +2,12 @@
 
 Library to integrate legacy applications built under PHP 4 with PHP 5 applications and libraries.
 
-## Usage
+## Really, really basic usage
 
 This is the front end, i.e., a PHP 4 application:
 
 ```php
+# frontend.php
 <?php
 
     include "PHP-Ghetto-IPC/GhettoIPC.class.php";
@@ -31,13 +32,14 @@ This is the front end, i.e., a PHP 4 application:
     $ipc->execute(true);
 
     function callback ($string) {
-        echo $string;
+        echo "Back end said: ", $string;
     }
 ```
 
-This is the front end, i.e., a PHP 5 application
+This is the back end, i.e., a PHP 5 application
 
 ```php
+# backend.php
 <?php
 
     // Instantiate GhettoIPC in back end.
