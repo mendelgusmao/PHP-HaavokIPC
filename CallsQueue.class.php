@@ -59,12 +59,13 @@
 
         function process () {
 
-            $instances = new Instances();
-
             if (GIPC_IS_BACKEND) {
 
+                $instances = new Instances();
+                $wrappers = new Wrappers();                
+                
                 foreach ($this->queue as $index => $call) {
-                    $call->invoke($instances);
+                    $call->invoke($instances, $wrappers);
                     $this->queue[$index] = $call;
                 }
 
@@ -79,15 +80,16 @@
 
         function process_callbacks() {
 
-            if (GIPC_IS_BACKEND)
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot execute callbacks in backend."), E_USER_ERROR);
-
-            if (is_array($this->queue))
+            if (!GIPC_IS_BACKEND) {
+                
                 foreach ($this->queue as $call)
                     $call->callback();
-
-            return $this;
+                
+            }
+            else {
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot execute callbacks in backend."), E_USER_ERROR);
+            }
 
         }
 

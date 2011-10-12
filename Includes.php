@@ -8,8 +8,11 @@
         Configuration
         Runner.class
         Instances.class
-        Call.class
         CallsQueue.class
+        calls/Call.class
+        calls/FunctionCall.class
+        calls/StaticCall.class
+        calls/ObjectCall.class
         Wrappers.class
         drivers/FileDriver.class
         drivers/MemcacheDriver.class
