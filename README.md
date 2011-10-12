@@ -85,65 +85,71 @@ The execution is syncronous, following this order:
 ```php
 $call = new Call($callee, $parameters = void, $constructor_parameters = void, $callback = void, $additional_callback_parameters = void);
 ```
-_As NULL is a value that can be exchanged between the ends, doesn't make sense to use is_null. void is a constant meant to be the library null value_
+_As NULL is a value that can be exchanged between the ends, doesn't make sense to use is_null. void is a constant meant to be the library's null value_
     
 Where
 
-    * $callee - The static method, object method or function to be invoked
+* \$callee - The static method, object method or function to be invoked
 
-        When calling a function:
-        ```php
-        $call = new Call("function");
-        ```
-        ```php
-        $call = new Call(array("function"));
-        ```
+    When calling a function:
+    ```php
+    $call = new Call("function");
+    ```
+    ```php
+    $call = new Call(array("function"));
+    ```
 
-        When calling an object method
-        ```php
-        $call = new Call(array("class", "method"));
-        ```
-        
-        When calling a static method
-        ```php
-        $call = new Call(array("class", "::method"));
-        ```        
-        or
-        ```php
-        $call = new Call(array("class::method");
-        ```
-        easier:
-        ```php
-        $call = new Call("class::method");
-        ```
-        
-        If the call is to an object method, GhettoIPC will instantiate the class and store it in a container named Instances.
-        The container has a way to do "instance reusing", so, if the code needs to do two calls to the same object, and the second call
-        has its class name prepended by "&", PHP-Ghetto-IPC will not instantiate another object to the second call if there's an object 
-        of the same class instantiated when invoking the first call.
-        
-        Examples:
-        
-        ```php
-        $call = new Call("foobar", "baz");
-        $call = new Call("foobar", "baz");
-        ```
-        _Will instantiate two objects of class "foobar" and invoke the method "baz"_
+    When calling an object method
+    ```php
+    $call = new Call(array("class", "method"));
+    ```
 
-        ```php
-        $call = new Call("foobar", "baz");
-        $call = new Call("&foobar", "baz");
-        ```
-        _Will instantiate one object of class "foobar" in first call and invoke the method "baz" two times_
+    When calling a static method
+    ```php
+    $call = new Call(array("class", "::method"));
+    ```        
+    or
+    ```php
+    $call = new Call(array("class::method");
+    ```
+    easier:
+    ```php
+    $call = new Call("class::method");
+    ```
 
-        ```php
-        $call = new Call("&foobar", "baz");
-        ```
-        _Will instantiate one object of class "foobar", but, even if marked to reuse an instance, there is no instance in the container, so, it will instantiate_        
-        
-    * $parameters - Parameters to be passed to the function or class        
+    If the call is to an object method, GhettoIPC will instantiate the class and store it in a container named Instances.
+    The container has a way to do "instance reusing", so, if the code needs to do two calls to the same object, and the second call
+    has its class name prepended by "&", PHP-Ghetto-IPC will not instantiate another object to the second call if there's an object 
+    of the same class instantiated when invoking the first call.
 
-    ## Note about $parameters, $constructor_parameters and $additional_callback_parameters
+    Examples:
+
+    ```php
+    $call = new Call("foobar", "baz");
+    $call = new Call("foobar", "baz");
+    ```
+    _Will instantiate two objects of class "foobar" and invoke the method "baz"_
+
+    ```php
+    $call = new Call("foobar", "baz");
+    $call = new Call("&foobar", "baz");
+    ```
+    _Will instantiate one object of class "foobar" in first call and invoke the method "baz" two times_
+
+    ```php
+    $call = new Call("&foobar", "baz");
+    ```
+    _Will instantiate one object of class "foobar", but, even if marked to reuse an instance, there is no instance in the container, so, it will instantiate_        
+
+* \$parameters - Parameters to be passed to the function or class
+
+* \$constructor_parameters - Parameters to be passed to the class constructor
+    
+* \$callback - Function or static method (PHP 5 only) to be called when the execution returns to front end
+    
+* \$additional_callback_parameters - Parameters to be passed to callback in addition to the value returned by a call in back end
+
+## Note about \$parameters, \$constructor_parameters and \$additional_callback_parameters
         
         Important: The point about these parameters is that every value passed to them
         that is not an array will be the first element of an array to make easier to pass values to call_user_func_array().
