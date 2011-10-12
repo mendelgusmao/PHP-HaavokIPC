@@ -18,10 +18,10 @@
         var $queue = array();
         var $index = 0;
 
-        function create ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
-            
-            $call = new Call($class_method, $parameters, $constructor_parameters, $callback, $additional_callback_parameters);
-            return $this->enqueue($call);
+        function create ($callee, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
+            return $this->enqueue(
+                new Call($callee, $parameters, $constructor_parameters, $callback, $additional_callback_parameters)
+            );
         }
         
         function enqueue () {

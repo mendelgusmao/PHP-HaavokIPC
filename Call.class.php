@@ -8,7 +8,7 @@
      * the class method or function that will be called in backend, the objects
      * it will use and the invoking of itself and its callback (if any)
      *
-     * When reading $class_method, think in "class method" OR "function"
+     * When reading $callee, think in "class method" OR "function"
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
      * @copyright Mendel Gusmao
@@ -29,43 +29,25 @@
         var $return;
         var $reuse_instance = false;
         
-        function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
+        function __construct ($callee, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
-            $this->Call($class_method, $parameters, $constructor_parameters, $callback, $additional_callback_parameters);
+            $this->Call($callee, $parameters, $constructor_parameters, $callback, $additional_callback_parameters);
             
         }
 
-        function Call ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
+        function Call ($callee, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
-            if (is_array($class_method)) {
+            $this->_define_callee($callee);
 
-                if (2 == count($class_method)) {
-
-                    if ("&" == substr($class_method[0], 0, 1)) {
-                        $this->reuse_instance = true;
-                        $class_method[0] = substr($class_method[0], 1);
-                    }
-
-                    if ("::" == substr($class_method[1], 0, 2)) {
-                        $this->is_static = true;
-                        $class_method[1] = substr($class_method[1], 2);
-                    }                    
-                    
-                    $this->class = $class_method[0];
-                    $this->method = $class_method[1];
-                    
-                }
-                else if (1 == count($class_method)) {
-                    $this->method = $class_method[0];
-                }
-                else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Wrong parameter count for class method/function name."), E_USER_ERROR);
-                }
-
-            }
-            else {
-                $this->method = $class_method;
-            }
+            if ($this->is_static && !$this->class) {
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    "No class specified for method '{$scope['method']}'"), E_USER_ERROR);                        
+            }            
+            
+            if ("&" == substr($this->class, 0, 1)) {
+                $this->reuse_instance = true;
+                $this->class = substr($this->class, 1);
+            }            
 
             $this->parameters = $parameters;
             $this->constructor_parameters = $constructor_parameters;
@@ -80,6 +62,59 @@
             
         }
 
+        function _define_callee ($callee) {
+            
+            if (is_array($callee)) {
+
+                if (2 == count($callee)) {
+
+                    $this->class = $callee[0];
+                    $this->method = $callee[1];
+                    $scope = $this->_is_static_method($callee[1]);
+
+                    if ($scope !== false) {
+                        $this->is_static = true;
+                        $this->method = $scope["method"];
+                    }
+
+                }
+                else if (1 == count($callee)) {
+
+                    $scope = $this->_is_static_method($callee[0]);
+
+                    if ($scope !== false) {
+                        $this->is_static = true;
+                        list($this->class, $this->method) = $scope;
+                    }
+                    else {
+                        $this->method = $callee[0];
+                    }
+
+                }
+                else {
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                        "Wrong parameter count for class method/function name."), E_USER_ERROR);
+                }
+
+            }
+            else {
+                
+                $scope = $this->_is_static_method($callee);
+
+                if ($scope !== false) {
+                    if ($scope["class"] != "") {
+                        $this->is_static = true;
+                        list($this->class, $this->method) = $scope;
+                    }
+                }
+                else {
+                    $this->method = $callee;
+                }                
+                
+            }
+            
+        }
+        
         function invoke (&$instances) {
 
             $class = $this->class;
@@ -258,6 +293,27 @@
                 $string = sprintf("%s(%s)", $callback, $string);
 
             return $string;
+        }
+        
+        function _is_static_method ($callee) {
+            
+            $class = "";
+            $method = "";
+            
+            $sro = strpos($callee, "::");
+            
+            if ($sro !== false) {
+                $class = substr($callee, 0, $sro);
+                $method = substr($callee, $sro + 2);
+                
+                return array(
+                    "class" => $class, 
+                    "method" => $method
+                );
+            }
+            
+            return false;
+            
         }
 
     }
