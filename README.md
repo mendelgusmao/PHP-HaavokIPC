@@ -167,7 +167,6 @@ The idea is to call _foo(array("bar"))_, but instead of this, _foo("bar")_ will 
 ```php
 $foo = array("bar");
 $call = new Call("baz", array($foo));
-        ```
+```
 
-(to be continued)  
-  
+(to be continued)
