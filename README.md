@@ -56,6 +56,7 @@ This is the back end, i.e., a PHP 5 application
 ## How it works
     
 The execution is syncronous, following this order:
+    
 * At front end: Build the calls
 * At front end: Serialize and export the serialized data to driver
 * At front end: Execute the back end
