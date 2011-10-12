@@ -93,27 +93,35 @@ Where
 * $callee - The static method, object method or function to be invoked
 
     When calling a function:
+
     ```php
     $call = new Call("function");
     ```
+
     ```php
     $call = new Call(array("function"));
     ```
 
     When calling an object method
+    
     ```php
     $call = new Call(array("class", "method"));
     ```
 
     When calling a static method
+    
     ```php
     $call = new Call(array("class", "::method"));
     ```        
+    
     or
+    
     ```php
     $call = new Call(array("class::method");
     ```
+    
     easier:
+    
     ```php
     $call = new Call("class::method");
     ```
