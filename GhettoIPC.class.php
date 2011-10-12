@@ -140,8 +140,8 @@
                 }
                 else {
 
-                    $this->application = realpath($this->application);
-                    $this->application = escapeshellcmd($this->application);
+                    $this->application = escapeshellcmd(
+                        str_replace("\\", "/", realpath($this->application)));
 
                     $this->_log("start execute");
 
@@ -150,7 +150,7 @@
                     $runner_params = array();
 
                     if (GIPC_PREPEND_IPC_CLASS)
-                        $runner_params["-d auto_prepend_file"] = __FILE__;
+                        $runner_params["-d auto_prepend_file"] = "\"" . str_replace("\\", "/", __FILE__) . "\"";
 
                     $runner_params = array_merge(
                         $runner_params,

@@ -89,6 +89,10 @@
         }
 
         function __toString () {
+            return $this->describe();
+        }
+        
+        function describe ($with_callback = true) {
 
             $class = $this->class;
             $method = $this->method;
@@ -126,7 +130,7 @@
 
             $string = sprintf("%s%s%s(%s)", $class, $constructor_parameters, $method, $parameters);
 
-            if ($callback != void)
+            if ($callback != void && $with_callback)
                 $string = sprintf("%s(%s)", $callback, $string);
 
             return $string;
@@ -134,9 +138,13 @@
 
         function _filter_resource_return () {
             if (is_resource($this->return)) {
+                
+                $describe = $this->describe(false);
+                
                 $this->return = void;                
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                "Value returned is a resource."), E_USER_ERROR);
+                "Value returned by {$describe} is a resource."), E_USER_ERROR);
+                
             }
         }
         

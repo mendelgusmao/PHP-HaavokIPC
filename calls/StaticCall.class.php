@@ -22,7 +22,7 @@
 
         function __construct ($callee, $parameters = void, $callback = void, $additional_callback_parameters = void) {
 
-            $this->Call($callee, $parameters, $callback, $additional_callback_parameters);
+            $this->StaticCall($callee, $parameters, $callback, $additional_callback_parameters);
             
         }
 
