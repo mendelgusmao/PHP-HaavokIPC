@@ -56,14 +56,14 @@ This is the back end, i.e., a PHP 5 application
 ## How it works
     
 The execution is syncronous, following this order:
-    * At front end: Build the calls
-    * At front end: Serialize and export the serialized data to driver
-    * At front end: Execute the back end
-    * At back end: Import serialized data and unserialize it
-    * At back end: Process the calls queue, invoking the calls
-    * At back end: Serialize and export the serialized data to driver
-    * At front end: Import serialized data, unserialize it
-    * At front end: Grab the results from every call and execute the respective callbacks, if any    
+* At front end: Build the calls
+* At front end: Serialize and export the serialized data to driver
+* At front end: Execute the back end
+* At back end: Import serialized data and unserialize it
+* At back end: Process the calls queue, invoking the calls
+* At back end: Serialize and export the serialized data to driver
+* At front end: Import serialized data, unserialize it
+* At front end: Grab the results from every call and execute the respective callbacks, if any    
     
 ## Some considerations
     
