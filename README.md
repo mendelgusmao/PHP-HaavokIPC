@@ -89,7 +89,7 @@ _As NULL is a value that can be exchanged between the ends, doesn't make sense t
     
 Where
 
-* \$callee - The static method, object method or function to be invoked
+* $callee - The static method, object method or function to be invoked
 
     When calling a function:
     ```php
@@ -141,30 +141,30 @@ Where
     ```
     _Will instantiate one object of class "foobar", but, even if marked to reuse an instance, there is no instance in the container, so, it will instantiate_        
 
-* \$parameters - Parameters to be passed to the function or class
+* $parameters - Parameters to be passed to the function or class
 
-* \$constructor_parameters - Parameters to be passed to the class constructor
+* $constructor_parameters - Parameters to be passed to the class constructor
     
-* \$callback - Function or static method (PHP 5 only) to be called when the execution returns to front end
+* $callback - Function or static method (PHP 5 only) to be called when the execution returns to front end
     
-* \$additional_callback_parameters - Parameters to be passed to callback in addition to the value returned by a call in back end
+* $additional_callback_parameters - Parameters to be passed to callback in addition to the value returned by a call in back end
 
-## Note about \$parameters, \$constructor_parameters and \$additional_callback_parameters
+## Note about $parameters, $constructor_parameters and $additional_callback_parameters
         
-        Important: The point about these parameters is that every value passed to them
-        that is not an array will be the first element of an array to make easier to pass values to call_user_func_array().
-        If you must pass an array to any of these variables, you must first create another array with the first array as an element
+Important: The point about these parameters is that every value passed to them
+that is not an array will be the first element of an array to make easier to pass values to call_user_func_array().
+If you must pass an array to any of these variables, you must first create another array with the first array as an element
 
-        For instance:
-        ```php
-        $foo = array("bar");
-        $call = new Call("baz", $foo);
-        ```
+For instance:
+```php
+$foo = array("bar");
+$call = new Call("baz", $foo);
+```
 
-        The idea is to call _foo(array("bar"))_, but instead of this, _foo("bar")_ will be called. To avoid this, the right way is:
-        ```php
-        $foo = array("bar");
-        $call = new Call("baz", array($foo));
+The idea is to call _foo(array("bar"))_, but instead of this, _foo("bar")_ will be called. To avoid this, the right way is:
+```php
+$foo = array("bar");
+$call = new Call("baz", array($foo));
         ```
 
 (to be continued)  
