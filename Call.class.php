@@ -31,7 +31,7 @@
         
         function __construct ($class_method, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
 
-            $this->Call($class_method, $parameters, $constructor_parameters, $callback, $callback_parameters = null);
+            $this->Call($class_method, $parameters, $constructor_parameters, $callback, $additional_callback_parameters);
             
         }
 
