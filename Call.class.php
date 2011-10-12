@@ -118,58 +118,52 @@
         
         function invoke (&$instances) {
 
-            $class = $this->class;
-            $method = $this->method;
-            $is_static = $this->is_static;
-            $parameters = $this->parameters;
-            $constructor_parameters = $this->constructor_parameters;
-            $reuse_instance = $this->reuse_instance;
-
-            if ($class) {
-                if (class_exists($class)) {
+            if ($this->class) {
+             
+                if (class_exists($this->class)) {
                     
-                    if ($is_static) {
-                        $object = $class;
+                    if ($this->is_static) {
+                        $object = $this->class;
                     }
                     else {
-                        $object = $instances->has_instances_of($class) && $reuse_instance
-                                ? $instances->get($class)
-                                : $instances->get_or_add($class, $constructor_parameters);
+                        $object = $instances->has_instances_of($this->class) && $this->reuse_instance
+                                ? $instances->get($this->class)
+                                : $instances->get_or_add($this->class, $this->constructor_parameters);
                     }
 
-                    if (method_exists($object, $method)) {
+                    if (method_exists($object, $this->method)) {
                         $this->return = call_user_func_array(
-                            array($object, $method),
-                            $parameters
+                            array($object, $this->method),
+                            $this->parameters
                         );
                     }
                     else {
                         trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                            "Method '{$method}' not found in class '{$class}'."), E_USER_ERROR);
+                            "Method '{$this->method}' not found in class '{$this->class}'."), E_USER_ERROR);
                     }
                     
                 }
                 else {
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                        "Class '{$class}' doesn't exist."), E_USER_ERROR);
+                        "Class '{$this->class}' doesn't exist."), E_USER_ERROR);
                 }
 
             }
             else {
 
-                if (function_exists($method)) {
-                    $this->return = call_user_func_array($method, $parameters);
+                if (function_exists($this->method)) {
+                    $this->return = call_user_func_array($this->method, $this->parameters);
                 }
                 else {
 
                     $wrappers = new Wrappers;
 
-                    if ($wrappers->has($method)) {
-                        $this->return = $wrappers->$method($parameters);
+                    if ($wrappers->has($this->method)) {
+                        $this->return = $wrappers->$this->method($this->parameters);
                     }
                     else {
                         trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                            "Function '{$method}' not found."), E_USER_ERROR);
+                            "Function '{$this->method}' not found."), E_USER_ERROR);
                     }
                     
                 }
@@ -187,7 +181,7 @@
         function callback () {
 
             if (empty($this->callback) || $this->callback == void)
-                return false;
+                return void;
             
             array_unshift($this->additional_callback_parameters, $this->return);
 
