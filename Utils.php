@@ -18,5 +18,11 @@
 
         return substr($return, 0, strpos($return, " "));
     }
+    
+    function gipc_to_array ($var) {
+        
+        return is_array($var) ? $var : ($var == void ? array() : array($var));
+            
+    }
 
 ?>
