@@ -156,12 +156,14 @@ that is not an array will be the first element of an array to make easier to pas
 If you must pass an array to any of these variables, you must first create another array with the first array as an element
 
 For instance:
+    
 ```php
 $foo = array("bar");
 $call = new Call("baz", $foo);
 ```
 
 The idea is to call _foo(array("bar"))_, but instead of this, _foo("bar")_ will be called. To avoid this, the right way is:
+
 ```php
 $foo = array("bar");
 $call = new Call("baz", array($foo));
