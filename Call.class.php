@@ -29,36 +29,20 @@
         var $return;
         var $reuse_instance = false;
         
-        function __construct ($callee, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
+        function __construct ($callee, $parameters = void, $constructor_parameters = void, $callback = void, $additional_callback_parameters = void) {
 
             $this->Call($callee, $parameters, $constructor_parameters, $callback, $additional_callback_parameters);
             
         }
 
-        function Call ($callee, $parameters = null, $constructor_parameters = null, $callback = null, $additional_callback_parameters = null) {
+        function Call ($callee, $parameters = void, $constructor_parameters = void, $callback = void, $additional_callback_parameters = void) {
 
-            $this->_define_callee($callee);
+            $this->parameters = gipc_to_array($parameters);
+            $this->constructor_parameters = gipc_to_array($constructor_parameters);
+            $this->additional_callback_parameters = gipc_to_array($additional_callback_parameters);
+            $this->callback = gipc_to_array($callback);
 
-            if ($this->is_static && !$this->class) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
-                    "No class specified for method '{$scope['method']}'"), E_USER_ERROR);                        
-            }            
-            
-            if ("&" == substr($this->class, 0, 1)) {
-                $this->reuse_instance = true;
-                $this->class = substr($this->class, 1);
-            }            
-
-            $this->parameters = $parameters;
-            $this->constructor_parameters = $constructor_parameters;
-            $this->callback = $callback;
-
-            if (!is_array($additional_callback_parameters))
-                $additional_callback_parameters = is_null($additional_callback_parameters)
-                                                ? array()
-                                                : array($additional_callback_parameters);
-
-            $this->additional_callback_parameters = $additional_callback_parameters;
+            $this->_define_callee($callee);            
             
         }
 
@@ -113,6 +97,23 @@
                 
             }
             
+            if ("&" == substr($this->class, 0, 1)) {
+                if (!$this->is_static) {
+                    $this->reuse_instance = true;
+                    $this->class = substr($this->class, 1);
+                }
+                else {
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                        "Can't allow instance reusing when calling a static method."), E_USER_ERROR);
+                }
+            }
+            
+            if ($this->is_static && !$this->class) {
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    "No class specified for method '{$scope['method']}'"), E_USER_ERROR);                        
+            }              
+            
+            
         }
         
         function invoke (&$instances) {
@@ -123,16 +124,6 @@
             $parameters = $this->parameters;
             $constructor_parameters = $this->constructor_parameters;
             $reuse_instance = $this->reuse_instance;
-
-            if (!is_array($parameters))
-                $parameters = is_null($parameters)
-                            ? array()
-                            : array($parameters);
-
-            if (!is_array($constructor_parameters))
-                $constructor_parameters = is_null($constructor_parameters)
-                                        ? array()
-                                        : array($constructor_parameters);
 
             if ($class) {
                 if (class_exists($class)) {
@@ -195,11 +186,8 @@
 
         function callback () {
 
-            if (!isset($this->callback) || is_null($this->callback))
+            if (empty($this->callback) || $this->callback == void)
                 return false;
-
-            if (!is_array($this->callback))
-                $this->callback = array($this->callback);
             
             array_unshift($this->additional_callback_parameters, $this->return);
 

@@ -31,4 +31,6 @@
     define("GIPC_EXPORT_WAY_F2B", 2);
     define("GIPC_EXPORT_WAY_B2F", 3);
 
+    define("void", "§\0§\0\0§\0\0\0§");  
+
 ?>
