@@ -7,12 +7,14 @@
     $calls = new CallsQueue;
     
     $calls->enqueue(
-        new Call("fopen", array(__FILE__, "r"), null, "var_dump"),
-        new Call("compare_php_version", PHP_VERSION, null, "var_dump"),
-        new Call(array("Backend", "backend_md5"), "The World", null, "var_dump"),
-        new Call(array("Backend2", "backend_sha1"), null, array("str" => "The World"), "var_dump"),
-        new Call(array("Backend3", "::backend_version"), null, null, "var_dump"),
-        new Call(array("&Backend2", "backend_raw"), null, null, "callback", 1)
+        new FunctionCall("fopen", array(__FILE__, "r"), "var_dump"),
+        new FunctionCall("compare_php_version", PHP_VERSION, "var_dump"),
+        new ObjectCall(array("Backend", "backend_md5"), "The World", "var_dump"),
+        new ObjectCall(array("Backend2", "backend_sha1", "The World"), void, "var_dump"),
+        new StaticCall(array("Backend3", "::backend_version"), void, "var_dump"),
+        new ObjectCall(array("&Backend2", "backend_raw"), void, "callback", 1),
+        new FunctionCall("eval", "print_r(123,1)", "var_dump")
+            
     );
 
     function callback () {
@@ -22,7 +24,6 @@
     }
 
     $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
-    $ipc->set_export_options(GIPC_EXPORT_SERVER);
     $ipc->execute(true); // execute callbacks
     
     echo "#################################################################\n";
