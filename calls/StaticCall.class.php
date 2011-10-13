@@ -106,14 +106,10 @@
 
         function _parse_static_method ($callee) {
             
-            $class = "";
-            $method = "";
-            
             $sro = strpos($callee, "::");
             
             if ($sro !== false) {
-                $class = substr($callee, 0, $sro);
-                $method = substr($callee, $sro + 2);
+                list($class, $method) = explode("::", $callee);
                 
                 return array(
                     "class" => $class, 
