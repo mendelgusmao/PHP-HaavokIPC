@@ -10,7 +10,6 @@
         Instances.class
         CallsQueue.class
         calls/Call.class
-        calls/FunctionCall.class
         calls/StaticCall.class
         calls/ObjectCall.class
         Wrappers.class

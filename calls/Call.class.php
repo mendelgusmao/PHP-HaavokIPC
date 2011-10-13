@@ -29,6 +29,47 @@
         var $return;
         var $reuse_instance = false;
 
+        function __construct ($callee, $parameters = void, $callback = void, $additional_callback_parameters = void) {
+
+            $this->Call($callee, $parameters, $callback, $additional_callback_parameters);
+
+        }
+
+        function Call ($callee, $parameters = void, $callback = void, $additional_callback_parameters = void) {
+
+            $this->parameters = $parameters;
+            $this->callback = $callback;
+            $this->additional_callback_parameters = $additional_callback_parameters;
+
+            $this->method = $callee;
+
+        }
+
+        function invoke (&$instances, &$wrappers) {
+
+            $parameters = gipc_to_array($this->parameters);
+
+            if (function_exists($this->method)) {
+                $this->return = call_user_func_array($this->method, $parameters);
+            }
+            else {
+
+                if ($wrappers->has($this->method)) {
+                    $method = $this->method;
+                    $this->return = $wrappers->$method($parameters);
+                }
+                else {
+                    $this->return = void;
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                        "Function '{$this->method}' not found."), E_USER_ERROR);
+                }
+
+            }
+
+            $this->_filter_resource_return();
+
+        }
+
         function callback () {
             
             if (empty($this->callback) || $this->callback == void)
