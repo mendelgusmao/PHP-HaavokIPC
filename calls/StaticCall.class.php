@@ -36,8 +36,7 @@
                 
                 if (2 == count($callee)) {
                     $this->class = $callee[0];
-                    $scope = $this->_parse_static_method($callee[1]);
-                    $this->method = $scope["method"];
+                    $this->method = $callee[1];
                 }
                 else if (1 == count($callee)) {
                     
