@@ -109,12 +109,7 @@
             $sro = strpos($callee, "::");
             
             if ($sro !== false) {
-                list($class, $method) = explode("::", $callee);
-                
-                return array(
-                    "class" => $class, 
-                    "method" => $method
-                );
+                return explode("::", $callee);
             }
             
             return false;
