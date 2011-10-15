@@ -108,9 +108,8 @@
             
             $sro = strpos($callee, "::");
             
-            if ($sro !== false) {
+            if ($sro !== false)
                 return explode("::", $callee);
-            }
             
             return false;
             
