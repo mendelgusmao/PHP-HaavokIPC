@@ -88,20 +88,25 @@ All configuration is done with constants defined in Configuration.php
 The most important are:
 
 * GIPC_BACKEND_BIN
-    The path of PHP binary that will run as back end
+    
+The path of PHP binary that will run as back end
 
 * GIPC_LOGFILE
-    The path of the file that will store log information
+    
+The path of the file that will store log information
 
 * GIPC_LOG
-    Enable or disable logging
+    
+Enable or disable logging
 
 * GIPC_PREPEND_IPC_CLASS
-    Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
-    _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
+    
+Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
+_It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
 
 * GIPC_FORCE_NO_OUTPUT
-    Enable or disable output buffering in back end from the instantiation of GhettoIPC
+    
+Enable or disable output buffering in back end from the instantiation of GhettoIPC
     
 ## Setting the driver
 
