@@ -23,7 +23,7 @@
     define("GIPC_LOGFILE", "/var/tmp/gipc.log");
     define("GIPC_LOG", true);
 
-    /* Define whether GhettoIPC.class.php will be prepend in back end with "-d auto_prepend_file" argument */
+    /* Define whether GhettoIPC.class.php will be prepended in back end with "-d auto_prepend_file" argument */
     define("GIPC_PREPEND_IPC_CLASS", true);
 
     /* Force GhettoIPC to use output buffering in back end */

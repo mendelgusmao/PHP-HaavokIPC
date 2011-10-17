@@ -20,13 +20,12 @@
     define("GIPC_EXPORT_COOKIE", 32);
     define("GIPC_EXPORT_SESSION", 64);
     define("GIPC_EXPORT_CONSTANTS", 128);
-    define("GIPC_EXPORT_CALLS", 256);
-    define("GIPC_EXPORT_HEADERS", 512);
-    define("GIPC_EXPORT_ENV", 1024);
-    define("GIPC_EXPORT_FILES", 2048);
-    define("GIPC_EXPORT_DEBUG", 4096);
-    define("GIPC_EXPORT_OUTPUT", 8192);
-    define("GIPC_EXPORT_FORCE_NO_OUTPUT", 16384);
+    define("GIPC_EXPORT_HEADERS", 256);
+    define("GIPC_EXPORT_ENV", 512);
+    define("GIPC_EXPORT_FILES", 1024);
+    define("GIPC_EXPORT_DEBUG", 2048);
+    define("GIPC_EXPORT_OUTPUT", 4096);
+    define("GIPC_EXPORT_FORCE_NO_OUTPUT", 8192);
 
     define("GIPC_EXPORT_WAY_BOTH", 1);
     define("GIPC_EXPORT_WAY_F2B", 2);
