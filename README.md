@@ -81,27 +81,27 @@ The execution is syncronous, following this order:
 * GhettoIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler
     Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
 
-## Basic configuration    
+## Basic configuration
 
 All configuration is done with constants defined in Configuration.php
     
 The most important are:
-    
-    * GIPC_BACKEND_BIN
-        The path of PHP binary that will run as back end
 
-    * GIPC_LOGFILE
-        The path of the file that will store log information
-    
-    * GIPC_LOG
-        Enable or disable logging
+* GIPC_BACKEND_BIN
+    The path of PHP binary that will run as back end
 
-    * GIPC_PREPEND_IPC_CLASS
-        Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
-        _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
+* GIPC_LOGFILE
+    The path of the file that will store log information
 
-    * GIPC_FORCE_NO_OUTPUT
-        Enable or disable output buffering in back end from the instantiation of GhettoIPC
+* GIPC_LOG
+    Enable or disable logging
+
+* GIPC_PREPEND_IPC_CLASS
+    Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
+    _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
+
+* GIPC_FORCE_NO_OUTPUT
+    Enable or disable output buffering in back end from the instantiation of GhettoIPC
     
 ## Setting the driver
 
