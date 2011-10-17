@@ -1,4 +1,4 @@
-# PHP-Ghetto-IPC
+# PHP-Ghetto-IPC / GhettoIPC
 
 Library to integrate legacy applications built under PHP 4 with PHP 5 applications and libraries.
 
@@ -68,17 +68,17 @@ The execution is syncronous, following this order:
     
 ## Some considerations
     
-* PHP-Ghetto-IPC is meant to be portable between all versions of PHP, so...
+* GhettoIPC is meant to be portable between all versions of PHP, so...
     * There are no visibility keywords in classes definition, as there is no implementation of visibility in PHP 4
     * There are no interfaces - I miss them, they would be very useful defining the drivers
-    * A lot of good sense is needed to avoid interference in PHP-Ghetto-IPC behavior. Respect the API and you'll be fine
+    * A lot of good sense is needed to avoid interference in GhettoIPC behavior. Respect the API and you'll be fine
     
-* Don't expect performance. PHP-Ghetto-IPC is not meant to be fast
+* Don't expect performance. GhettoIPC is not meant to be fast
     * In average, between the first data serializing and the end of the execution of callbacks,
     it took 0.01 second, running in a Core i7 (Ubuntu 11.04) and in a Phenom II X4 965 (Windows XP)
     - Also, shell_exec() performed much faster than proc_open()
     
-* PHP-Ghetto-IPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler
+* GhettoIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler
     Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
 
 ## Basic configuration    
@@ -108,14 +108,16 @@ The most important are:
 For now 3 drivers are avaliable:
 
 * FileDriver
-It's the first driver created for PHP-Ghetto-IPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
+    
+It's the first driver created for GhettoIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
 
 ```php
 define("GIPC_EXT", ".persistence"); // Filename extension
 define("GIPC_TMP", "/tmp/");        // Temporary directory
 ```   
     
-* MemcacheDriver    
+* MemcacheDriver
+
 This driver uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
 
 ```php
@@ -124,7 +126,9 @@ define("GIPC_MEMCACHEDP", 11211);      // Port of the memcache server
 ```
 
 * ShmDriver
-This driver uses shared memory and doesn't serializes data before exporting. You can configure it using these constants:
+
+This driver uses shared memory and doesn't serializes data before exporting. It's more appropriated for *nix environments and won't work in Windows.
+You can configure it using these constants:
 
 ```php
 define("GIPC_SHM_SIZE", 32768); // Initial shared memory segment size
@@ -132,7 +136,7 @@ define("GIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
 ```
 
 * StdIODriver
-This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in PHP-Ghetto-IPC core.
+This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in GhettoIPC core.
 
 _There is no need to define a driver in back end. The information about what driver was configured in front end is passed via command line to back end_
 
@@ -182,7 +186,7 @@ Where
 
     If the call is to an object method, GhettoIPC will instantiate the class and store it in a container named Instances.
     The container has a way to do "instance reusing", so, if the code needs to do two calls to the same object, and the second call
-    has its class name prepended by "&", PHP-Ghetto-IPC will not instantiate another object to the second call if there's an object 
+    has its class name prepended by "&", GhettoIPC will not instantiate another object to the second call if there's an object 
     of the same class instantiated when invoking the first call.
 
     Examples:
@@ -260,4 +264,4 @@ And $value can be:
 * GIPC_EXPORT_WAY_B2F - Export from back end to front end
 * GIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
 
-Exception: For GIPC_EXPORT_FORCE_NO_OUTPUT the value is boolean
+Exception: For GIPC_EXPORT_HEADERS, GIPC_EXPORT_DEBUG, GIPC_EXPORT_FORCE_NO_OUTPUT, and GIPC_EXPORT_OUTPUT the value is boolean
