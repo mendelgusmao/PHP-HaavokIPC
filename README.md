@@ -81,12 +81,68 @@ The execution is syncronous, following this order:
 * PHP-Ghetto-IPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler
     Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
 
+## Basic configuration    
+
+All configuration is done with constants defined in Configuration.php
+    
+The most important are:
+    
+    * GIPC_BACKEND_BIN
+        The path of PHP binary that will run as back end
+
+    * GIPC_LOGFILE
+        The path of the file that will store log information
+    
+    * GIPC_LOG
+        Enable or disable logging
+
+    * GIPC_PREPEND_IPC_CLASS
+        Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
+        _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
+
+    * GIPC_FORCE_NO_OUTPUT
+        Enable or disable output buffering in back end from the instantiation of GhettoIPC
+    
+## Setting the driver
+
+For now 3 drivers are avaliable:
+
+* FileDriver
+It's the first driver created for PHP-Ghetto-IPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
+
+```php
+define("GIPC_EXT", ".persistence"); // Filename extension
+define("GIPC_TMP", "/tmp/");        // Temporary directory
+```   
+    
+* MemcacheDriver    
+This driver uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
+
+```php
+define("GIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
+define("GIPC_MEMCACHEDP", 11211);      // Port of the memcache server
+```
+
+* ShmDriver
+This driver uses shared memory and doesn't serializes data before exporting. You can configure it using these constants:
+
+```php
+define("GIPC_SHM_SIZE", 32768); // Initial shared memory segment size
+define("GIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
+```
+
+* StdIODriver
+This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in PHP-Ghetto-IPC core.
+
+_There is no need to define a driver in back end. The information about what driver was configured in front end is passed via command line to back end_
+
 ## Building a call
     
 ```php
-$call = new Call($callee, $parameters = void, $constructor_parameters = void, $callback = void, $additional_callback_parameters = void);
+$call = new (Static|Object)?Call($callee, $parameters = void, $callback = void, $additional_callback_parameters = void);
 ```
-_As NULL is a value that can be exchanged between the ends, doesn't make sense to use is_null. void is a constant meant to be the library's null value_
+_As NULL is a value that can be exchanged between the ends, then it makes no sense to use is_null in certain situations.
+void is a constant meant to be the "library's null value"._
     
 Where
 
@@ -96,34 +152,32 @@ Where
 
     ```php
     $call = new Call("function");
-    ```
-
-    ```php
+    // or
     $call = new Call(array("function"));
     ```
 
     When calling an object method
     
     ```php
-    $call = new Call(array("class", "method"));
+    $call = new ObjectCall(array("class", "method"));
     ```
 
+    Instantiating a class with constructor parameters before calling the desired method
+    
+    ```php
+    $call = new ObjectCall(array("class", "method", "constructor parameter"));
+    // or
+    $call = new ObjectCall(array("class", "method", array("constructor parameter 1", "constructor parameter 2")));
+    ```
+    
     When calling a static method
     
     ```php
-    $call = new Call(array("class", "::method"));
-    ```        
-    
-    or
-    
-    ```php
-    $call = new Call(array("class::method");
-    ```
-    
-    easier:
-    
-    ```php
-    $call = new Call("class::method");
+    $call = new StaticCall(array("class", "method"));
+    // or
+    $call = new StaticCall(array("class::method"));
+    // easier!
+    $call = new StaticCall("class::method");
     ```
 
     If the call is to an object method, GhettoIPC will instantiate the class and store it in a container named Instances.
@@ -134,25 +188,23 @@ Where
     Examples:
 
     ```php
-    $call = new Call("foobar", "baz");
-    $call = new Call("foobar", "baz");
+    $call = new ObjectCall(array("foobar", "baz"));
+    $call = new ObjectCall(array("foobar", "baz"));
     ```
     _Will instantiate two objects of class "foobar" and invoke the method "baz"_
 
     ```php
-    $call = new Call("foobar", "baz");
-    $call = new Call("&foobar", "baz");
+    $call = new ObjectCall(array("foobar", "baz"));
+    $call = new ObjectCall(array("&foobar", "baz"));
     ```
     _Will instantiate one object of class "foobar" in first call and invoke the method "baz" two times_
 
     ```php
-    $call = new Call("&foobar", "baz");
+    $call = new ObjectCall(array("&foobar", "baz"));
     ```
     _Will instantiate one object of class "foobar", but, even if marked to reuse an instance, there is no instance in the container, so, it will instantiate_        
 
 * $parameters - Parameters to be passed to the function or class
-
-* $constructor_parameters - Parameters to be passed to the class constructor
     
 * $callback - Function or static method (PHP 5 only) to be called when the execution returns to front end
     
@@ -160,9 +212,8 @@ Where
 
 ## Note about $parameters, $constructor_parameters and $additional_callback_parameters
         
-Important: The point about these parameters is that every value passed to them
-that is not an array will be the first element of an array to make easier to pass values to call_user_func_array().
-If you must pass an array to any of these variables, you must first create another array with the first array as an element
+Important: The point about these parameters is that every value passed to them that is not an array will be the first element of an array to make easier to pass values to call_user_func_array(). 
+    If you must pass an array to any of these variables, you must first create another array with the first array as an element
 
 For instance:
     
@@ -178,4 +229,35 @@ $foo = array("bar");
 $call = new Call("baz", array($foo));
 ```
 
-(to be continued)
+## Sending extra data to back end
+
+Before execute() in front end:
+
+```php
+$ipc->set_export_options($option, $value);
+```
+
+Where $option can be:
+
+* GIPC_EXPORT_GLOBALS - Export $GLOBALS
+* GIPC_EXPORT_REQUEST - Export $_REQUEST
+* GIPC_EXPORT_POST - Export $_POST
+* GIPC_EXPORT_GET - Export $_GET
+* GIPC_EXPORT_SERVER - Export $_SERVER
+* GIPC_EXPORT_COOKIE - Export $_COOKIE
+* GIPC_EXPORT_SESSION - Export $_SESSION
+* GIPC_EXPORT_CONSTANTS - Export defined constants
+* GIPC_EXPORT_HEADERS - Export generated headers 
+* GIPC_EXPORT_ENV - Export $_ENV
+* GIPC_EXPORT_FILES - Export $_FILES
+* GIPC_EXPORT_DEBUG - Export debug_backtrace() result
+* GIPC_EXPORT_OUTPUT - Export stdout
+* GIPC_EXPORT_FORCE_NO_OUTPUT - Force back end to use output buffering
+
+And $value can be:
+
+* GIPC_EXPORT_WAY_F2B - Export from front end to back end
+* GIPC_EXPORT_WAY_B2F - Export from back end to front end
+* GIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
+
+Exception: For GIPC_EXPORT_FORCE_NO_OUTPUT the value is boolean
