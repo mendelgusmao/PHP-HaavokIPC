@@ -83,9 +83,9 @@
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
-                if (GIPC_LOG && !is_writable(GIPC_TMP))
+                if (GIPC_LOG && !is_writable(dirname(GIPC_LOGFILE)))
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                        "Cannot initialize. Directory '" . GIPC_TMP . "' not found or not writable."), E_USER_ERROR);
+                        "Cannot initialize. Directory '" . dirname(GIPC_LOGFILE) . "' is not writable."), E_USER_ERROR);
 					
             }
 

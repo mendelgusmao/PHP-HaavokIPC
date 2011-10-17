@@ -23,10 +23,16 @@
 
         function initialize ($id) {
 
+            $this->configure();
+            
             $this->id = $id;
             $this->valid = false;
-            $this->file = GIPC_TMP . $this->id . GIPC_EXT;
+            $this->file = GIPC_TMP . $this->id . GIPC_EXTENSION;
 
+            if (!is_writable(GIPC_TMP))
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot initialize. Directory '" . GIPC_LOGFILE . "' is not writable."), E_USER_ERROR);            
+            
             if ($this->handle = fopen($this->file, GIPC_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
@@ -34,6 +40,16 @@
             
         }
 
+        function configure () {
+
+            if (!defined("GIPC_TMP"))
+                define("GIPC_TMP", "/tmp/");
+
+            if (!defined("GIPC_EXTENSION"))
+                define("GIPC_EXTENSION", ".persistence");            
+            
+        }
+        
         function set ($data) {
             
             $data = serialize($data);
@@ -63,7 +79,7 @@
 
         function delete () {
 
-            return @fclose($this->handle) & unlink($this->file);
+            //return @fclose($this->handle) & unlink($this->file);
             
         }
 

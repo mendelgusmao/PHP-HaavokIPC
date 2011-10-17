@@ -22,6 +22,8 @@
 
         function initialize ($id, $fallback_source = null) {
 
+            $this->configure();
+            
             $this->valid = false;
 
             if (class_exists("Memcache")) {
@@ -43,6 +45,16 @@
             return $this->valid;
         }
 
+        function configure () {
+            
+            if (!defined("GIPC_MEMCACHED")) 
+                define("GIPC_MEMCACHED", "127.0.0.1");
+            
+            if (!defined("GIPC_MEMCACHEDP"))
+                define("GIPC_MEMCACHEDP", 11211);
+        
+        }
+        
         function set ($data) {
 
             return $this->handle->set($this->id, $data, 1);

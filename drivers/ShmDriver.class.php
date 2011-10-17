@@ -22,6 +22,8 @@
         var $valid;
 
         function initialize ($id) {
+            
+            $this->configure();
 
             $this->id = end(explode(".", $id)) . (int) $id;
 
@@ -35,6 +37,16 @@
 
         }
 
+        function configure () {
+            
+            if (!defined("GIPC_SHM_SIZE"))
+                define("GIPC_SHM_SIZE", 32768);
+
+            if (!defined("GIPC_SHM_PERMS"))
+                define("GIPC_SHM_PERMS", 0666);
+            
+        }
+        
         function set ($data) {
 
             $data = serialize($data);

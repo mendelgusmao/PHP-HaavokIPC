@@ -2,7 +2,7 @@
 
     /**
      * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
-     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     * PHP versions, usually from PHP 4 (called front end) to 5 (called back end).
      *
      * This is the main configuration file, defining basic directives for
      * the functioning of GhettoIPC
@@ -16,26 +16,17 @@
     /* Backend binary */
     define("GIPC_BACKEND_BIN", "/usr/bin/php");
 
-    /* FileDriver config */
+    /* Suffix for unique execution id */
     define("GIPC_ID_PREFIX", "");
-    define("GIPC_EXT", ".persistence");
-    define("GIPC_TMP", dirname(__FILE__) . "/temp/");
-
+    
     /* Logging config */
-    define("GIPC_LOGFILE", GIPC_TMP . "/log.txt");
+    define("GIPC_LOGFILE", "/var/tmp/gipc.log");
     define("GIPC_LOG", true);
 
-    /* MemcacheDriver config */
-    define("GIPC_MEMCACHED", "127.0.0.1");
-    define("GIPC_MEMCACHEDP", 11211);
-
-    /* Define whether GhettoIPC.class.php will be prepend in backend with "-d auto_prepend_file" argument */
+    /* Define whether GhettoIPC.class.php will be prepend in back end with "-d auto_prepend_file" argument */
     define("GIPC_PREPEND_IPC_CLASS", true);
 
+    /* Force GhettoIPC to use output buffering in back end */
     define("GIPC_FORCE_NO_OUTPUT", false);
 
-    /* ShmDriver config */
-    define("GIPC_SHM_SIZE", 32768);
-    define("GIPC_SHM_PERMS", 0666);
-    
 ?>
