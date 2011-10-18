@@ -79,7 +79,7 @@
 
         function delete () {
 
-            //return @fclose($this->handle) & unlink($this->file);
+            return @fclose($this->handle) & unlink($this->file);
             
         }
 
