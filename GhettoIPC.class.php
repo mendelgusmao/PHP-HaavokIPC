@@ -328,7 +328,7 @@
                             $this->errors = $value;
 
                         if ("_OUTPUT" == $name && !GIPC_IS_BACKEND)
-                	    $this->output = $value;
+                            $this->output = $value;
 
                         if ("_DEBUG" == $name)
                             $this->debug_backtrace = $value;
