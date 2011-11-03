@@ -70,6 +70,14 @@
                     
                 }
 
+                if (is_a($this->calls, "Call")) {
+                    
+                    $call = $this->calls;
+                    $this->calls = new CallsQueue;
+                    $this->calls->enqueue($call);
+                    
+                }
+                
                 set_error_handler(array(&$this, "error"));
                 define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("php-ghetto-ipc-no-output"));
                 
