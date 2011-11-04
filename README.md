@@ -68,18 +68,18 @@ The execution is syncronous, following this order:
     
 ## Some considerations
     
-* GhettoIPC is meant to be portable between all versions of PHP, so...
-    * There are no visibility keywords in classes definition, as there is no implementation of visibility in PHP 4
-    * There are no interfaces - I miss them, they would be very useful defining the drivers
+* GhettoIPC is meant to be portable between the majority of versions of PHP after 4, so...
+    * No visibility keywords in classes definition, as there is no implementation of visibility in PHP 4
+    * No interfaces - I miss them, they would be very useful defining the drivers
+    * No type hinting
+    * No Reflection classes
     * A lot of good sense is needed to avoid interference in GhettoIPC behavior. Respect the API and you'll be fine
     
 * Don't expect performance. GhettoIPC is not meant to be fast
-    * In average, between the first data serializing and the end of the execution of callbacks,
-    it took 0.01 second, running in a Core i7 (Ubuntu 11.04) and in a Phenom II X4 965 (Windows XP)
+    * In average, between the first data serializing and the end of the execution of callbacks, it took 0.01 second, running in a Core i7 (Ubuntu 11.04) and in a Phenom II X4 965 (Windows XP)
     - Also, shell_exec() performed much faster than proc_open()
     
-* GhettoIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler
-    Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
+* GhettoIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler. Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
 
 ## Basic configuration
 
@@ -102,6 +102,7 @@ Enable or disable logging
 * GIPC_PREPEND_IPC_CLASS
     
 Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
+    
 _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
 
 * GIPC_FORCE_NO_OUTPUT
@@ -269,4 +270,4 @@ And $value can be:
 * GIPC_EXPORT_WAY_B2F - Export from back end to front end
 * GIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
 
-Exception: For GIPC_EXPORT_HEADERS, GIPC_EXPORT_DEBUG, GIPC_EXPORT_FORCE_NO_OUTPUT, and GIPC_EXPORT_OUTPUT the value is boolean
+Exceptions: For GIPC_EXPORT_HEADERS, GIPC_EXPORT_DEBUG, GIPC_EXPORT_FORCE_NO_OUTPUT, and GIPC_EXPORT_OUTPUT the value is boolean
