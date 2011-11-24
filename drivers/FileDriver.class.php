@@ -68,8 +68,6 @@
         
         function set ($data) {
             
-            echo (method_exists(this-serializer, "serialize")? "metodo existe" : "que porra e essa?"), "\n";
-            
             $data = $this->serializer->to($data);
 
             rewind($this->handle);

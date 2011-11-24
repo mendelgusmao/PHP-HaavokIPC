@@ -118,7 +118,6 @@
                 else {
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Error calling function {$function}(). Function not defined."), E_USER_ERROR);
-                    print_r(debug_backtrace());
                 }
 
             }

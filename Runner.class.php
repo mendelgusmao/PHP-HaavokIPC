@@ -47,8 +47,6 @@
         function run () {
 
             $command_line = $this->executable . " " . $this->_commandify($this->parameters);
-
-            echo ">>>>>>>>>>>>>>", $command_line, "<<<<<<<<<<<<<<";
             
             return shell_exec($command_line);
             
