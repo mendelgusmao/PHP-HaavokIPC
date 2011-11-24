@@ -2,12 +2,16 @@
 
 lang=$1
 ext=$2
-dirs="drivers temp tests"
-files="Configuration Constants Includes Call Calls GhettoIPC Instances Runner"
+
+dirs="drivers temp tests serializers calls"
+files="Configuration Constants Includes CallsQueue GhettoIPC Instances Runner Wrappers Utils"
+calls="Call Object StaticCall"
 drivers="File Memcache StdIO Shm"
+serializers="Default Msgpack"
 
 rm -rf ./$lang
 
 for file in $dirs; do mkdir -p $lang/$file; done
-for file in $files; do echo "" > $lang/$file.$ext; done
-for file in $drivers; do echo "" > $lang/drivers/${file}Driver.$ext; done
+for file in $files; do touch $lang/$file.$ext; done
+for file in $drivers; do touch $lang/drivers/${file}Driver.$ext; done
+for file in $serializers; do touch $lang/serializers/${file}Serializer.$ext; done
