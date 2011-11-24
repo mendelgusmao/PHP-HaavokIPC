@@ -5,7 +5,7 @@ ext=$2
 
 dirs="drivers temp tests serializers calls"
 files="Configuration Constants Includes CallsQueue GhettoIPC Instances Runner Wrappers Utils"
-calls="Call Object StaticCall"
+calls="Object Static"
 drivers="File Memcache StdIO Shm"
 serializers="Default Msgpack"
 
@@ -15,3 +15,5 @@ for file in $dirs; do mkdir -p $lang/$file; done
 for file in $files; do touch $lang/$file.$ext; done
 for file in $drivers; do touch $lang/drivers/${file}Driver.$ext; done
 for file in $serializers; do touch $lang/serializers/${file}Serializer.$ext; done
+for file in $calls; do touch $lang/calls/${file}Call.$ext; done
+touch $lang/calls/Call.$ext
