@@ -19,8 +19,21 @@
         var $handle;
         var $data;
         var $valid;
+        var $serializer;
 
-        function initialize ($id, $fallback_source = null) {
+        function __construct ($serializer = null) {
+            
+            $this->MemcacheDriver($serializer);
+
+        }
+        
+        function MemcacheDriver ($serializer = null) {
+
+            // Memcache has your own serializer
+            
+        }        
+        
+        function initialize ($id) {
 
             $this->configure();
             

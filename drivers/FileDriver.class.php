@@ -20,9 +20,25 @@
         var $file;
         var $data;
         var $valid;
+        var $serializer;
 
+        function __construct ($serializer = null) {
+            
+            $this->FileDriver($serializer);
+
+        }
+        
+        function FileDriver ($serializer = null) {
+
+            if (is_null($serializer))
+                $serializer = new DefaultSerializer;
+            
+            $this->serializer = $serializer;
+            
+        }
+        
         function initialize ($id) {
-
+            
             $this->configure();
             
             $this->id = $id;
@@ -52,7 +68,9 @@
         
         function set ($data) {
             
-            $data = serialize($data);
+            echo (method_exists(this-serializer, "serialize")? "metodo existe" : "que porra e essa?"), "\n";
+            
+            $data = $this->serializer->to($data);
 
             rewind($this->handle);
             fwrite($this->handle, $data);
@@ -68,7 +86,7 @@
             while ($temp = fread($this->handle, 1024))
                 $data .= $temp;
 
-            $data = unserialize($data);    
+            $data = $this->serializer->from($data);    
                 
             if (empty($data))
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Empty or corrupted file."), E_USER_ERROR);

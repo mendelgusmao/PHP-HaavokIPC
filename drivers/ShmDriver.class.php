@@ -20,7 +20,23 @@
         var $sem_id;
         var $data;
         var $valid;
+        var $serializer;
 
+        function __construct ($serializer = null) {
+            
+            $this->ShmDriver($serializer);
+
+        }
+        
+        function ShmDriver ($serializer = null) {
+            
+            if (is_null($serializer))
+                $serializer = new DefaultSerializer;
+            
+            $this->serializer = $serializer;            
+            
+        }         
+        
         function initialize ($id) {
             
             $this->configure();
@@ -49,7 +65,7 @@
         
         function set ($data) {
 
-            $data = serialize($data);
+            $data = $this->serializer->serialize($data);
             $expected = strlen($data);
             $written = shmop_write($this->handle, $data, 0);
 
@@ -63,7 +79,7 @@
         function get () {
 
             $data = shmop_read($this->handle, 0, shmop_size($this->handle));
-            $data = unserialize($data);
+            $data = $this->serializer->unserialize($data);
 
             if (empty($data))
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,

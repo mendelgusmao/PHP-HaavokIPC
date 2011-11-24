@@ -59,15 +59,26 @@
                 if (is_null($this->driver)) {
 
                     $driver = get_cfg_var("php-ghetto-ipc-driver");
-
+                    $serializer = get_cfg_var("php-ghetto-ipc-serializer");
+                    
                     if (class_exists($driver)) {
-                        $this->driver = new $driver;
+                        
+                        if (class_exists($serializer)) {
+                            
+                            $this->driver = new $driver(new $serializer);
+                            
+                        }
+                        else {
+                            trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                                "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
+                        }                        
+                        
                     }
                     else {
                         trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                             "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
                     }
-                    
+
                 }
 
                 if (is_a($this->calls, "Call")) {
@@ -166,6 +177,7 @@
                             "-d php-ghetto-ipc-backend" => 1,
                             "-d php-ghetto-ipc-id" => $this->id(),
                             "-d php-ghetto-ipc-driver" => get_class($this->driver),
+                            "-d php-ghetto-ipc-serializer" => get_class($this->driver->serializer),
                             "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[GIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                             "-f \"{$this->application}\""
                         )

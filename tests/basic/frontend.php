@@ -23,9 +23,9 @@
         print_r($args);
     }
 
-    $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
+    $ipc = new GhettoIPC(new FileDriver(new MsgpackSerializer), $backend, $calls);
     $ipc->execute(true); // execute callbacks
-    
+
     echo "#################################################################\n";
     echo $ipc->output;
     echo "#################################################################\n";

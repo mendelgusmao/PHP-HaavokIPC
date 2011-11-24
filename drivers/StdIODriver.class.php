@@ -19,7 +19,23 @@
         var $runner;
         var $data;
         var $valid;
+        var $serializer;
 
+        function __construct ($serializer = null) {
+            
+            $this->StdIODriver($serializer);
+
+        }
+        
+        function StdIODriver ($serializer = null) {
+            
+            if (is_null($serializer))
+                $serializer = new DefaultSerializer;
+            
+            $this->serializer = $serializer;            
+            
+        } 
+        
         function initialize ($id) {
 
             $this->id = $id;
@@ -34,7 +50,7 @@
 
         function set ($data) {
 
-            $data = serialize($data);
+            $data = $this->serializer->serialize($data);
             fwrite($this->stdout_descriptor, $data);
 			
         }
@@ -46,7 +62,7 @@
             while ($temp = fread($this->stdin_descriptor, 1024))
                 $data .= $temp;
 
-            return unserialize($data);
+            return $this->serializer->unserialize($data);
         }
 
         function delete () {

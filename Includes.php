@@ -16,6 +16,8 @@
         drivers/FileDriver.class
         drivers/MemcacheDriver.class
         drivers/ShmDriver.class
+        serializers/DefaultSerializer.class
+        serializers/MsgpackSerializer.class
 INC;
 
     foreach (explode("\n", $includes) as $include)
