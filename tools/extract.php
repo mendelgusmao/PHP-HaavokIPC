@@ -1,7 +1,5 @@
 <?php
 
-    include dirname(__FILE__) . "/../Includes.php";
-
     function extract_class ($language, $file, $definitions) {
         if (!file_exists($file))
             return;
@@ -30,18 +28,26 @@
 
         foreach ($methods as $method) {
 
-            if ($method == "__construct" || $method == $class)
-                $method = $definitions["constructor"];
-
-            if ($method == "__toString")
-                $method = $definitions["tostring"];        
-
             $regex_method = "/function $method.*\\((?<arguments>.*)\\).*{/i";
             preg_match($regex_method, $script, $return);
 
             $arguments = $return["arguments"];
             $arguments = str_replace('$', "", $arguments);
 
+            if ($method == "initialize")
+                $method = "setup";
+            
+            if ($method == "__construct" || $method == $class)
+                $method = $definitions["constructor"];
+
+            if ($method == "__toString")
+                $method = $definitions["tostring"];
+
+            if ($method == "__call") {
+                $method = $definitions["dynamic"];            
+                $arguments = "method, *args, &block";
+            }            
+            
             $full_methods[$method] = $arguments;
         }
 
