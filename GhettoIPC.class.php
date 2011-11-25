@@ -81,14 +81,6 @@
 
                 }
 
-                if (is_a($this->calls, "Call")) {
-                    
-                    $call = $this->calls;
-                    $this->calls = new CallsQueue;
-                    $this->calls->enqueue($call);
-                    
-                }
-                
                 set_error_handler(array(&$this, "error"));
                 define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("gipc_no_output"));
                 
@@ -98,6 +90,14 @@
             } 
             else {
 
+                if (is_a($this->calls, "Call")) {
+                    
+                    $call = $this->calls;
+                    $this->calls = new CallsQueue;
+                    $this->calls->enqueue($call);
+                    
+                }                
+                
                 if (is_null($this->driver))
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
