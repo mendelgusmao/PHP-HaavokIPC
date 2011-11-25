@@ -52,14 +52,14 @@
 
         function initialize () {
 
-            define("GIPC_IS_BACKEND", 1 == get_cfg_var("php-ghetto-ipc-backend"));
+            define("GIPC_IS_BACKEND", 1 == get_cfg_var("gipc_backend"));
 
             if (GIPC_IS_BACKEND) {
 
                 if (is_null($this->driver)) {
 
-                    $driver = get_cfg_var("php-ghetto-ipc-driver");
-                    $serializer = get_cfg_var("php-ghetto-ipc-serializer");
+                    $driver = get_cfg_var("gipc_driver");
+                    $serializer = get_cfg_var("gipc_serializer");
                     
                     if (class_exists($driver)) {
                         
@@ -90,7 +90,7 @@
                 }
                 
                 set_error_handler(array(&$this, "error"));
-                define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("php-ghetto-ipc-no-output"));
+                define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("gipc_no_output"));
                 
                 if (GIPC_FORCE_NO_OUTPUT)
                     ob_start();
@@ -166,23 +166,18 @@
 
                     $this->export();
 
-                    $runner_params = array();
-
-                    if (GIPC_PREPEND_IPC_CLASS)
-                        $runner_params["-d auto_prepend_file"] = "\"" . str_replace("\\", "/", __FILE__) . "\"";
-
-                    $runner_params = array_merge(
-                        $runner_params,
-                        array(
-                            "-d php-ghetto-ipc-backend" => 1,
-                            "-d php-ghetto-ipc-id" => $this->id(),
-                            "-d php-ghetto-ipc-driver" => get_class($this->driver),
-                            "-d php-ghetto-ipc-serializer" => get_class($this->driver->serializer),
-                            "-d php-ghetto-ipc-force-no-output" => isset($this->export_options[GIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
-                            "-f \"{$this->application}\""
-                        )
+                    $runner_params = array(
+                        "-d gipc_backend" => 1,
+                        "-d gipc_id" => $this->id(),
+                        "-d gipc_driver" => get_class($this->driver),
+                        "-d gipc_serializer" => get_class($this->driver->serializer),
+                        "-d gipc_no_output" => isset($this->export_options[GIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
+                        "-f \"{$this->application}\""
                     );
 
+                    if (GIPC_PREPEND_IPC_CLASS)
+                        $runner_params["-d auto_prepend_file"] = "\"" . str_replace("\\", "/", __FILE__) . "\"";                            
+                            
                     $this->runner = new Runner(
                         $this,
                         GIPC_BACKEND_BIN,
@@ -426,7 +421,7 @@
 
             if (empty($id))
                 $id = GIPC_IS_BACKEND
-                    ? get_cfg_var("php-ghetto-ipc-id")
+                    ? get_cfg_var("gipc_id")
                     : uniqid(GIPC_ID_PREFIX . getmypid(), true);
 
             return $id;
