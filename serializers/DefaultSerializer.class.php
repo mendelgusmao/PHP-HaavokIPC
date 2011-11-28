@@ -2,6 +2,8 @@
 
     class DefaultSerializer {
         
+        var $name = "Serializer";
+        
         function to ($data) {
             return serialize($data);
         }

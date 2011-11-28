@@ -2,6 +2,8 @@
 
     class MsgpackSerializer {
         
+        var $name = "Serializer";
+        
         function __construct () {
             $this->MsgpackSerializer();
         }
