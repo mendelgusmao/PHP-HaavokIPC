@@ -13,20 +13,32 @@
      *
      */
 
-    /* Backend binary */
-    define("GIPC_BACKEND_BIN", "/usr/bin/php");
-
-    /* Suffix for unique execution id */
-    define("GIPC_ID_PREFIX", "");
+    $profiles = new Profiles;
     
-    /* Logging config */
-    define("GIPC_LOGFILE", "/var/tmp/gipc.log");
-    define("GIPC_LOG", true);
+    $profiles->add('/\\.php$/i', 
+        array(
+            "executable" => "/usr/bin/php",
+            "id_prefix" => "",
+            "logfile" => "/var/tmp/gipc.log",
+            "logging" => true,
+            "prepend_ipc_class" => true,
+            "prepend_argument" => "-d auto_prepend_file",
+            "prepend_string" => $__DIR__ . "GhettoIPC.class.php",
+            "force_no_output" => false,
+        )
+    );
 
-    /* Define whether GhettoIPC.class.php will be prepended in back end with "-d auto_prepend_file" argument */
-    define("GIPC_PREPEND_IPC_CLASS", true);
-
-    /* Force GhettoIPC to use output buffering in back end */
-    define("GIPC_FORCE_NO_OUTPUT", false);
-
+    $profiles->add('/\\.rb$/i', 
+        array(
+            "executable" => "/usr/local/bin/ruby",
+            "id_prefix" => "",
+            "logfile" => "/var/tmp/gipc.log",
+            "logging" => true,
+            "prepend_ipc_class" => true,
+            "prepend_argument" => "-r",
+            "prepend_string" => "/path/to/Ruby-Ghetto-IPC/Core.rb",
+            "force_no_output" => false,
+        )
+    );    
+    
 ?>
