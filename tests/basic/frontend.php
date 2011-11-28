@@ -29,7 +29,8 @@
         new FileDriver(new MsgpackSerializer),
         new Runner,
         $calls
-    )->execute(true);
+    );
+    $ipc->execute(true);
 
     echo "--------------------- EXPORTED OUTPUT ---------------------------\n";
     echo $ipc->output;
