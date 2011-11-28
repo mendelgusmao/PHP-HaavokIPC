@@ -15,6 +15,8 @@
 
     class CallsQueue {
 
+        var $name = "Calls";
+        
         var $queue = array();
         var $index = 0;
 
