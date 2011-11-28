@@ -29,6 +29,7 @@
         var $errors;
         var $export_options = array();
         var $debug_backtrace;
+        var $configuration;
 
         function __construct ($application = null) {
             
@@ -83,21 +84,22 @@
             } 
             else {
 
-                if (is_a($this->calls, "Call")) {
+                $this->configuration = $this->profiles->retrieve($this->application);                
+                
+                if (isset($this->call)) {
                     
-                    $call = $this->calls;
                     $this->calls = new CallsQueue;
-                    $this->calls->enqueue($call);
+                    $this->calls->enqueue($this->call);
                     
-                }                
+                }
                 
                 if (is_null($this->driver))
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
-                if (GIPC_LOG && !is_writable(dirname(GIPC_LOGFILE)))
+                if ($this->configuration["logging"] && !is_writable(dirname($this->configuration["logfile"])))
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                        "Cannot initialize. Directory '" . dirname(GIPC_LOGFILE) . "' is not writable."), E_USER_ERROR);
+                        "Cannot initialize. Directory '" . dirname($this->configuration["logfile"]) . "' is not writable."), E_USER_ERROR);
 					
             }
 
@@ -171,11 +173,11 @@
                         "-f \"{$this->application}\""
                     );
 
-                    if (GIPC_PREPEND_IPC_CLASS)
-                        $runner_params["-d auto_prepend_file"] = "\"" . str_replace("\\", "/", __FILE__) . "\"";                            
+                    if ($this->configuration["prepend_ipc_class"])
+                        $runner_params[$this->configuration["prepend_argument"]] = $this->configuration["prepend_string"];
                             
                     $this->runner->initialize(
-                        GIPC_BACKEND_BIN,
+                        $this->configuration["executable"],
                         $runner_params
                     );
 
@@ -359,14 +361,14 @@
 
         function _log ($str) {
 
-            if (GIPC_LOG) {
+            if ($this->configuration["logging"]) {
 
                 static $logfile;
 
                 if (!$logfile)
-                    if (!$logfile = @fopen(GIPC_LOGFILE, "a+"))
+                    if (!$logfile = @fopen($this->configuration["logfile"], "a+"))
                         trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                            "Cannot log. Error opening log file '" . GIPC_LOGFILE . "' for writing."));
+                            "Cannot log. Error opening log file '" . $this->configuration["logfile"] . "' for writing."));
 
                 fwrite($logfile,
                        sprintf("%s %s %s%s%s\n",
@@ -417,7 +419,7 @@
             if (empty($id))
                 $id = GIPC_IS_BACKEND
                     ? get_cfg_var("gipc_id")
-                    : uniqid(GIPC_ID_PREFIX . getmypid(), true);
+                    : uniqid($this->configuration["id_prefix"] . getmypid(), true);
 
             return $id;
             
