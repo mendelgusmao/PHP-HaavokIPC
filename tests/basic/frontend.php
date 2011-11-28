@@ -25,7 +25,7 @@
 
     $ipc = new GhettoIPC("backend.php");
     $ipc->inject(
-        new Profiles,
+        $profiles,
         new FileDriver(new MsgpackSerializer),
         new Runner,
         $calls
