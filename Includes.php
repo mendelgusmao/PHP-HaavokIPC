@@ -5,14 +5,16 @@
     $includes = <<<INC
         Utils
         Constants
+        Profiles        
         Configuration
         Runner.class
         Instances.class
         CallsQueue.class
+        Wrappers.class
+        Dependencies
         calls/Call.class
         calls/StaticCall.class
         calls/ObjectCall.class
-        Wrappers.class
         drivers/FileDriver.class
         drivers/MemcacheDriver.class
         drivers/ShmDriver.class
