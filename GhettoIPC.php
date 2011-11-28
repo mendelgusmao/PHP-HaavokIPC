@@ -12,7 +12,7 @@
      *
      */
 
-    include "Includes.php";
+    include "lib/Includes.php";
     
     class GhettoIPC extends Dependencies {
         

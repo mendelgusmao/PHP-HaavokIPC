@@ -23,7 +23,7 @@
             "logging" => true,
             "prepend_ipc_class" => true,
             "prepend_argument" => "-d auto_prepend_file",
-            "prepend_string" => $__DIR__ . "GhettoIPC.class.php",
+            "prepend_string" => $__DIR__ . "GhettoIPC.php",
             "force_no_output" => false,
         )
     );
