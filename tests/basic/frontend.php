@@ -1,8 +1,7 @@
 <?php
 
-    include dirname(__FILE__) . '/../../GhettoIPC.php';
-
-    $backend = dirname(__FILE__) . '/backend.php';
+    include '../../GhettoIPC.php';
+    include 'mylib.php';
     
     $calls = new CallsQueue;
     
@@ -16,12 +15,6 @@
         new Call("eval", "print_r(123,1)", "var_dump")
             
     );
-
-    function callback () {
-        $args = func_get_args();
-        echo "Callback called in frontend\n";
-        print_r($args);
-    }
 
     $ipc = new GhettoIPC("backend.php");
     $ipc->inject(
