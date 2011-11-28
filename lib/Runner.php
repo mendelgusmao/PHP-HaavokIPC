@@ -9,9 +9,9 @@
      * to do it, but is planned to use proc_open(), due to the need of using
      * bidirectional pipes for StdIODriver.
      *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
 

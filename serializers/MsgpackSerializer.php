@@ -1,5 +1,20 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * MsgpackSerializer is a serializer that uses Msgpack's msgpack_pack
+     * /msgpack_unpack functions
+     * 
+     * More information at http://msgpack.org/
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @copyright Mendel Gusmao
+     * @version 1.4
+     *
+     */
+
     class MsgpackSerializer {
         
         var $name = "Serializer";

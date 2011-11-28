@@ -7,9 +7,9 @@
      * CallsQueue is a container of Calls and is responsible on processing
      * the queue, invoking the calls and the callback of a call
      *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
 

@@ -6,9 +6,9 @@
      *
      * Basic constants to set what data will be exported
      *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
 

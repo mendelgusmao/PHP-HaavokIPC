@@ -8,9 +8,9 @@
      * by GhettoIPC to a memcache daemon. After data is read by the frontend
      * (meaning the end of the process), the item is deleted.
      *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
     class MemcacheDriver {

@@ -1,5 +1,17 @@
 <?php
 
+    /**
+     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
+     *
+     * Simple functions that must remain in global scope
+     *
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
+     * @copyright Mendel Gusmao
+     * @version 1.4
+     *
+     */
+
     function gipc_error_message ($class, $function, $message) {
 
         $end = GIPC_IS_BACKEND ? "Backend" : "Frontend";

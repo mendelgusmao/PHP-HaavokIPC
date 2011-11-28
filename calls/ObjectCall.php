@@ -5,14 +5,12 @@
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Call is an object responsible for storing the information of a call,
-     * the class method or function that will be called in backend, the objects
+     * object method that will be called in backend, the objects
      * it will use and the invoking of itself and its callback (if any)
      *
-     * When reading $callee, think in "class method" OR "function"
-     *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
 

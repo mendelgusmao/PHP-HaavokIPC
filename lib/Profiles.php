@@ -4,12 +4,12 @@
      * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called front end) to 5 (called back end).
      *
-     * This is the main configuration file, defining basic directives for
-     * the functioning of GhettoIPC
+     * This is the Profiles container, used to store and retrieve configuration 
+     * profiles based on regular expressions
      *
-     * @author Mendel Gusmao <mendelsongusmao () gmail.com> | @MendelGusmao
+     * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
-     * @version 1.3
+     * @version 1.4
      *
      */
 
