@@ -14,7 +14,7 @@
 
     include "Includes.php";
     
-    class GhettoIPC {
+    class GhettoIPC extends Dependencies {
         
         /**
          * The class can't use public/private/protected
@@ -24,39 +24,32 @@
          */
 
         var $application;
-        var $calls;
         var $output;
-        var $output2;
+        var $stdout;
         var $errors;
-        var $driver;
-        var $runner;
-        var $export_options;
+        var $export_options = array();
         var $debug_backtrace;
 
-        function __construct ($driver = null, $application = null, $calls = null) {
+        function __construct ($application = null) {
             
-            $this->GhettoIPC($driver, $application, $calls);
+            $this->GhettoIPC($application);
             
         }
          
-        function GhettoIPC ($driver = null, $application = null, $calls = null) {
+        function GhettoIPC ($application = null) {
 
-            $this->driver = $driver;
             $this->application = $application;
-            $this->calls = $calls;
-            $this->export_options = array();
 
-            $this->initialize();
+            define("GIPC_IS_BACKEND", 1 == get_cfg_var("gipc_backend"));
+            define("GIPC_ON_WINDOWS", strtolower(substr(PHP_OS, 0, 3)) == "win");
             
         }
 
         function initialize () {
 
-            define("GIPC_IS_BACKEND", 1 == get_cfg_var("gipc_backend"));
-
             if (GIPC_IS_BACKEND) {
 
-                if (is_null($this->driver)) {
+                if (!isset($this->driver)) {
 
                     $driver = get_cfg_var("gipc_driver");
                     $serializer = get_cfg_var("gipc_serializer");
@@ -139,6 +132,8 @@
 
         function execute ($callback = true) {
 
+            $this->initialize();
+            
             if (GIPC_IS_BACKEND) {
 
                 $this->import();
@@ -159,8 +154,9 @@
                 }
                 else {
 
-                    $this->application = escapeshellcmd(
-                        str_replace("\\", "/", realpath($this->application)));
+                    if (GIPC_ON_WINDOWS)
+                        $this->application = escapeshellcmd(
+                            str_replace("\\", "/", realpath($this->application)));
 
                     $this->_log("start execute");
 
@@ -178,13 +174,12 @@
                     if (GIPC_PREPEND_IPC_CLASS)
                         $runner_params["-d auto_prepend_file"] = "\"" . str_replace("\\", "/", __FILE__) . "\"";                            
                             
-                    $this->runner = new Runner(
-                        $this,
+                    $this->runner->initialize(
                         GIPC_BACKEND_BIN,
                         $runner_params
                     );
 
-                    $this->output2 = $this->runner->run();
+                    $this->stdout = $this->runner->run();
                     $this->_log("end execute");
 
                     if ($this->import())
