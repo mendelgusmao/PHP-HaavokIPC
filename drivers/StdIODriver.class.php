@@ -14,6 +14,8 @@
      */
     class StdIODriver {
         
+        var $name = "Driver";
+        
         var $id;
         var $handle;
         var $runner;

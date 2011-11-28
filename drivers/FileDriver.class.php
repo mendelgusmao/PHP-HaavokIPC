@@ -15,6 +15,8 @@
      */
     class FileDriver {
         
+        var $name = "Driver";
+        
         var $id;
         var $handle;
         var $file;

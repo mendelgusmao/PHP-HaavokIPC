@@ -14,6 +14,8 @@
      *
      */
     class ShmDriver {
+        
+        var $name = "Driver";
 
         var $id;
         var $handle;

@@ -14,6 +14,8 @@
      *
      */
     class MemcacheDriver {
+        
+        var $name = "Driver";
 
         var $id;
         var $handle;
