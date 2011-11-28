@@ -23,13 +23,18 @@
         print_r($args);
     }
 
-    $ipc = new GhettoIPC(new FileDriver(new MsgpackSerializer), $backend, $calls);
-    $ipc->execute(true); // execute callbacks
+    $ipc = new GhettoIPC("backend.php");
+    $ipc->inject(
+        new Profiles,
+        new FileDriver(new MsgpackSerializer),
+        new Runner,
+        $calls
+    )->execute(true);
 
-    echo "#################################################################\n";
+    echo "--------------------- EXPORTED OUTPUT ---------------------------\n";
     echo $ipc->output;
-    echo "#################################################################\n";
-    echo $ipc->output2;
-    echo "#################################################################\n";
+    echo "------------------------- STDOUT --------------------------------\n";
+    echo $ipc->stdout;
+    echo "--------------------- EXPORTED ERRORS ---------------------------\n";
     print_r($ipc->errors);
-    echo "-----------------------------------------------------------------\n";
+    echo "--------------------------- END ---------------------------------\n";
