@@ -17,30 +17,17 @@
 
     class Runner {
 
-        var $ipc;
         var $executable;
         var $parameters;
 
-        function __construct ($ipc, $executable, $parameters = null) {
+        function initialize ($executable, $parameters = null) {
 
-            $this->Runner($ipc, $executable, $parameters);
-            
-        }
-
-        function Runner ($ipc, $executable, $parameters = null) {
-
-            $this->ipc = $ipc;
             $this->executable = $executable;
             $this->parameters = $parameters;
 
-            $this->initialize();
-
-        }
-
-        function initialize () {
-
             if (!file_exists($this->executable))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Executable {$this->executable} not found;"), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    "Executable {$this->executable} not found;"), E_USER_ERROR);
 
         }
 
