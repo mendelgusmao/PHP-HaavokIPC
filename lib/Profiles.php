@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called front end) to 5 (called back end).
      *
      * This is the Profiles container, used to store and retrieve configuration 

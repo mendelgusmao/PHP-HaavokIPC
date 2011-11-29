@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * FileDriver is the class responsible for writing and reading data generated
-     * by GhettoIPC to a file. After data is read by the frontend (meaning the end
+     * by HaavokIPC to a file. After data is read by the frontend (meaning the end
      * of the process), the file is deleted.
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
@@ -27,14 +27,19 @@
 
         function initialize (&$ipc) {
             
-            $this->directory = $ipc->configuration["temp_directory"];
-            $this->extension = $ipc->configuration["file_extension"];
-            
-            if (!$this->directory)
+            if (isset($ipc->configuration["temp_directory"])) {
+                $this->directory = $ipc->configuration["temp_directory"];
+            }
+            else {
                 $this->directory = "/tmp/";
-
-            if (!$this->extension)
+            }
+            
+            if (isset($ipc->configuration["file_extension"])) {
+                $this->extension = $ipc->configuration["file_extension"];
+            }
+            else {
                 $this->extension = ".persistence";
+            }
             
             $this->id = $ipc->id();
             $this->valid = false;

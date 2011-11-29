@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * ShmDriver is the class responsible for writing and reading data generated
-     * by GhettoIPC from shared memory. After data is read by the frontend
+     * by HaavokIPC from shared memory. After data is read by the frontend
      * (meaning the end of the process), the shm segment is deleted.
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>

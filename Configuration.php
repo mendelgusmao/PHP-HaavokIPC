@@ -1,10 +1,10 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called front end) to 5 (called back end).
      *
-     * This is the main configuration file, defining basic directives for GhettoIPC
+     * This is the main configuration file, defining basic directives for HaavokIPC
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
@@ -22,7 +22,7 @@
             "logging" => true,
             "prepend_ipc_class" => true,
             "prepend_argument" => "-d auto_prepend_file",
-            "prepend_string" => $__DIR__ . "GhettoIPC.php",
+            "prepend_string" => $__DIR__ . "HaavokIPC.php",
             "force_no_output" => false,
         )
     );

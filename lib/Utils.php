@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Simple functions that must remain in global scope
@@ -16,7 +16,7 @@
 
         $end = GIPC_IS_BACKEND ? "Backend" : "Frontend";
         $version = PHP_VERSION;
-        $error_message = "PHP-Ghetto-IPC (%s [%s])::%s::%s: %s";
+        $error_message = "HaavokIPC (%s [%s])::%s::%s: %s";
 
         return sprintf($error_message, $end, $version, $class, $function, $message);
 
