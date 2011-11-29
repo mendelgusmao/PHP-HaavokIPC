@@ -35,7 +35,7 @@
             "logging" => true,
             "prepend_ipc_class" => true,
             "prepend_argument" => "-r",
-            "prepend_string" => "/path/to/Ruby-Ghetto-IPC/Core.rb",
+            "prepend_string" => "/path/to/Ruby/HaavokIPC/Core.rb",
             "force_no_output" => false,
         )
     );    

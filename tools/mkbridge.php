@@ -3,7 +3,7 @@
     define("BASE", dirname(__FILE__) . "/");
     define("OUTDIR", getcwd());
     
-    include BASE . '../GhettoIPC.class.php';
+    include BASE . '../HaavokIPC.class.php';
     include "extract.php";
 
     $lang = $argv[1];
@@ -19,7 +19,7 @@
         mkdir(OUTDIR . "/$lang/" . $dir);
     }
     
-    $includes .= "\nGhettoIPC.class";
+    $includes .= "\nHaavokIPC.class";
     
     foreach (explode("\n", $includes) as $include) {
         $include = trim($include);
