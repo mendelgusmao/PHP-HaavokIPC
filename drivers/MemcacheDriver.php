@@ -45,13 +45,13 @@
                     $this->valid = true;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                         "Couldn't connect to memcached at " . HIPC_MEMCACHED . ":" . HIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "Memcache is not enabled."), E_USER_ERROR);
             }
 

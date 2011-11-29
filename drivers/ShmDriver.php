@@ -38,7 +38,7 @@
             $this->id = end(explode(".", $ipc->id())) . (int) $ipc->id();
 
             if (HIPC_ON_WINDOWS)
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
             $this->handle = shmop_open($this->id, "c", $this->size, $this->permissions);
@@ -54,7 +54,7 @@
             $written = shmop_write($this->handle, $data, 0);
 
             if ($written != $expected)
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Error writing to shared memory cache: expected {$expected} bytes, written {$written} bytes. "
                     . "Try to increase size in configuration."), E_USER_ERROR);
 
@@ -66,7 +66,7 @@
             $data = $this->serializer->unserialize($data);
 
             if (empty($data))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Empty or corrupted data from shared memory segment."), E_USER_ERROR);
 
             return $data;

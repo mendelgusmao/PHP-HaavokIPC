@@ -26,7 +26,7 @@
             $this->parameters = $parameters;
 
             if (!file_exists($this->executable))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "Executable {$this->executable} not found;"), E_USER_ERROR);
 
         }

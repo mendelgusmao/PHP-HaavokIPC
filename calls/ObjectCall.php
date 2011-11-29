@@ -50,7 +50,7 @@
 
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                         "Wrong parameter count for class method/function name."), E_USER_ERROR);
                 }
 
@@ -62,7 +62,7 @@
             }
             
             if (!$this->class) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "No class specified for method '{$scope['method']}'"), E_USER_ERROR);                        
             }              
             
@@ -70,8 +70,8 @@
         
         function invoke (&$instances, &$wrappers) {
 
-            $parameters = gipc_to_array($this->parameters);
-            $constructor_parameters = gipc_to_array($this->constructor_parameters);
+            $parameters = hipc_to_array($this->parameters);
+            $constructor_parameters = hipc_to_array($this->constructor_parameters);
             
             if (class_exists($this->class)) {
 
@@ -87,14 +87,14 @@
                 }
                 else {
                     $this->return = void;
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Method '{$this->method}' not found in class '{$this->class}'."), E_USER_ERROR);
                 }
 
             }
             else {
                 $this->return = void;
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Class '{$this->class}' doesn't exist."), E_USER_ERROR);
             }
 

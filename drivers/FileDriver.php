@@ -46,7 +46,7 @@
             $this->file = $this->directory . $this->id . $this->extension;
 
             if (!is_writable($this->directory))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot initialize. Directory '{$this->directory}' is not writable."), E_USER_ERROR);            
             
             if ($this->handle = fopen($this->file, HIPC_IS_BACKEND ? "r+" : "w+"))
@@ -77,7 +77,7 @@
             $data = $this->serializer->from($data);    
                 
             if (empty($data))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "Empty or corrupted file."), E_USER_ERROR);
 
             return $data;

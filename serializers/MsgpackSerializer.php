@@ -26,7 +26,7 @@
         function MsgpackSerializer () {
             
             if (!extension_loaded("msgpack")) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Msgpack extension not installed"), E_USER_ERROR);
             }
             

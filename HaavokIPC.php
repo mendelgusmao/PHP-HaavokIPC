@@ -41,7 +41,7 @@
 
             $this->application = $application;
 
-            define("HIPC_IS_BACKEND", 1 == get_cfg_var("gipc_backend"));
+            define("HIPC_IS_BACKEND", 1 == get_cfg_var("hipc_backend"));
             define("HIPC_ON_WINDOWS", strtolower(substr(PHP_OS, 0, 3)) == "win");
             
         }
@@ -52,8 +52,8 @@
 
                 if (!isset($this->driver)) {
 
-                    $driver = get_cfg_var("gipc_driver");
-                    $serializer = get_cfg_var("gipc_serializer");
+                    $driver = get_cfg_var("hipc_driver");
+                    $serializer = get_cfg_var("hipc_serializer");
                     
                     if (class_exists($driver)) {
                         
@@ -63,20 +63,20 @@
                             
                         }
                         else {
-                            trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                            trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                                 "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
                         }                        
                         
                     }
                     else {
-                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
                     }
 
                 }
 
                 set_error_handler(array(&$this, "error"));
-                define("HIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("gipc_no_output"));
+                define("HIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("hipc_no_output"));
                 
                 if (HIPC_FORCE_NO_OUTPUT)
                     ob_start();
@@ -94,11 +94,11 @@
                 }
                 
                 if (is_null($this->driver))
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
                 if ($this->configuration["logging"] && !is_writable(dirname($this->configuration["logfile"])))
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize. Directory '" . dirname($this->configuration["logfile"]) . "' is not writable."), E_USER_ERROR);
 					
             }
@@ -150,7 +150,7 @@
                 if (!realpath($this->application)) {
 
                     $this->log("cannot execute: script not found");
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
 
                 }
@@ -165,11 +165,11 @@
                     $this->export();
 
                     $runner_params = array(
-                        "-d gipc_backend" => 1,
-                        "-d gipc_id" => $this->id(),
-                        "-d gipc_driver" => get_class($this->driver),
-                        "-d gipc_serializer" => get_class($this->driver->serializer),
-                        "-d gipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
+                        "-d hipc_backend" => 1,
+                        "-d hipc_id" => $this->id(),
+                        "-d hipc_driver" => get_class($this->driver),
+                        "-d hipc_serializer" => get_class($this->driver->serializer),
+                        "-d hipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                         "-f \"{$this->application}\""
                     );
 
@@ -212,7 +212,7 @@
                     $this->export_options[$option] = $value;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Invalid option '{$export_option}'"), E_USER_ERROR);
                 }
 
@@ -307,7 +307,7 @@
                 $this->log("end export");
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
             }
             
@@ -360,7 +360,7 @@
                 return $data;
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
             }
         }
@@ -373,7 +373,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen($this->configuration["logfile"], "a+"))
-                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Cannot log. Error opening log file '" . $this->configuration["logfile"] . "' for writing."));
 
                 fwrite($logfile,
@@ -424,7 +424,7 @@
 
             if (empty($id))
                 $id = HIPC_IS_BACKEND
-                    ? get_cfg_var("gipc_id")
+                    ? get_cfg_var("hipc_id")
                     : uniqid($this->configuration["id_prefix"] . getmypid(), true);
 
             return $id;

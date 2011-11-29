@@ -46,7 +46,7 @@
                     
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                         "Wrong parameter count for callee."), E_USER_ERROR);                
                 }
 
@@ -62,12 +62,12 @@
             }
 
             if (!$this->class) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "No class specified for method '{$this->method}'"), E_USER_ERROR);                        
             }
             
             if ("&" == substr($this->class, 0, 1)) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "Can't allow instance reusing when calling a static method."), E_USER_ERROR);
             }
             
@@ -75,7 +75,7 @@
         
         function invoke (&$instances, &$wrappers) {
 
-            $parameters = gipc_to_array($this->parameters);
+            $parameters = hipc_to_array($this->parameters);
             
             if (class_exists($this->class)) {
 
@@ -87,14 +87,14 @@
                 }
                 else {
                     $this->return = void;
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Static method '{$this->method}' not found in class '{$this->class}'."), E_USER_ERROR);
                 }
 
             }
             else {
                 $this->return = void;
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Class '{$this->class}' doesn't exist."), E_USER_ERROR);
             }
 

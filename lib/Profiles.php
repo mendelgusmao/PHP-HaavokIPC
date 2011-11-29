@@ -25,7 +25,7 @@
                 }
             }
             
-            trigger_error(gipc_error_message(__CLASS__, __METHOD__, 
+            trigger_error(hipc_error_message(__CLASS__, __METHOD__, 
                 "No profile found for file '{$file}'"));
             
         }
