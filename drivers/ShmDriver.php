@@ -13,56 +13,38 @@
      * @version 1.4
      *
      */
-    class ShmDriver {
+    class ShmDriver extends Driver {
         
         var $name = "Driver";
 
         var $id;
         var $handle;
-        var $sem_id;
         var $data;
         var $valid;
-        var $serializer;
+        var $size;
+        var $permissions;
 
-        function __construct ($serializer = null) {
+        function initialize (&$ipc) {
             
-            $this->ShmDriver($serializer);
+            $this->size = $ipc->configuration["shm_size"];
+            $this->permissions = $ipc->configuration["shm_permissions"];            
+            
+            if (!$this->size)
+                $this->size = 32768;
+            
+            if (!$this->permissions)
+                $this->permissions = 0666;
 
-        }
-        
-        function ShmDriver ($serializer = null) {
-            
-            if (is_null($serializer))
-                $serializer = new DefaultSerializer;
-            
-            $this->serializer = $serializer;            
-            
-        }         
-        
-        function initialize ($id) {
-            
-            $this->configure();
+            $this->id = end(explode(".", $ipc->id())) . (int) $ipc->id();
 
-            $this->id = end(explode(".", $id)) . (int) $id;
-
-            if (preg_match("/win/i", PHP_OS))
+            if (GIPC_ON_WINDOWS)
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 
-            $this->handle = shmop_open($this->id, "c", GIPC_SHM_PERMS, GIPC_SHM_SIZE);
+            $this->handle = shmop_open($this->id, "c", $this->size, $this->permissions);
 
             return true;
 
-        }
-
-        function configure () {
-            
-            if (!defined("GIPC_SHM_SIZE"))
-                define("GIPC_SHM_SIZE", 32768);
-
-            if (!defined("GIPC_SHM_PERMS"))
-                define("GIPC_SHM_PERMS", 0666);
-            
         }
         
         function set ($data) {
@@ -74,7 +56,7 @@
             if ($written != $expected)
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Error writing to shared memory cache: expected {$expected} bytes, written {$written} bytes. "
-                    . "Try to increase GIPC_SHM_SIZE constant."), E_USER_ERROR);
+                    . "Try to increase size in configuration."), E_USER_ERROR);
 
         }
 

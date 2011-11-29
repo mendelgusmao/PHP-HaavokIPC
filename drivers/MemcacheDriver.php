@@ -13,32 +13,28 @@
      * @version 1.4
      *
      */
-    class MemcacheDriver {
+    class MemcacheDriver extends Driver {
         
         var $name = "Driver";
 
         var $id;
         var $handle;
-        var $data;
         var $valid;
-        var $serializer;
-
-        function __construct ($serializer = null) {
-            
-            $this->MemcacheDriver($serializer);
-
-        }
+        var $server;
+        var $port;
         
-        function MemcacheDriver ($serializer = null) {
-
-            // Memcache has your own serializer
+        function initialize (&$ipc) {
             
-        }        
-        
-        function initialize ($id) {
+            $this->server = $ipc->configuration["memcached_server"];
+            $this->port = $ipc->configuration["memcached_port"];
 
-            $this->configure();
+            if (!$this->server)
+                $this->server = "127.0.0.1";
             
+            if (!$this->port)
+                $this->port = 11211;
+            
+            $this->id = $ipc->id();
             $this->valid = false;
 
             if (class_exists("Memcache")) {
@@ -49,25 +45,17 @@
                     $this->valid = true;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
+                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                        "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Memcache is not enabled."), E_USER_ERROR);
+                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    "Memcache is not enabled."), E_USER_ERROR);
             }
 
             return $this->valid;
-        }
-
-        function configure () {
-            
-            if (!defined("GIPC_MEMCACHED")) 
-                define("GIPC_MEMCACHED", "127.0.0.1");
-            
-            if (!defined("GIPC_MEMCACHEDP"))
-                define("GIPC_MEMCACHEDP", 11211);
-        
         }
         
         function set ($data) {

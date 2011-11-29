@@ -12,7 +12,7 @@
      * @version 1.4
      *
      */
-    class StdIODriver {
+    class StdIODriver extends Driver {
         
         var $name = "Driver";
         
@@ -21,26 +21,10 @@
         var $runner;
         var $data;
         var $valid;
-        var $serializer;
-
-        function __construct ($serializer = null) {
-            
-            $this->StdIODriver($serializer);
-
-        }
         
-        function StdIODriver ($serializer = null) {
-            
-            if (is_null($serializer))
-                $serializer = new DefaultSerializer;
-            
-            $this->serializer = $serializer;            
-            
-        } 
-        
-        function initialize ($id) {
+        function initialize (&$ipc) {
 
-            $this->id = $id;
+            $this->id = $ipc->id();
             $this->valid = false;
 
             if ($this->stdin_descriptor = fopen($this->stdin_file, "r") &&
