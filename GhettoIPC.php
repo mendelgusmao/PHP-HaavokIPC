@@ -1,10 +1,10 @@
 <?php 
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * GhettoIPC is the core class
+     * HaavokIPC is the core class
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
@@ -14,7 +14,7 @@
 
     include "lib/Includes.php";
     
-    class GhettoIPC extends Dependencies {
+    class HaavokIPC extends Dependencies {
         
         /**
          * The class can't use public/private/protected
@@ -33,11 +33,11 @@
 
         function __construct ($application = null) {
             
-            $this->GhettoIPC($application);
+            $this->HaavokIPC($application);
             
         }
          
-        function GhettoIPC ($application = null) {
+        function HaavokIPC ($application = null) {
 
             $this->application = $application;
 
