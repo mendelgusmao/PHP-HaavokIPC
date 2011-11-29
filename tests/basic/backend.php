@@ -1,8 +1,19 @@
 <?php
 
-    $ipc = new GhettoIPC;
+    function mem($str) {
+        echo $str, " -> ", memory_get_usage(), "\n";
+    }
+    
+    mem("(backend) Initial");
+
+    $ipc = new HaavokIPC;
+    
+    mem("(backend) After HaavokIPC instantiating");
+    
     $ipc->execute();
 
+    mem("(backend) After execution");
+    
     function compare_php_version ($version) { return __FUNCTION__ . "() = From $version to " . PHP_VERSION; }
 
     class Backend {

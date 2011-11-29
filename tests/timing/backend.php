@@ -1,6 +1,6 @@
 <?php
 
-    $ipc = new GhettoIPC(new FileDriver);
+    $ipc = new HaavokIPC(new FileDriver);
     $ipc->execute();
 
 ?>

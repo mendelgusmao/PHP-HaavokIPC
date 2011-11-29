@@ -1,6 +1,6 @@
 <?php
 
-    $ipc = new GhettoIPC(new FileDriver);
+    $ipc = new HaavokIPC(new FileDriver);
     $ipc->set_export_options(GIPC_EXPORT_OUTPUT);
     $ipc->execute();
 

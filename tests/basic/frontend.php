@@ -1,6 +1,6 @@
 <?php
 
-    include '../../GhettoIPC.php';
+    include '../../HaavokIPC.php';
     include 'mylib.php';
     
     $calls = new CallsQueue;
@@ -16,10 +16,10 @@
             
     );
 
-    $ipc = new GhettoIPC("backend.php");
+    $ipc = new HaavokIPC("backend.php");
     $ipc->inject(
         $profiles,
-        new FileDriver(new MsgpackSerializer),
+        new FileDriver,
         new Runner,
         $calls
     );
