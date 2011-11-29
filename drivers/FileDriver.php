@@ -49,7 +49,7 @@
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot initialize. Directory '{$this->directory}' is not writable."), E_USER_ERROR);            
             
-            if ($this->handle = fopen($this->file, GIPC_IS_BACKEND ? "r+" : "w+"))
+            if ($this->handle = fopen($this->file, HIPC_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
             return $this->valid;

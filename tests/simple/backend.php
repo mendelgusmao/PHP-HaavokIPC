@@ -1,7 +1,7 @@
 <?php
 
     $ipc = new HaavokIPC(new FileDriver);
-    $ipc->set_export_options(GIPC_EXPORT_OUTPUT);
+    $ipc->set_export_options(HIPC_EXPORT_OUTPUT);
     $ipc->execute();
 
     function function_with_no_parameters () {

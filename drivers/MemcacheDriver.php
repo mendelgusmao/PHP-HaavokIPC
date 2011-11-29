@@ -41,12 +41,12 @@
 
                 $this->handle = new Memcache;
 
-                if ($this->handle->addServer(GIPC_MEMCACHED, GIPC_MEMCACHEDP)) {
+                if ($this->handle->addServer(HIPC_MEMCACHED, HIPC_MEMCACHEDP)) {
                     $this->valid = true;
                 }
                 else {
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
-                        "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
+                        "Couldn't connect to memcached at " . HIPC_MEMCACHED . ":" . HIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }

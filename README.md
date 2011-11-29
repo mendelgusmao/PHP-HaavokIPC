@@ -87,25 +87,25 @@ All configuration is done with constants defined in Configuration.php
     
 The most important are:
 
-* GIPC_BACKEND_BIN
+* HIPC_BACKEND_BIN
     
 The path of PHP binary that will run as back end
 
-* GIPC_LOGFILE
+* HIPC_LOGFILE
     
 The path of the file that will store log information
 
-* GIPC_LOG
+* HIPC_LOG
     
 Enable or disable logging
 
-* GIPC_PREPEND_IPC_CLASS
+* HIPC_PREPEND_IPC_CLASS
     
 Enable or disable the prepending of HaavokIPC.class.php in back end, avoiding the need to include the file
     
 _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
 
-* GIPC_FORCE_NO_OUTPUT
+* HIPC_FORCE_NO_OUTPUT
     
 Enable or disable output buffering in back end from the instantiation of HaavokIPC
     
@@ -118,8 +118,8 @@ For now 3 drivers are avaliable:
 It's the first driver created for HaavokIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
 
 ```php
-define("GIPC_EXT", ".persistence"); // Filename extension
-define("GIPC_TMP", "/tmp/");        // Temporary directory
+define("HIPC_EXT", ".persistence"); // Filename extension
+define("HIPC_TMP", "/tmp/");        // Temporary directory
 ```   
     
 * MemcacheDriver
@@ -127,8 +127,8 @@ define("GIPC_TMP", "/tmp/");        // Temporary directory
 This driver uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
 
 ```php
-define("GIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
-define("GIPC_MEMCACHEDP", 11211);      // Port of the memcache server
+define("HIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
+define("HIPC_MEMCACHEDP", 11211);      // Port of the memcache server
 ```
 
 * ShmDriver
@@ -137,8 +137,8 @@ This driver uses shared memory and doesn't serializes data before exporting. It'
 You can configure it using these constants:
 
 ```php
-define("GIPC_SHM_SIZE", 32768); // Initial shared memory segment size
-define("GIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
+define("HIPC_SHM_SIZE", 32768); // Initial shared memory segment size
+define("HIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
 ```
 
 * StdIODriver
@@ -249,25 +249,25 @@ $ipc->set_export_options($option, $value);
 
 Where $option can be:
 
-* GIPC_EXPORT_GLOBALS - Export $GLOBALS
-* GIPC_EXPORT_REQUEST - Export $_REQUEST
-* GIPC_EXPORT_POST - Export $_POST
-* GIPC_EXPORT_GET - Export $_GET
-* GIPC_EXPORT_SERVER - Export $_SERVER
-* GIPC_EXPORT_COOKIE - Export $_COOKIE
-* GIPC_EXPORT_SESSION - Export $_SESSION
-* GIPC_EXPORT_CONSTANTS - Export defined constants
-* GIPC_EXPORT_HEADERS - Export generated headers 
-* GIPC_EXPORT_ENV - Export $_ENV
-* GIPC_EXPORT_FILES - Export $_FILES
-* GIPC_EXPORT_DEBUG - Export debug_backtrace() result
-* GIPC_EXPORT_OUTPUT - Export stdout
-* GIPC_EXPORT_FORCE_NO_OUTPUT - Force back end to use output buffering
+* HIPC_EXPORT_GLOBALS - Export $GLOBALS
+* HIPC_EXPORT_REQUEST - Export $_REQUEST
+* HIPC_EXPORT_POST - Export $_POST
+* HIPC_EXPORT_GET - Export $_GET
+* HIPC_EXPORT_SERVER - Export $_SERVER
+* HIPC_EXPORT_COOKIE - Export $_COOKIE
+* HIPC_EXPORT_SESSION - Export $_SESSION
+* HIPC_EXPORT_CONSTANTS - Export defined constants
+* HIPC_EXPORT_HEADERS - Export generated headers 
+* HIPC_EXPORT_ENV - Export $_ENV
+* HIPC_EXPORT_FILES - Export $_FILES
+* HIPC_EXPORT_DEBUG - Export debug_backtrace() result
+* HIPC_EXPORT_OUTPUT - Export stdout
+* HIPC_EXPORT_FORCE_NO_OUTPUT - Force back end to use output buffering
 
 And $value can be:
 
-* GIPC_EXPORT_WAY_F2B - Export from front end to back end
-* GIPC_EXPORT_WAY_B2F - Export from back end to front end
-* GIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
+* HIPC_EXPORT_WAY_F2B - Export from front end to back end
+* HIPC_EXPORT_WAY_B2F - Export from back end to front end
+* HIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
 
-Exceptions: For GIPC_EXPORT_HEADERS, GIPC_EXPORT_DEBUG, GIPC_EXPORT_FORCE_NO_OUTPUT, and GIPC_EXPORT_OUTPUT the value is boolean
+Exceptions: For HIPC_EXPORT_HEADERS, HIPC_EXPORT_DEBUG, HIPC_EXPORT_FORCE_NO_OUTPUT, and HIPC_EXPORT_OUTPUT the value is boolean

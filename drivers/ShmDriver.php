@@ -37,7 +37,7 @@
 
             $this->id = end(explode(".", $ipc->id())) . (int) $ipc->id();
 
-            if (GIPC_ON_WINDOWS)
+            if (HIPC_ON_WINDOWS)
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
 

@@ -12,24 +12,24 @@
      *
      */
 
-    define("GIPC_EXPORT_GLOBALS", 1);
-    define("GIPC_EXPORT_REQUEST", 2);
-    define("GIPC_EXPORT_POST", 4);
-    define("GIPC_EXPORT_GET", 8);
-    define("GIPC_EXPORT_SERVER", 16);
-    define("GIPC_EXPORT_COOKIE", 32);
-    define("GIPC_EXPORT_SESSION", 64);
-    define("GIPC_EXPORT_CONSTANTS", 128);
-    define("GIPC_EXPORT_HEADERS", 256);
-    define("GIPC_EXPORT_ENV", 512);
-    define("GIPC_EXPORT_FILES", 1024);
-    define("GIPC_EXPORT_DEBUG", 2048);
-    define("GIPC_EXPORT_OUTPUT", 4096);
-    define("GIPC_EXPORT_FORCE_NO_OUTPUT", 8192);
+    define("HIPC_EXPORT_GLOBALS", 1);
+    define("HIPC_EXPORT_REQUEST", 2);
+    define("HIPC_EXPORT_POST", 4);
+    define("HIPC_EXPORT_GET", 8);
+    define("HIPC_EXPORT_SERVER", 16);
+    define("HIPC_EXPORT_COOKIE", 32);
+    define("HIPC_EXPORT_SESSION", 64);
+    define("HIPC_EXPORT_CONSTANTS", 128);
+    define("HIPC_EXPORT_HEADERS", 256);
+    define("HIPC_EXPORT_ENV", 512);
+    define("HIPC_EXPORT_FILES", 1024);
+    define("HIPC_EXPORT_DEBUG", 2048);
+    define("HIPC_EXPORT_OUTPUT", 4096);
+    define("HIPC_EXPORT_FORCE_NO_OUTPUT", 8192);
 
-    define("GIPC_EXPORT_WAY_BOTH", 1);
-    define("GIPC_EXPORT_WAY_F2B", 2);
-    define("GIPC_EXPORT_WAY_B2F", 3);
+    define("HIPC_EXPORT_WAY_BOTH", 1);
+    define("HIPC_EXPORT_WAY_F2B", 2);
+    define("HIPC_EXPORT_WAY_B2F", 3);
 
     define("void", "§\0§\0\0§\0\0\0§");  
 

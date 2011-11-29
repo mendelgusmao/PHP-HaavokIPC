@@ -61,7 +61,7 @@
 
         function process () {
 
-            if (GIPC_IS_BACKEND) {
+            if (HIPC_IS_BACKEND) {
 
                 $instances = new Instances();
                 $wrappers = new Wrappers();                
@@ -82,7 +82,7 @@
 
         function process_callbacks() {
 
-            if (!GIPC_IS_BACKEND) {
+            if (!HIPC_IS_BACKEND) {
                 
                 foreach ($this->queue as $call)
                     $call->callback();

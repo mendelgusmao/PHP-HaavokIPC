@@ -14,7 +14,7 @@
 
     function gipc_error_message ($class, $function, $message) {
 
-        $end = GIPC_IS_BACKEND ? "Backend" : "Frontend";
+        $end = HIPC_IS_BACKEND ? "Backend" : "Frontend";
         $version = PHP_VERSION;
         $error_message = "HaavokIPC (%s [%s])::%s::%s: %s";
 
