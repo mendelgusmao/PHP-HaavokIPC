@@ -103,7 +103,7 @@
 					
             }
 
-            $this->driver->initialize($this->id());
+            $this->driver->initialize($this);
 
             register_shutdown_function(
                 array(&$this, GIPC_IS_BACKEND ? "export" : "__destruct")
@@ -173,8 +173,14 @@
                         "-f \"{$this->application}\""
                     );
 
-                    if ($this->configuration["prepend_ipc_class"])
-                        $runner_params[$this->configuration["prepend_argument"]] = $this->configuration["prepend_string"];
+                    if ($this->configuration["prepend_ipc_class"]) {
+                        $prepend_string = $this->configuration["prepend_string"];
+                        
+                        if (GIPC_ON_WINDOWS)
+                            $prepend_string = escapeshellcmd(str_replace("\\", "/", $prepend_string));                        
+                        
+                        $runner_params[$this->configuration["prepend_argument"]] = "\"{$prepend_string}\"";
+                    }
                             
                     $this->runner->initialize(
                         $this->configuration["executable"],
