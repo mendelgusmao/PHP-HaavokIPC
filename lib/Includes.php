@@ -25,6 +25,7 @@
         calls/Call
         calls/StaticCall
         calls/ObjectCall
+        drivers/Driver
         drivers/FileDriver
         drivers/MemcacheDriver
         drivers/ShmDriver
