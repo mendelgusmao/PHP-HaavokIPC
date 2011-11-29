@@ -109,7 +109,7 @@
                 array(&$this, GIPC_IS_BACKEND ? "export" : "__destruct")
             );
 
-            $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
+            $this->log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
         }
 
         function __destruct () {
@@ -122,7 +122,7 @@
             if (!GIPC_IS_BACKEND)
                 $this->driver->delete();
 
-            $this->_log(
+            $this->log(
                 sprintf("php %s end%s",
                         PHP_VERSION,
                         (!GIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
@@ -140,16 +140,16 @@
 
                 $this->import();
                 
-                $this->_log("start calls");
+                $this->log("start calls");
                 $this->calls->process();
-                $this->_log("end calls");
+                $this->log("end calls");
                 
             }
             else {
             
                 if (!realpath($this->application)) {
 
-                    $this->_log("cannot execute: script not found");
+                    $this->log("cannot execute: script not found");
                     trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
 
@@ -160,7 +160,7 @@
                         $this->application = escapeshellcmd(
                             str_replace("\\", "/", realpath($this->application)));
 
-                    $this->_log("start execute");
+                    $this->log("start execute");
 
                     $this->export();
 
@@ -188,13 +188,13 @@
                     );
 
                     $this->stdout = $this->runner->run();
-                    $this->_log("end execute");
+                    $this->log("end execute");
 
                     if ($this->import())
                         if ($this->calls && $callback) {
-                            $this->_log("start callbacks");
+                            $this->log("start callbacks");
                             $this->calls->process_callbacks();
-                            $this->_log("end callbacks");
+                            $this->log("end callbacks");
                         }
                     
                 }
@@ -220,7 +220,7 @@
 
         function export () {
 
-            $this->_log("start export");
+            $this->log("start export");
             $export_output = false;
 
             if ($this->driver->valid()) {
@@ -304,7 +304,7 @@
                 
                 $this->driver->set($exports);
 
-                $this->_log("end export");
+                $this->log("end export");
             }
             else {
                 trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
@@ -319,7 +319,7 @@
 
                 $data = $this->driver->get();
 
-                $this->_log("start import");
+                $this->log("start import");
 
                 if (is_array($data))
                     foreach ($data as $name => $value) {
@@ -355,7 +355,7 @@
                         $$name = $value;
                     }
 
-                $this->_log("end import");
+                $this->log("end import");
 
                 return $data;
             }
@@ -365,7 +365,7 @@
             }
         }
 
-        function _log ($str) {
+        function log ($str) {
 
             if ($this->configuration["logging"]) {
 
@@ -414,7 +414,7 @@
             );
 
             if ($errno != E_NOTICE)
-                $this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
+                $this->log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
 
         }
 
