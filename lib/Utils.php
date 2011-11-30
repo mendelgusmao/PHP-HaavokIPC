@@ -23,18 +23,29 @@
     }
 
     function hipc_var_dump () {
+        
         ob_start();
         $variable = func_get_args();
         call_user_func_array('var_dump', $variable);
         $return = ob_get_clean();
 
         return substr($return, 0, strpos($return, " "));
+        
     }
     
     function hipc_to_array ($var) {
         
         return is_array($var) ? $var : ($var == void ? array() : array($var));
             
+    }
+    
+    function hipc_path ($path) {
+        
+        if (HIPC_ON_WINDOWS)
+            return escapeshellcmd(str_replace("\\", "/", realpath($path)));
+        
+        return $path;
+        
     }
 
 ?>
