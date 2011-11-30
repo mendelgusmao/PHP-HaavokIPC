@@ -31,6 +31,6 @@
     define("HIPC_EXPORT_WAY_F2B", 2);
     define("HIPC_EXPORT_WAY_B2F", 3);
 
-    define("void", "§\0§\0\0§\0\0\0§");  
-
+    define("void", "§\8§\1\1§\22\15\11§\0");
+    
 ?>
