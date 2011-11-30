@@ -30,6 +30,7 @@
         var $export_options = array();
         var $debug_backtrace;
         var $configuration;
+        var $runner;
 
         function __construct ($application = null) {
             
@@ -39,39 +40,34 @@
          
         function HaavokIPC ($application = null) {
 
+            $this->runner = new Runner;
             $this->application = $application;
 
             define("HIPC_IS_BACKEND", 1 == get_cfg_var("hipc_backend"));
             define("HIPC_ON_WINDOWS", strtolower(substr(PHP_OS, 0, 3)) == "win");
-            
+           
         }
 
         function initialize () {
 
             if (HIPC_IS_BACKEND) {
 
+                $this->configuration = Configuration::retrieve(HIPC_APPLICATION);
+                
                 if (!isset($this->driver)) {
 
                     $driver = get_cfg_var("hipc_driver");
                     $serializer = get_cfg_var("hipc_serializer");
                     
-                    if (class_exists($driver)) {
-                        
-                        if (class_exists($serializer)) {
-                            
-                            $this->driver = new $driver(new $serializer);
-                            
-                        }
-                        else {
-                            trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                                "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
-                        }                        
-                        
-                    }
-                    else {
+                    if (!class_exists($driver))
                         trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
-                    }
+                   
+                    if (!class_exists($serializer))
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
+                            "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
+                            
+                    $this->driver = new $driver(new $serializer);
 
                 }
 
@@ -84,7 +80,7 @@
             } 
             else {
 
-                $this->configuration = $this->profiles->retrieve($this->application);                
+                $this->configuration = Configuration::retrieve($this->application);
                 
                 if (isset($this->call)) {
                     
@@ -138,11 +134,11 @@
             
             if (HIPC_IS_BACKEND) {
 
-                $this->import();
-                
-                $this->log("start calls");
-                $this->calls->process();
-                $this->log("end calls");
+                if ($this->import()) {
+                    $this->log("start calls");
+                    $this->calls->process();
+                    $this->log("end calls");
+                }
                 
             }
             else {
@@ -156,32 +152,32 @@
                 }
                 else {
 
-                    if (HIPC_ON_WINDOWS)
-                        $this->application = escapeshellcmd(
-                            str_replace("\\", "/", realpath($this->application)));
-
-                    $this->log("start execute");
-
-                    $this->export();
-
-                    $runner_params = array(
-                        "-d hipc_backend" => 1,
-                        "-d hipc_id" => $this->id(),
-                        "-d hipc_driver" => get_class($this->driver),
-                        "-d hipc_serializer" => get_class($this->driver->serializer),
-                        "-d hipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
-                        "-f \"{$this->application}\""
-                    );
+                    $this->application = hipc_path($this->application);
 
                     if ($this->configuration["prepend_ipc_class"]) {
+                        
                         $prepend_string = $this->configuration["prepend_string"];
                         
-                        if (HIPC_ON_WINDOWS)
-                            $prepend_string = escapeshellcmd(str_replace("\\", "/", $prepend_string));                        
+                        $prepend_string = hipc_path($prepend_string);
                         
                         $runner_params[$this->configuration["prepend_argument"]] = "\"{$prepend_string}\"";
-                    }
-                            
+
+                    }                    
+                    
+                    $runner_params = array_merge($runner_params, 
+                        array(
+                            "-d hipc_backend" => 1,
+                            "-d hipc_id" => $this->id(),
+                            "-d hipc_driver" => get_class($this->driver),
+                            "-d hipc_serializer" => get_class($this->driver->serializer),
+                            "-d hipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
+                            "-f \"{$this->application}\""
+                        )
+                    );
+                    
+                    $this->log("start execute");
+                    $this->export();
+                    
                     $this->runner->initialize(
                         $this->configuration["executable"],
                         $runner_params
@@ -190,15 +186,14 @@
                     $this->stdout = $this->runner->run();
                     $this->log("end execute");
 
-                    if ($this->import())
+                    if ($this->import()) {
                         if ($this->calls && $callback) {
                             $this->log("start callbacks");
                             $this->calls->process_callbacks();
                             $this->log("end callbacks");
                         }
-                    
+                    }
                 }
-            
             }
         }
 
@@ -336,7 +331,7 @@
 
                         if ("_CONSTANTS" == $name)
                             foreach ($value as $constant => $constant_value)
-                                if (substr($constant, 0, 3) != "PHP" && !defined($constant))
+                                if (!defined($constant))
                                     define($constant, $constant_value);
 
                         if ("_CALLS" == $name)
