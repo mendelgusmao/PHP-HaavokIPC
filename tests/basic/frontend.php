@@ -1,7 +1,8 @@
 <?php
 
-    include '../../HaavokIPC.php';
-    include 'mylib.php';
+    define("PWD", dirname(__FILE__) . "/");
+    include PWD . '../../HaavokIPC.php';
+    include PWD . 'mylib.php';
     
     $calls = new CallsQueue;
     
@@ -16,11 +17,9 @@
             
     );
 
-    $ipc = new HaavokIPC("backend.php");
+    $ipc = new HaavokIPC(PWD . "backend.php");
     $ipc->inject(
-        $profiles,
         new FileDriver,
-        new Runner,
         $calls
     );
     $ipc->execute(true);
