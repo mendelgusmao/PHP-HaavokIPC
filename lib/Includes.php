@@ -10,12 +10,12 @@
      *
      */
 
-    $__DIR__ = realpath(dirname(__FILE__) . "/../") . "/";
+    define("HIPC_DIR", realpath(dirname(__FILE__) . "/../") . "/");
+    define("HIPC_APPLICATION", realpath($_SERVER["argv"][0]));
 
     $includes = <<<INC
         lib/Utils
         lib/Constants
-        lib/Profiles        
         Configuration
         lib/Runner
         lib/Instances
@@ -34,6 +34,6 @@
 INC;
 
     foreach (explode("\n", $includes) as $include)
-        include $__DIR__ . trim($include) . ".php";
+        include HIPC_DIR . trim($include) . ".php";
 
 ?>
