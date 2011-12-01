@@ -88,7 +88,7 @@
                  * for instantiating these objects
                  */
                 trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot execute static method calls in PHP 4."), E_USER_ERROR);
+                    "Cannot call static methods in PHP 4."), E_USER_ERROR);
 
                 $class = $callback[0];
                 $method = $callback[1];
@@ -127,7 +127,9 @@
         }
 
         function __toString () {
+            
             return $this->describe();
+            
         }
         
         function describe ($with_callback = true) {
@@ -175,6 +177,7 @@
         }
 
         function _filter_resource_return () {
+            
             if (is_resource($this->return)) {
                 
                 $describe = $this->describe(false);
@@ -184,6 +187,7 @@
                 "Value returned by {$describe} is a resource."), E_USER_ERROR);
                 
             }
+            
         }
         
     }

@@ -33,8 +33,10 @@
             if (is_array($callee)) {
                 
                 if (2 == count($callee)) {
+                    
                     $this->class = $callee[0];
                     $this->method = $callee[1];
+                    
                 }
                 else if (1 == count($callee)) {
                     
@@ -67,8 +69,11 @@
             }
             
             if ("&" == substr($this->class, 0, 1)) {
+                
+                $this->class = substr($this->class, 1);
+                
                 trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
-                    "Can't allow instance reusing when calling a static method."), E_USER_ERROR);
+                    "Trying to do instance reusing when calling a static method."), E_WARNING);
             }
             
         }
@@ -104,9 +109,7 @@
 
         function _parse_static_method ($callee) {
             
-            $sro = strpos($callee, "::");
-            
-            if ($sro !== false)
+            if (strpos($callee, "::") !== false)
                 return explode("::", $callee);
             
             return false;

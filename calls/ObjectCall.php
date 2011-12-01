@@ -88,7 +88,7 @@
                 else {
                     $this->return = void;
                     trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                        "Method '{$this->method}' not found in class '{$this->class}'."), E_USER_ERROR);
+                        "Method '{$this->method}' not found in object of class '{$this->class}'."), E_USER_ERROR);
                 }
 
             }
