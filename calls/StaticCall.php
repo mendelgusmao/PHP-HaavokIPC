@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Call is an object responsible for storing the information of a call,
@@ -33,8 +33,10 @@
             if (is_array($callee)) {
                 
                 if (2 == count($callee)) {
+                    
                     $this->class = $callee[0];
                     $this->method = $callee[1];
+                    
                 }
                 else if (1 == count($callee)) {
                     
@@ -46,7 +48,7 @@
                     
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                         "Wrong parameter count for callee."), E_USER_ERROR);                
                 }
 
@@ -62,20 +64,23 @@
             }
 
             if (!$this->class) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "No class specified for method '{$this->method}'"), E_USER_ERROR);                        
             }
             
             if ("&" == substr($this->class, 0, 1)) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
-                    "Can't allow instance reusing when calling a static method."), E_USER_ERROR);
+                
+                $this->class = substr($this->class, 1);
+                
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
+                    "Trying to do instance reusing when calling a static method."), E_WARNING);
             }
             
         }
         
         function invoke (&$instances, &$wrappers) {
 
-            $parameters = gipc_to_array($this->parameters);
+            $parameters = hipc_to_array($this->parameters);
             
             if (class_exists($this->class)) {
 
@@ -87,14 +92,14 @@
                 }
                 else {
                     $this->return = void;
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Static method '{$this->method}' not found in class '{$this->class}'."), E_USER_ERROR);
                 }
 
             }
             else {
                 $this->return = void;
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Class '{$this->class}' doesn't exist."), E_USER_ERROR);
             }
 
@@ -104,9 +109,7 @@
 
         function _parse_static_method ($callee) {
             
-            $sro = strpos($callee, "::");
-            
-            if ($sro !== false)
+            if (strpos($callee, "::") !== false)
                 return explode("::", $callee);
             
             return false;

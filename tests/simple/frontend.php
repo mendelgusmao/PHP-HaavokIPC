@@ -2,9 +2,9 @@
 
     /* Must include simpletest 1.0.1 (the last version with PHP 4 support */
     include 'simpletest/autorun.php';
-    include dirname(__FILE__) . '/../../Bridge.class.php';
+    include dirname(__FILE__) . '/../../HaavokIPC.php';
 
-    class PHPGhettoIPCTest extends UnitTestCase {
+    class HaavokIPCTest extends UnitTestCase {
 
         var $driver;
         var $ipc;

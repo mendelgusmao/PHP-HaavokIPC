@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Runner is the class responsible for executing the backend bin with
-     * parameters passed by GhettoIPC class. For now it will use shell_exec()
+     * parameters passed by HaavokIPC class. For now it will use shell_exec()
      * to do it, but is planned to use proc_open(), due to the need of using
      * bidirectional pipes for StdIODriver.
      *
@@ -26,7 +26,7 @@
             $this->parameters = $parameters;
 
             if (!file_exists($this->executable))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, 
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
                     "Executable {$this->executable} not found;"), E_USER_ERROR);
 
         }

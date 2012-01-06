@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Call is an object responsible for storing the information of a call,
@@ -45,7 +45,7 @@
 
         function invoke (&$instances, &$wrappers) {
 
-            $parameters = gipc_to_array($this->parameters);
+            $parameters = hipc_to_array($this->parameters);
 
             if (function_exists($this->method)) {
                 $this->return = call_user_func_array($this->method, $parameters);
@@ -58,7 +58,7 @@
                 }
                 else {
                     $this->return = void;
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Function '{$this->method}' not found."), E_USER_ERROR);
                 }
 
@@ -73,8 +73,8 @@
             if (empty($this->callback) || $this->callback == void)
                 return void;
             
-            $additional_callback_parameters = gipc_to_array($this->additional_callback_parameters);            
-            $callback = gipc_to_array($this->callback);            
+            $additional_callback_parameters = hipc_to_array($this->additional_callback_parameters);            
+            $callback = hipc_to_array($this->callback);            
             
             array_unshift($additional_callback_parameters, $this->return);
 
@@ -87,8 +87,8 @@
                  * the objects you need in the frontend. They'll be responsible
                  * for instantiating these objects
                  */
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot execute static method calls in PHP 4."), E_USER_ERROR);
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot call static methods in PHP 4."), E_USER_ERROR);
 
                 $class = $callback[0];
                 $method = $callback[1];
@@ -100,7 +100,7 @@
                     );
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Error calling method {$method}() of {$class}. Method not defined."), E_USER_ERROR);
                 }
                 
@@ -114,20 +114,22 @@
                     );
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Error calling function {$function}(). Function not defined."), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Wrong parameter count for class method/function name."), E_USER_ERROR);
             }
 
         }
 
         function __toString () {
+            
             return $this->describe();
+            
         }
         
         function describe ($with_callback = true) {
@@ -143,7 +145,7 @@
                 if (is_array($constructor_parameters)) {
 
                     foreach ($constructor_parameters as $parameter)
-                        $parameters_types[] = gipc_var_dump($parameter);
+                        $parameters_types[] = hipc_var_dump($parameter);
 
                     $constructor_parameters = "(" . implode(", ", $parameters_types) . ")";
                 }
@@ -151,19 +153,19 @@
                 $method = ($this->is_static ? "::" : "->") . $method;
             }
             else {
-                $constructor_parameters = gipc_var_dump($constructor_parameters);
+                $constructor_parameters = hipc_var_dump($constructor_parameters);
             }
 
             $parameters_types = array();
 
             if (is_array($parameters)) {
                 foreach ($parameters as $parameter)
-                    $parameters_types[] = gipc_var_dump($parameter);
+                    $parameters_types[] = hipc_var_dump($parameter);
 
                 $parameters = implode(", ", $parameters_types);
             }
             else {
-                $parameters = gipc_var_dump($parameters);
+                $parameters = hipc_var_dump($parameters);
             }
 
             $string = sprintf("%s%s%s(%s)", $class, $constructor_parameters, $method, $parameters);
@@ -175,15 +177,17 @@
         }
 
         function _filter_resource_return () {
+            
             if (is_resource($this->return)) {
                 
                 $describe = $this->describe(false);
                 
                 $this->return = void;                
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                 "Value returned by {$describe} is a resource."), E_USER_ERROR);
                 
             }
+            
         }
         
     }

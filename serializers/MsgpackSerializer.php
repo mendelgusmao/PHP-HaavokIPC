@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * MsgpackSerializer is a serializer that uses Msgpack's msgpack_pack
@@ -26,7 +26,7 @@
         function MsgpackSerializer () {
             
             if (!extension_loaded("msgpack")) {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Msgpack extension not installed"), E_USER_ERROR);
             }
             

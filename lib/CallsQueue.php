@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * CallsQueue is a container of Calls and is responsible on processing
@@ -31,7 +31,7 @@
             $calls = func_get_args();
 
             if (0 == count($calls))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "No calls defined."), E_USER_ERROR);
 
             foreach ($calls as $call)
@@ -40,7 +40,7 @@
                     $this->queue[$this->index] = $call;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Trying to enqueue something that is not a Call."), E_USER_ERROR);
                 }
 
@@ -61,7 +61,7 @@
 
         function process () {
 
-            if (GIPC_IS_BACKEND) {
+            if (HIPC_IS_BACKEND) {
 
                 $instances = new Instances();
                 $wrappers = new Wrappers();                
@@ -75,21 +75,21 @@
                 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Unable to process Calls queue in the frontend."), E_USER_ERROR);
             }
         }
 
         function process_callbacks() {
 
-            if (!GIPC_IS_BACKEND) {
+            if (!HIPC_IS_BACKEND) {
                 
                 foreach ($this->queue as $call)
                     $call->callback();
                 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot execute callbacks in backend."), E_USER_ERROR);
             }
 

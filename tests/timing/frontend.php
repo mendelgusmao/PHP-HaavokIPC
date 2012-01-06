@@ -1,6 +1,6 @@
 <?php
 
-    require dirname(__FILE__) . '/../../GhettoIPC.class.php';
+    require dirname(__FILE__) . '/../../HaavokIPC.class.php';
     $backend = dirname(__FILE__) . '/backend.php';
 
     $calls = new CallsQueue;
@@ -11,7 +11,7 @@
         new Call("sha1", $base, null, "result")
     );
 
-    $ipc = new GhettoIPC(new FileDriver, $backend, $calls);
+    $ipc = new HaavokIPC(new FileDriver, $backend, $calls);
 
     $time_fe = microtime_float();
     $sha1_fe = sha1($base);

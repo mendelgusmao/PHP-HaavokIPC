@@ -1,4 +1,4 @@
-# PHP-Ghetto-IPC / GhettoIPC
+# HaavokIPC for PHP
 
 Library to integrate legacy applications built under PHP 4 with PHP 5 applications and libraries.
 
@@ -10,7 +10,7 @@ This is the front end, i.e., a PHP 4 application:
 # frontend.php
 <?php
 
-    include "PHP-Ghetto-IPC/GhettoIPC.class.php";
+    include "HaavokIPC/HaavokIPC.php";
 
     // CallsQueue is a container of calls
     $calls = new CallsQueue;
@@ -22,10 +22,10 @@ This is the front end, i.e., a PHP 4 application:
         new Call("hello", "world", null, "callback")
     );
 
-    // Instantiate GhettoIPC, the core class, with a driver that uses
+    // Instantiate HaavokIPC, the core class, with a driver that uses
     // a file to store the serialized information to be used by back end
     // "backend.php"
-    $ipc = new GhettoIPC(new FileDriver, "backend.php", $calls);
+    $ipc = new HaavokIPC(new FileDriver, "backend.php", $calls);
 
     // Method responsible for serializing data, exporting, executing back end,
     // re-importing data and executing callbacks.
@@ -42,10 +42,10 @@ This is the back end, i.e., a PHP 5 application
 # backend.php
 <?php
 
-    // Instantiate GhettoIPC in back end.
+    // Instantiate HaavokIPC in back end.
     // Don't worry about configuring anything in this side
     // Everything it needs has already been passed via command line
-    $ipc = new GhettoIPC();
+    $ipc = new HaavokIPC();
     $ipc->execute();
 
     function hello ($who) {
@@ -68,18 +68,18 @@ The execution is syncronous, following this order:
     
 ## Some considerations
     
-* GhettoIPC is meant to be portable between the majority of versions of PHP after 4, so...
+* HaavokIPC is meant to be portable between the majority of versions of PHP after 4, so...
     * No visibility keywords in classes definition, as there is no implementation of visibility in PHP 4
     * No interfaces - I miss them, they would be very useful defining the drivers
     * No type hinting
     * No Reflection classes
-    * A lot of good sense is needed to avoid interference in GhettoIPC behavior. Respect the API and you'll be fine
+    * A lot of good sense is needed to avoid interference in HaavokIPC behavior. Respect the API and you'll be fine
     
-* Don't expect performance. GhettoIPC is not meant to be fast
+* Don't expect performance. HaavokIPC is not meant to be fast
     * In average, between the first data serializing and the end of the execution of callbacks, it took 0.01 second, running in a Core i7 (Ubuntu 11.04) and in a Phenom II X4 965 (Windows XP)
     - Also, shell_exec() performed much faster than proc_open()
     
-* GhettoIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler. Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
+* HaavokIPC is meant to be simple and to make the integration of PHP 4 applications with PHP 5 code simpler. Personally, I think it's easier than build a local webservice or RPC, set up a new HTTP daemon, and so on
 
 ## Basic configuration
 
@@ -87,27 +87,27 @@ All configuration is done with constants defined in Configuration.php
     
 The most important are:
 
-* GIPC_BACKEND_BIN
+* HIPC_BACKEND_BIN
     
 The path of PHP binary that will run as back end
 
-* GIPC_LOGFILE
+* HIPC_LOGFILE
     
 The path of the file that will store log information
 
-* GIPC_LOG
+* HIPC_LOG
     
 Enable or disable logging
 
-* GIPC_PREPEND_IPC_CLASS
+* HIPC_PREPEND_IPC_CLASS
     
-Enable or disable the prepending of GhettoIPC.class.php in back end, avoiding the need to include the file
+Enable or disable the prepending of HaavokIPC.class.php in back end, avoiding the need to include the file
     
 _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI entry", so it will overwrite INI configuration_
 
-* GIPC_FORCE_NO_OUTPUT
+* HIPC_FORCE_NO_OUTPUT
     
-Enable or disable output buffering in back end from the instantiation of GhettoIPC
+Enable or disable output buffering in back end from the instantiation of HaavokIPC
     
 ## Setting the driver
 
@@ -115,11 +115,11 @@ For now 3 drivers are avaliable:
 
 * FileDriver
     
-It's the first driver created for GhettoIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
+It's the first driver created for HaavokIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
 
 ```php
-define("GIPC_EXT", ".persistence"); // Filename extension
-define("GIPC_TMP", "/tmp/");        // Temporary directory
+define("HIPC_EXT", ".persistence"); // Filename extension
+define("HIPC_TMP", "/tmp/");        // Temporary directory
 ```   
     
 * MemcacheDriver
@@ -127,8 +127,8 @@ define("GIPC_TMP", "/tmp/");        // Temporary directory
 This driver uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
 
 ```php
-define("GIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
-define("GIPC_MEMCACHEDP", 11211);      // Port of the memcache server
+define("HIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
+define("HIPC_MEMCACHEDP", 11211);      // Port of the memcache server
 ```
 
 * ShmDriver
@@ -137,12 +137,12 @@ This driver uses shared memory and doesn't serializes data before exporting. It'
 You can configure it using these constants:
 
 ```php
-define("GIPC_SHM_SIZE", 32768); // Initial shared memory segment size
-define("GIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
+define("HIPC_SHM_SIZE", 32768); // Initial shared memory segment size
+define("HIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
 ```
 
 * StdIODriver
-This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in GhettoIPC core.
+This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in HaavokIPC core.
 
 _There is no need to define a driver in back end. The information about what driver was configured in front end is passed via command line to back end_
 
@@ -190,9 +190,9 @@ Where
     $call = new StaticCall("class::method");
     ```
 
-    If the call is to an object method, GhettoIPC will instantiate the class and store it in a container named Instances.
+    If the call is to an object method, HaavokIPC will instantiate the class and store it in a container named Instances.
     The container has a way to do "instance reusing", so, if the code needs to do two calls to the same object, and the second call
-    has its class name prepended by "&", GhettoIPC will not instantiate another object to the second call if there's an object 
+    has its class name prepended by "&", HaavokIPC will not instantiate another object to the second call if there's an object 
     of the same class instantiated when invoking the first call.
 
     Examples:
@@ -249,25 +249,25 @@ $ipc->set_export_options($option, $value);
 
 Where $option can be:
 
-* GIPC_EXPORT_GLOBALS - Export $GLOBALS
-* GIPC_EXPORT_REQUEST - Export $_REQUEST
-* GIPC_EXPORT_POST - Export $_POST
-* GIPC_EXPORT_GET - Export $_GET
-* GIPC_EXPORT_SERVER - Export $_SERVER
-* GIPC_EXPORT_COOKIE - Export $_COOKIE
-* GIPC_EXPORT_SESSION - Export $_SESSION
-* GIPC_EXPORT_CONSTANTS - Export defined constants
-* GIPC_EXPORT_HEADERS - Export generated headers 
-* GIPC_EXPORT_ENV - Export $_ENV
-* GIPC_EXPORT_FILES - Export $_FILES
-* GIPC_EXPORT_DEBUG - Export debug_backtrace() result
-* GIPC_EXPORT_OUTPUT - Export stdout
-* GIPC_EXPORT_FORCE_NO_OUTPUT - Force back end to use output buffering
+* HIPC_EXPORT_GLOBALS - Export $GLOBALS
+* HIPC_EXPORT_REQUEST - Export $_REQUEST
+* HIPC_EXPORT_POST - Export $_POST
+* HIPC_EXPORT_GET - Export $_GET
+* HIPC_EXPORT_SERVER - Export $_SERVER
+* HIPC_EXPORT_COOKIE - Export $_COOKIE
+* HIPC_EXPORT_SESSION - Export $_SESSION
+* HIPC_EXPORT_CONSTANTS - Export defined constants
+* HIPC_EXPORT_HEADERS - Export generated headers 
+* HIPC_EXPORT_ENV - Export $_ENV
+* HIPC_EXPORT_FILES - Export $_FILES
+* HIPC_EXPORT_DEBUG - Export debug_backtrace() result
+* HIPC_EXPORT_OUTPUT - Export stdout
+* HIPC_EXPORT_FORCE_NO_OUTPUT - Force back end to use output buffering
 
 And $value can be:
 
-* GIPC_EXPORT_WAY_F2B - Export from front end to back end
-* GIPC_EXPORT_WAY_B2F - Export from back end to front end
-* GIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
+* HIPC_EXPORT_WAY_F2B - Export from front end to back end
+* HIPC_EXPORT_WAY_B2F - Export from back end to front end
+* HIPC_EXPORT_WAY_BOTH - Export from front end to back end, export from back end to front end
 
-Exceptions: For GIPC_EXPORT_HEADERS, GIPC_EXPORT_DEBUG, GIPC_EXPORT_FORCE_NO_OUTPUT, and GIPC_EXPORT_OUTPUT the value is boolean
+Exceptions: For HIPC_EXPORT_HEADERS, HIPC_EXPORT_DEBUG, HIPC_EXPORT_FORCE_NO_OUTPUT, and HIPC_EXPORT_OUTPUT the value is boolean

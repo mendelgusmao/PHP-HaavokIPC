@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * Instances is a container of objects instantiated in backend. It's responsible
@@ -42,7 +42,7 @@
                 
             if (is_null($instance) || !is_a($instance, $class))
                 trigger_error(
-                    gipc_error_message(__CLASS__, __FUNCTION__,
+                    hipc_error_message(__CLASS__, __FUNCTION__,
                     -1 == $index
                         ? "No instances of class '{$class}' found in instances container."
                         : "Instance #{$index} of class '{$class}' not found in instances container.")

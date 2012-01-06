@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * MemcacheDriver is the class responsible for writing and reading data generated
-     * by GhettoIPC to a memcache daemon. After data is read by the frontend
+     * by HaavokIPC to a memcache daemon. After data is read by the frontend
      * (meaning the end of the process), the item is deleted.
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
@@ -13,61 +13,49 @@
      * @version 1.4
      *
      */
-    class MemcacheDriver {
+    class MemcacheDriver extends Driver {
         
         var $name = "Driver";
 
         var $id;
         var $handle;
-        var $data;
         var $valid;
-        var $serializer;
-
-        function __construct ($serializer = null) {
-            
-            $this->MemcacheDriver($serializer);
-
-        }
+        var $server;
+        var $port;
         
-        function MemcacheDriver ($serializer = null) {
-
-            // Memcache has your own serializer
+        function initialize (&$ipc) {
             
-        }        
-        
-        function initialize ($id) {
+            $this->server = $ipc->configuration["memcached_server"];
+            $this->port = $ipc->configuration["memcached_port"];
 
-            $this->configure();
+            if (!$this->server)
+                $this->server = "127.0.0.1";
             
+            if (!$this->port)
+                $this->port = 11211;
+            
+            $this->id = $ipc->id();
             $this->valid = false;
 
             if (class_exists("Memcache")) {
 
                 $this->handle = new Memcache;
 
-                if ($this->handle->addServer(GIPC_MEMCACHED, GIPC_MEMCACHEDP)) {
+                if ($this->handle->addServer(HIPC_MEMCACHED, HIPC_MEMCACHEDP)) {
                     $this->valid = true;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Couldn't connect to memcached at " . GIPC_MEMCACHED . ":" . GIPC_MEMCACHEDP), E_USER_ERROR);
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
+                        "Couldn't connect to memcached at " . HIPC_MEMCACHED . ":" . HIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Memcache is not enabled."), E_USER_ERROR);
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
+                    "Memcache is not enabled."), E_USER_ERROR);
             }
 
             return $this->valid;
-        }
-
-        function configure () {
-            
-            if (!defined("GIPC_MEMCACHED")) 
-                define("GIPC_MEMCACHED", "127.0.0.1");
-            
-            if (!defined("GIPC_MEMCACHEDP"))
-                define("GIPC_MEMCACHEDP", 11211);
-        
         }
         
         function set ($data) {

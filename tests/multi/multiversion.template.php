@@ -1,12 +1,12 @@
 <?php
 
     include 'simpletest/autorun.php';
-    include dirname(__FILE__) . '/../../GhettoIPC.class.php';
+    include dirname(__FILE__) . '/../../HaavokIPC.class.php';
     
-    class GhettoIPCMultiVersionTest {
+    class HaavokIPCMultiVersionTest {
     
 #BEGIN
-        function testGhettoIPCWith__PHP1__And__PHP2__() {
+        function testHaavokIPCWith__PHP1__And__PHP2__() {
         
             $content = shell_exec("C:\\PHP\\__PHP1V__\\php.exe -q \"__FRONTEND__\" C:\\PHP\\__PHP2V__\\php.exe");
 

@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
@@ -10,12 +10,12 @@
      *
      */
 
-    $__DIR__ = realpath(dirname(__FILE__) . "/../") . "/";
+    define("HIPC_DIR", realpath(dirname(__FILE__) . "/../") . "/");
+    define("HIPC_APPLICATION", realpath($_SERVER["argv"][0]));
 
     $includes = <<<INC
         lib/Utils
         lib/Constants
-        lib/Profiles        
         Configuration
         lib/Runner
         lib/Instances
@@ -25,6 +25,7 @@
         calls/Call
         calls/StaticCall
         calls/ObjectCall
+        drivers/Driver
         drivers/FileDriver
         drivers/MemcacheDriver
         drivers/ShmDriver
@@ -33,6 +34,6 @@
 INC;
 
     foreach (explode("\n", $includes) as $include)
-        include $__DIR__ . trim($include) . ".php";
+        include HIPC_DIR . trim($include) . ".php";
 
 ?>

@@ -1,11 +1,11 @@
 <?php
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
      * FileDriver is the class responsible for writing and reading data generated
-     * by GhettoIPC to a file. After data is read by the frontend (meaning the end
+     * by HaavokIPC to a file. After data is read by the frontend (meaning the end
      * of the process), the file is deleted.
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
@@ -13,58 +13,46 @@
      * @version 1.4
      *
      */
-    class FileDriver {
+    class FileDriver extends Driver {
         
         var $name = "Driver";
         
         var $id;
         var $handle;
         var $file;
+        var $directory;
+        var $extension;
         var $data;
         var $valid;
-        var $serializer;
 
-        function __construct ($serializer = null) {
+        function initialize (&$ipc) {
             
-            $this->FileDriver($serializer);
-
-        }
-        
-        function FileDriver ($serializer = null) {
-
-            if (is_null($serializer))
-                $serializer = new DefaultSerializer;
+            if (isset($ipc->configuration["temp_directory"])) {
+                $this->directory = $ipc->configuration["temp_directory"];
+            }
+            else {
+                $this->directory = "/tmp/";
+            }
             
-            $this->serializer = $serializer;
+            if (isset($ipc->configuration["file_extension"])) {
+                $this->extension = $ipc->configuration["file_extension"];
+            }
+            else {
+                $this->extension = ".persistence";
+            }
             
-        }
-        
-        function initialize ($id) {
-            
-            $this->configure();
-            
-            $this->id = $id;
+            $this->id = $ipc->id();
             $this->valid = false;
-            $this->file = GIPC_TMP . $this->id . GIPC_EXTENSION;
+            $this->file = $this->directory . $this->id . $this->extension;
 
-            if (!is_writable(GIPC_TMP))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot initialize. Directory '" . GIPC_LOGFILE . "' is not writable."), E_USER_ERROR);            
+            if (!is_writable($this->directory))
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
+                    "Cannot initialize. Directory '{$this->directory}' is not writable."), E_USER_ERROR);            
             
-            if ($this->handle = fopen($this->file, GIPC_IS_BACKEND ? "r+" : "w+"))
+            if ($this->handle = fopen($this->file, HIPC_IS_BACKEND ? "r+" : "w+"))
                 $this->valid = true;
             
             return $this->valid;
-            
-        }
-
-        function configure () {
-
-            if (!defined("GIPC_TMP"))
-                define("GIPC_TMP", "/tmp/");
-
-            if (!defined("GIPC_EXTENSION"))
-                define("GIPC_EXTENSION", ".persistence");            
             
         }
         
@@ -89,7 +77,8 @@
             $data = $this->serializer->from($data);    
                 
             if (empty($data))
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__, "Empty or corrupted file."), E_USER_ERROR);
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
+                    "Empty or corrupted file."), E_USER_ERROR);
 
             return $data;
             

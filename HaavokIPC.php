@@ -1,10 +1,10 @@
 <?php 
 
     /**
-     * Part of PHP-Ghetto-IPC, a library to execute PHP code between different
+     * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * GhettoIPC is the core class
+     * HaavokIPC is the core class
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao
@@ -14,7 +14,7 @@
 
     include "lib/Includes.php";
     
-    class GhettoIPC extends Dependencies {
+    class HaavokIPC extends Dependencies {
         
         /**
          * The class can't use public/private/protected
@@ -30,61 +30,57 @@
         var $export_options = array();
         var $debug_backtrace;
         var $configuration;
+        var $runner;
 
         function __construct ($application = null) {
             
-            $this->GhettoIPC($application);
+            $this->HaavokIPC($application);
             
         }
          
-        function GhettoIPC ($application = null) {
+        function HaavokIPC ($application = null) {
 
+            $this->runner = new Runner;
             $this->application = $application;
 
-            define("GIPC_IS_BACKEND", 1 == get_cfg_var("gipc_backend"));
-            define("GIPC_ON_WINDOWS", strtolower(substr(PHP_OS, 0, 3)) == "win");
-            
+            define("HIPC_IS_BACKEND", 1 == get_cfg_var("hipc_backend"));
+            define("HIPC_ON_WINDOWS", strtolower(substr(PHP_OS, 0, 3)) == "win");
+           
         }
 
         function initialize () {
 
-            if (GIPC_IS_BACKEND) {
+            if (HIPC_IS_BACKEND) {
 
+                $this->configuration = Configuration::retrieve(HIPC_APPLICATION);
+                
                 if (!isset($this->driver)) {
 
-                    $driver = get_cfg_var("gipc_driver");
-                    $serializer = get_cfg_var("gipc_serializer");
+                    $driver = get_cfg_var("hipc_driver");
+                    $serializer = get_cfg_var("hipc_serializer");
                     
-                    if (class_exists($driver)) {
-                        
-                        if (class_exists($serializer)) {
-                            
-                            $this->driver = new $driver(new $serializer);
-                            
-                        }
-                        else {
-                            trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
-                                "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
-                        }                        
-                        
-                    }
-                    else {
-                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    if (!class_exists($driver))
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
-                    }
+                   
+                    if (!class_exists($serializer))
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
+                            "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
+                            
+                    $this->driver = new $driver(new $serializer);
 
                 }
 
                 set_error_handler(array(&$this, "error"));
-                define("GIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("gipc_no_output"));
+                define("HIPC_FORCE_NO_OUTPUT", 1 == get_cfg_var("hipc_no_output"));
                 
-                if (GIPC_FORCE_NO_OUTPUT)
+                if (HIPC_FORCE_NO_OUTPUT)
                     ob_start();
 
             } 
             else {
 
-                $this->configuration = $this->profiles->retrieve($this->application);                
+                $this->configuration = Configuration::retrieve($this->application);
                 
                 if (isset($this->call)) {
                     
@@ -94,22 +90,22 @@
                 }
                 
                 if (is_null($this->driver))
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize with no driver."), E_USER_ERROR);
 
                 if ($this->configuration["logging"] && !is_writable(dirname($this->configuration["logfile"])))
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot initialize. Directory '" . dirname($this->configuration["logfile"]) . "' is not writable."), E_USER_ERROR);
 					
             }
 
-            $this->driver->initialize($this->id());
+            $this->driver->initialize($this);
 
             register_shutdown_function(
-                array(&$this, GIPC_IS_BACKEND ? "export" : "__destruct")
+                array(&$this, HIPC_IS_BACKEND ? "export" : "__destruct")
             );
 
-            $this->_log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
+            $this->log("php " . PHP_VERSION . " start (pid:" . getmypid() . ")");
         }
 
         function __destruct () {
@@ -119,13 +115,13 @@
             if ($destructed)
             	return;
             
-            if (!GIPC_IS_BACKEND)
+            if (!HIPC_IS_BACKEND)
                 $this->driver->delete();
 
-            $this->_log(
+            $this->log(
                 sprintf("php %s end%s",
                         PHP_VERSION,
-                        (!GIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
+                        (!HIPC_IS_BACKEND ? "\n" . str_repeat("-", 70) : ""))
             );
         
             $destructed = true;
@@ -136,63 +132,68 @@
 
             $this->initialize();
             
-            if (GIPC_IS_BACKEND) {
+            if (HIPC_IS_BACKEND) {
 
-                $this->import();
-                
-                $this->_log("start calls");
-                $this->calls->process();
-                $this->_log("end calls");
+                if ($this->import()) {
+                    $this->log("start calls");
+                    $this->calls->process();
+                    $this->log("end calls");
+                }
                 
             }
             else {
             
                 if (!realpath($this->application)) {
 
-                    $this->_log("cannot execute: script not found");
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    $this->log("cannot execute: script not found");
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Cannot execute. Application file '{$this->application}' not found!"), E_USER_ERROR);
 
                 }
                 else {
 
-                    if (GIPC_ON_WINDOWS)
-                        $this->application = escapeshellcmd(
-                            str_replace("\\", "/", realpath($this->application)));
+                    $this->application = hipc_path($this->application);
 
-                    $this->_log("start execute");
+                    if ($this->configuration["prepend_ipc_class"]) {
+                        
+                        $prepend_string = $this->configuration["prepend_string"];
+                        
+                        $prepend_string = hipc_path($prepend_string);
+                        
+                        $runner_params[$this->configuration["prepend_argument"]] = "\"{$prepend_string}\"";
 
-                    $this->export();
-
-                    $runner_params = array(
-                        "-d gipc_backend" => 1,
-                        "-d gipc_id" => $this->id(),
-                        "-d gipc_driver" => get_class($this->driver),
-                        "-d gipc_serializer" => get_class($this->driver->serializer),
-                        "-d gipc_no_output" => isset($this->export_options[GIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
-                        "-f \"{$this->application}\""
+                    }                    
+                    
+                    $runner_params = array_merge($runner_params, 
+                        array(
+                            "-d hipc_backend" => 1,
+                            "-d hipc_id" => $this->id(),
+                            "-d hipc_driver" => get_class($this->driver),
+                            "-d hipc_serializer" => get_class($this->driver->serializer),
+                            "-d hipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
+                            "-f \"{$this->application}\""
+                        )
                     );
-
-                    if ($this->configuration["prepend_ipc_class"])
-                        $runner_params[$this->configuration["prepend_argument"]] = $this->configuration["prepend_string"];
-                            
+                    
+                    $this->log("start execute");
+                    $this->export();
+                    
                     $this->runner->initialize(
                         $this->configuration["executable"],
                         $runner_params
                     );
 
                     $this->stdout = $this->runner->run();
-                    $this->_log("end execute");
+                    $this->log("end execute");
 
-                    if ($this->import())
+                    if ($this->import()) {
                         if ($this->calls && $callback) {
-                            $this->_log("start callbacks");
+                            $this->log("start callbacks");
                             $this->calls->process_callbacks();
-                            $this->_log("end callbacks");
+                            $this->log("end callbacks");
                         }
-                    
+                    }
                 }
-            
             }
         }
 
@@ -206,7 +207,7 @@
                     $this->export_options[$option] = $value;
                 }
                 else {
-                    trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                    trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                         "Invalid option '{$export_option}'"), E_USER_ERROR);
                 }
 
@@ -214,7 +215,7 @@
 
         function export () {
 
-            $this->_log("start export");
+            $this->log("start export");
             $export_output = false;
 
             if ($this->driver->valid()) {
@@ -227,81 +228,81 @@
                 foreach ($this->export_options as $export_option => $export_option_value) {
 
                     if (
-                        $export_option_value != GIPC_EXPORT_WAY_BOTH
+                        $export_option_value != HIPC_EXPORT_WAY_BOTH
                         && (
-                            (GIPC_IS_BACKEND && $export_option_value == GIPC_EXPORT_WAY_F2B)
-                            || (!GIPC_IS_BACKEND && $export_option_value == GIPC_EXPORT_WAY_B2F)
+                            (HIPC_IS_BACKEND && $export_option_value == HIPC_EXPORT_WAY_F2B)
+                            || (!HIPC_IS_BACKEND && $export_option_value == HIPC_EXPORT_WAY_B2F)
                         )
                     ) continue;
 
                     switch ($export_option) {
                         
-                        case GIPC_EXPORT_GLOBALS:
+                        case HIPC_EXPORT_GLOBALS:
                             foreach ($GLOBALS as $name => $value)
                                 if (!is_object($value) && !is_resource($value))
                                     $exports["GLOBALS"][$name] = $value;
                         break;
 
-                        case GIPC_EXPORT_REQUEST:
+                        case HIPC_EXPORT_REQUEST:
                             $exports["_REQUEST"] = $_REQUEST;
                         break;
 
-                        case GIPC_EXPORT_POST:
+                        case HIPC_EXPORT_POST:
                             $exports["_POST"] = $_POST;
                         break;
 
-                        case GIPC_EXPORT_GET:
+                        case HIPC_EXPORT_GET:
                             $exports["_GET"] = $_GET;
                         break;
 
-                        case GIPC_EXPORT_SERVER:
+                        case HIPC_EXPORT_SERVER:
                             $exports["_SERVER"] = $_SERVER;
                         break;
 
-                        case GIPC_EXPORT_COOKIE:
+                        case HIPC_EXPORT_COOKIE:
                             $exports["_COOKIE"] = $_COOKIE;
                         break;
 
-                        case GIPC_EXPORT_SESSION:
+                        case HIPC_EXPORT_SESSION:
                             $exports["_SESSION"] = $_SESSION;
                         break;
                     
-                        case GIPC_EXPORT_CONSTANTS:
+                        case HIPC_EXPORT_CONSTANTS:
                             $exports["_CONSTANTS"] = get_defined_constants();
                         break;
 
-                        case GIPC_EXPORT_HEADERS:
-                            $exports["_HEADERS"] = GIPC_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
+                        case HIPC_EXPORT_HEADERS:
+                            $exports["_HEADERS"] = HIPC_IS_BACKEND && function_exists("headers_list") ? headers_list() : array();
                         break;
                     
-                        case GIPC_EXPORT_OUTPUT:
+                        case HIPC_EXPORT_OUTPUT:
                             $export_output = true;
                         break;
                         
-                        case GIPC_EXPORT_ENV:
+                        case HIPC_EXPORT_ENV:
                             $exports["_ENV"] = $_ENV;
                         break;
 
-                        case GIPC_EXPORT_FILES:
+                        case HIPC_EXPORT_FILES:
                             $exports["_FILES"] = $_FILES;
                         break;
 
-                        case GIPC_EXPORT_DEBUG:
-                            $exports["_DEBUG"] = GIPC_IS_BACKEND ? debug_backtrace() : array();
+                        case HIPC_EXPORT_DEBUG:
+                            $exports["_DEBUG"] = HIPC_IS_BACKEND ? debug_backtrace() : array();
                         break;
                     
                     }
                 }
                 
-                if (GIPC_IS_BACKEND && (GIPC_FORCE_NO_OUTPUT || $export_output))
+                if (HIPC_IS_BACKEND && (HIPC_FORCE_NO_OUTPUT || $export_output))
                     $exports["_OUTPUT"] = ob_get_clean();
                 
                 $this->driver->set($exports);
 
-                $this->_log("end export");
+                $this->log("end export");
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
             }
             
@@ -313,7 +314,7 @@
 
                 $data = $this->driver->get();
 
-                $this->_log("start import");
+                $this->log("start import");
 
                 if (is_array($data))
                     foreach ($data as $name => $value) {
@@ -330,7 +331,7 @@
 
                         if ("_CONSTANTS" == $name)
                             foreach ($value as $constant => $constant_value)
-                                if (substr($constant, 0, 3) != "PHP" && !defined($constant))
+                                if (!defined($constant))
                                     define($constant, $constant_value);
 
                         if ("_CALLS" == $name)
@@ -339,7 +340,7 @@
                         if ("_ERRORS" == $name)
                             $this->errors = $value;
 
-                        if ("_OUTPUT" == $name && !GIPC_IS_BACKEND)
+                        if ("_OUTPUT" == $name && !HIPC_IS_BACKEND)
                             $this->output = $value;
 
                         if ("_DEBUG" == $name)
@@ -349,17 +350,17 @@
                         $$name = $value;
                     }
 
-                $this->_log("end import");
+                $this->log("end import");
 
                 return $data;
             }
             else {
-                trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                     "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
             }
         }
 
-        function _log ($str) {
+        function log ($str) {
 
             if ($this->configuration["logging"]) {
 
@@ -367,7 +368,7 @@
 
                 if (!$logfile)
                     if (!$logfile = @fopen($this->configuration["logfile"], "a+"))
-                        trigger_error(gipc_error_message(__CLASS__, __FUNCTION__,
+                        trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Cannot log. Error opening log file '" . $this->configuration["logfile"] . "' for writing."));
 
                 fwrite($logfile,
@@ -375,7 +376,7 @@
                                time(),
                                $this->id(),
                                PHP_VERSION,
-                               (GIPC_IS_BACKEND ? "\t\t" : "\t"),
+                               (HIPC_IS_BACKEND ? "\t\t" : "\t"),
                                $str)
                 );
             }
@@ -408,7 +409,7 @@
             );
 
             if ($errno != E_NOTICE)
-                $this->_log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
+                $this->log(sprintf("%s: %s %s:%s", $errlevel, $errstr, $errfile, $errline));
 
         }
 
@@ -417,8 +418,8 @@
             static $id;
 
             if (empty($id))
-                $id = GIPC_IS_BACKEND
-                    ? get_cfg_var("gipc_id")
+                $id = HIPC_IS_BACKEND
+                    ? get_cfg_var("hipc_id")
                     : uniqid($this->configuration["id_prefix"] . getmypid(), true);
 
             return $id;
