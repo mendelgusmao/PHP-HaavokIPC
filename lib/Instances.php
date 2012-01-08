@@ -94,10 +94,11 @@
 
         function _new ($class, $constructor_parameters) {
 
+            $i = 0;
             $values = array_values($constructor_parameters);
             $parameters = implode(", ", array_fill(0, sizeof($values), '$values[$i++]'));
 
-            return eval("\$i = 0; return new $class($parameters);");
+            return eval("return new $class($parameters);");
 
         }
         
