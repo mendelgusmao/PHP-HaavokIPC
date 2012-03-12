@@ -4,7 +4,7 @@
      * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * ShmDriver is the class responsible for writing and reading data generated
+     * ShmPersistence is the class responsible for writing and reading data generated
      * by HaavokIPC from shared memory. After data is read by the frontend
      * (meaning the end of the process), the shm segment is deleted.
      *
@@ -13,9 +13,9 @@
      * @version 1.4
      *
      */
-    class ShmDriver extends Driver {
+    class ShmPersistence extends Persistence {
         
-        var $name = "Driver";
+        var $name = "Persistence";
 
         var $id;
         var $handle;
@@ -39,7 +39,7 @@
 
             if (HIPC_ON_WINDOWS)
                 trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot use Shared Memory Driver in Windows."), E_USER_ERROR);
+                    "Cannot use Shared Memory Persistence in Windows."), E_USER_ERROR);
 
             $this->handle = shmop_open($this->id, "c", $this->size, $this->permissions);
 

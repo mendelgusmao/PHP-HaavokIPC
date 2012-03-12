@@ -7,7 +7,7 @@
      * Runner is the class responsible for executing the backend bin with
      * parameters passed by HaavokIPC class. For now it will use shell_exec()
      * to do it, but is planned to use proc_open(), due to the need of using
-     * bidirectional pipes for StdIODriver.
+     * bidirectional pipes for StdIOPersistence.
      *
      * @author Mendel Gusmao <mendelsongusmao () gmail.com>
      * @copyright Mendel Gusmao

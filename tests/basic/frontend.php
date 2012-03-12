@@ -19,7 +19,7 @@
 
     $ipc = new HaavokIPC(PWD . "backend.php");
     $ipc->inject(
-        new FileDriver,
+        new FilePersistence,
         $calls
     );
     $ipc->execute(true);

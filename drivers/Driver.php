@@ -1,16 +1,16 @@
 <?php
 
-    class Driver {
+    class Persistence {
         
         var $serializer;
         
         function __construct ($serializer = null) {
             
-            $this->Driver($serializer);
+            $this->Persistence($serializer);
 
         }
         
-        function Driver ($serializer = null) {
+        function Persistence ($serializer = null) {
             
             if (is_null($serializer))
                 $serializer = new DefaultSerializer;

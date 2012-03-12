@@ -4,7 +4,7 @@
      * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * FileDriver is the class responsible for writing and reading data generated
+     * FilePersistence is the class responsible for writing and reading data generated
      * by HaavokIPC to a file. After data is read by the frontend (meaning the end
      * of the process), the file is deleted.
      *
@@ -13,9 +13,9 @@
      * @version 1.4
      *
      */
-    class FileDriver extends Driver {
+    class FilePersistence extends Persistence {
         
-        var $name = "Driver";
+        var $name = "Persistence";
         
         var $id;
         var $handle;
@@ -86,7 +86,7 @@
 
         function delete () {
 
-            return @fclose($this->handle) & unlink($this->file);
+            // return @fclose($this->handle) & unlink($this->file);
             
         }
 

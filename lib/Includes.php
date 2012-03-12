@@ -25,10 +25,11 @@
         calls/Call
         calls/StaticCall
         calls/ObjectCall
-        drivers/Driver
-        drivers/FileDriver
-        drivers/MemcacheDriver
-        drivers/ShmDriver
+        persistences/Persistence
+        persistences/FilePersistence
+        persistences/MemcachePersistence
+        persistences/ShmPersistence
+        persistences/RedisPersistence
         serializers/DefaultSerializer
         serializers/MsgpackSerializer
 INC;

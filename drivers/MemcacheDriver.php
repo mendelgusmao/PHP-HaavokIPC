@@ -4,7 +4,7 @@
      * Part of HaavokIPC, a library to execute PHP code between different
      * PHP versions, usually from PHP 4 (called frontend) to 5 (called backend).
      *
-     * MemcacheDriver is the class responsible for writing and reading data generated
+     * MemcachePersistence is the class responsible for writing and reading data generated
      * by HaavokIPC to a memcache daemon. After data is read by the frontend
      * (meaning the end of the process), the item is deleted.
      *
@@ -13,9 +13,9 @@
      * @version 1.4
      *
      */
-    class MemcacheDriver extends Driver {
+    class MemcachePersistence extends Persistence {
         
-        var $name = "Driver";
+        var $name = "Persistence";
 
         var $id;
         var $handle;

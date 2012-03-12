@@ -22,10 +22,10 @@ This is the front end, i.e., a PHP 4 application:
         new Call("hello", "world", null, "callback")
     );
 
-    // Instantiate HaavokIPC, the core class, with a driver that uses
+    // Instantiate HaavokIPC, the core class, with a persistence that uses
     // a file to store the serialized information to be used by back end
     // "backend.php"
-    $ipc = new HaavokIPC(new FileDriver, "backend.php", $calls);
+    $ipc = new HaavokIPC(new FilePersistence, "backend.php", $calls);
 
     // Method responsible for serializing data, exporting, executing back end,
     // re-importing data and executing callbacks.
@@ -58,11 +58,11 @@ This is the back end, i.e., a PHP 5 application
 The execution is syncronous, following this order:
     
 * At front end: Build the calls
-* At front end: Serialize and export the serialized data to driver
+* At front end: Serialize and export the serialized data to persistence
 * At front end: Execute the back end
 * At back end: Import serialized data and unserialize it
 * At back end: Process the calls queue, invoking the calls
-* At back end: Serialize and export the serialized data to driver
+* At back end: Serialize and export the serialized data to persistence
 * At front end: Import serialized data, unserialize it
 * At front end: Grab the results from every call and execute the respective callbacks, if any    
     
@@ -70,7 +70,7 @@ The execution is syncronous, following this order:
     
 * HaavokIPC is meant to be portable between the majority of versions of PHP after 4, so...
     * No visibility keywords in classes definition, as there is no implementation of visibility in PHP 4
-    * No interfaces - I miss them, they would be very useful defining the drivers
+    * No interfaces - I miss them, they would be very useful defining the persistences
     * No type hinting
     * No Reflection classes
     * A lot of good sense is needed to avoid interference in HaavokIPC behavior. Respect the API and you'll be fine
@@ -109,31 +109,31 @@ _It uses the parameter "-d auto_prepend_file" or "define auto_prepend_file INI e
     
 Enable or disable output buffering in back end from the instantiation of HaavokIPC
     
-## Setting the driver
+## Setting the persistence
 
-For now 3 drivers are avaliable:
+For now 3 persistences are avaliable:
 
-* FileDriver
+* FilePersistence
     
-It's the first driver created for HaavokIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
+It's the first persistence created for HaavokIPC and uses a temporary file for each execution. You can configure it in Configuration.php using these constants:
 
 ```php
 define("HIPC_EXT", ".persistence"); // Filename extension
 define("HIPC_TMP", "/tmp/");        // Temporary directory
 ```   
     
-* MemcacheDriver
+* MemcachePersistence
 
-This driver uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
+This persistence uses memcache and doesn't serializes data before exporting. You can configure it using these constants:
 
 ```php
 define("HIPC_MEMCACHED", "127.0.0.1"); // Address of the memcache server
 define("HIPC_MEMCACHEDP", 11211);      // Port of the memcache server
 ```
 
-* ShmDriver
+* ShmPersistence
 
-This driver uses shared memory and doesn't serializes data before exporting. It's more appropriated for *nix environments and won't work in Windows.
+This persistence uses shared memory and doesn't serializes data before exporting. It's more appropriated for *nix environments and won't work in Windows.
 You can configure it using these constants:
 
 ```php
@@ -141,10 +141,10 @@ define("HIPC_SHM_SIZE", 32768); // Initial shared memory segment size
 define("HIPC_SHM_PERMS", 0666); // Permissions for the shared memory segment
 ```
 
-* StdIODriver
-This driver will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in HaavokIPC core.
+* StdIOPersistence
+This persistence will use stdio to exchange data between front end and back end. Its development is frozen as it requires architecture changes in HaavokIPC core.
 
-_There is no need to define a driver in back end. The information about what driver was configured in front end is passed via command line to back end_
+_There is no need to define a persistence in back end. The information about what persistence was configured in front end is passed via command line to back end_
 
 ## Building a call
     

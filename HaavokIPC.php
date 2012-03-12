@@ -54,20 +54,20 @@
 
                 $this->configuration = Configuration::retrieve(HIPC_APPLICATION);
                 
-                if (!isset($this->driver)) {
+                if (!isset($this->persistence)) {
 
-                    $driver = get_cfg_var("hipc_driver");
+                    $persistence = get_cfg_var("hipc_persistence");
                     $serializer = get_cfg_var("hipc_serializer");
                     
-                    if (!class_exists($driver))
+                    if (!class_exists($persistence))
                         trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                            "Driver '{$driver}' not found or not loaded in Includes.php."), E_USER_ERROR);
+                            "Persistence '{$persistence}' not found or not loaded in Includes.php."), E_USER_ERROR);
                    
                     if (!class_exists($serializer))
                         trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
                             "Serializer '{$serializer}' not found or not loaded in Includes.php."), E_USER_ERROR);
                             
-                    $this->driver = new $driver(new $serializer);
+                    $this->persistence = new $persistence(new $serializer);
 
                 }
 
@@ -89,9 +89,9 @@
                     
                 }
                 
-                if (is_null($this->driver))
+                if (is_null($this->persistence))
                     trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                        "Cannot initialize with no driver."), E_USER_ERROR);
+                        "Cannot initialize with no persistence."), E_USER_ERROR);
 
                 if ($this->configuration["logging"] && !is_writable(dirname($this->configuration["logfile"])))
                     trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
@@ -99,7 +99,7 @@
 					
             }
 
-            $this->driver->initialize($this);
+            $this->persistence->initialize($this);
 
             register_shutdown_function(
                 array(&$this, HIPC_IS_BACKEND ? "export" : "__destruct")
@@ -116,7 +116,7 @@
             	return;
             
             if (!HIPC_IS_BACKEND)
-                $this->driver->delete();
+                $this->persistence->delete();
 
             $this->log(
                 sprintf("php %s end%s",
@@ -168,8 +168,8 @@
                         array(
                             "-d hipc_backend" => 1,
                             "-d hipc_id" => $this->id(),
-                            "-d hipc_driver" => get_class($this->driver),
-                            "-d hipc_serializer" => get_class($this->driver->serializer),
+                            "-d hipc_persistence" => get_class($this->persistence),
+                            "-d hipc_serializer" => get_class($this->persistence->serializer),
                             "-d hipc_no_output" => isset($this->export_options[HIPC_EXPORT_FORCE_NO_OUTPUT]) ? 1 : 0,
                             "-f \"{$this->application}\""
                         )
@@ -218,7 +218,7 @@
             $this->log("start export");
             $export_output = false;
 
-            if ($this->driver->valid()) {
+            if ($this->persistence->valid()) {
 
                 $exports["_EXPORT_OPTIONS"] = $this->export_options;
                 $exports["_CALLS"] = $this->calls;
@@ -297,22 +297,22 @@
                 if (HIPC_IS_BACKEND && (HIPC_FORCE_NO_OUTPUT || $export_output))
                     $exports["_OUTPUT"] = ob_get_clean();
                 
-                $this->driver->set($exports);
+                $this->persistence->set($exports);
 
                 $this->log("end export");
             }
             else {
                 trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot export. Driver resource is not valid anymore."), E_USER_ERROR);
+                    "Cannot export. Persistence resource is not valid anymore."), E_USER_ERROR);
             }
             
         }
 
         function import () {
 
-            if ($this->driver->valid()) {
+            if ($this->persistence->valid()) {
 
-                $data = $this->driver->get();
+                $data = $this->persistence->get();
 
                 $this->log("start import");
 
@@ -356,7 +356,7 @@
             }
             else {
                 trigger_error(hipc_error_message(__CLASS__, __FUNCTION__,
-                    "Cannot import. Driver resource is not valid anymore."), E_USER_ERROR);
+                    "Cannot import. Persistence resource is not valid anymore."), E_USER_ERROR);
             }
         }
 
