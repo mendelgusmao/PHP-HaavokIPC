@@ -41,12 +41,12 @@
 
                 $this->handle = new Memcache;
 
-                if ($this->handle->addServer(HIPC_MEMCACHED, HIPC_MEMCACHEDP)) {
+                if ($this->handle->addServer($this->server, $this->port)) {
                     $this->valid = true;
                 }
                 else {
                     trigger_error(hipc_error_message(__CLASS__, __FUNCTION__, 
-                        "Couldn't connect to memcached at " . HIPC_MEMCACHED . ":" . HIPC_MEMCACHEDP), E_USER_ERROR);
+                        "Couldn't connect to memcached at " . $this->server . ":" . HIPC_MEMCACHEDP), E_USER_ERROR);
                 }
 
             }
